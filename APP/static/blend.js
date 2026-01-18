@@ -22,6 +22,7 @@ const baseEmpty = document.querySelector("[data-base-empty]");
 const baseGrids = document.querySelectorAll("[data-base-grid]");
 const baseCards = document.querySelectorAll(".base-card");
 const botanicalEmpty = document.querySelector("[data-botanical-empty]");
+const botanicalWarning = document.querySelector("[data-botanical-warning]");
 const botanicalGrids = document.querySelectorAll("[data-botanical-grid]");
 const botanicalCards = document.querySelectorAll(".botanical-card");
 const flavorEmpty = document.querySelector("[data-flavor-empty]");
@@ -37,6 +38,8 @@ const nameHelp = document.querySelector("[data-blend-name-help]");
 const NAME_MIN = 3;
 const NAME_MAX = 32;
 const NAME_HELP_DEFAULT = nameHelp ? nameHelp.dataset.default || "" : "";
+const BOTANICAL_MIN = 1;
+const BOTANICAL_MAX = 2;
 
 const outcomeAxes = (() => {
   if (!radarChart) {
@@ -153,6 +156,19 @@ const updateFlavorWarning = (message) => {
   }
 };
 
+const updateBotanicalWarning = (message) => {
+  if (!botanicalWarning) {
+    return;
+  }
+
+  if (message) {
+    botanicalWarning.textContent = message;
+    botanicalWarning.hidden = false;
+  } else {
+    botanicalWarning.hidden = true;
+  }
+};
+
 const getStoredSelection = () => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) {
@@ -185,6 +201,7 @@ let radarPointNodes = [];
 let radarScoreNodes = [];
 let flavorSpectrumReady = false;
 let flavorSpectrumRows = [];
+let currentBotanicalOptionIds = new Set();
 
 const createSvgElement = (tag) =>
   document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -286,6 +303,28 @@ const getAxisValue = (source, axis) => {
     return source.Energy || 0;
   }
   return 0;
+};
+
+const parseBotanicalContributions = (card) => {
+  if (!card || !card.dataset.botanicalContributions) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(card.dataset.botanicalContributions);
+  } catch (error) {
+    console.warn("Unable to read botanical contributions", error);
+    return {};
+  }
+};
+
+const scoreBotanical = (card, baseAlignment = {}) => {
+  const contributions = parseBotanicalContributions(card);
+  return outcomeAxes.reduce(
+    (total, axis) =>
+      total + getAxisValue(baseAlignment, axis) * getAxisValue(contributions, axis),
+    0,
+  );
 };
 
 const renderRadarChart = (alignment = {}) => {
@@ -405,6 +444,21 @@ const updateBotanicalPreview = (selection) => {
   );
 };
 
+const updateBotanicalRequirement = (selection) => {
+  if (!selection.baseId) {
+    updateBotanicalWarning("");
+    return;
+  }
+  const count = (selection.selectedBotanicals || []).length;
+  if (count < BOTANICAL_MIN) {
+    updateBotanicalWarning(
+      `Select at least ${BOTANICAL_MIN} botanical${BOTANICAL_MIN === 1 ? "" : "s"}.`,
+    );
+    return;
+  }
+  updateBotanicalWarning("");
+};
+
 const updateFlavorPreview = (selection) => {
   const flavors = selection.selectedFlavors || [];
   const titles = flavors.map((flavor) => `${flavor.title} (${flavor.category})`);
@@ -441,20 +495,51 @@ const showBaseGrid = (outcomeId) => {
   }
 };
 
-const showBotanicalGrid = (outcomeId, baseId) => {
+const showBotanicalGrid = (outcomeId, baseId, baseAlignment = {}) => {
+  const matchingCards = Array.from(botanicalCards).filter((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    return Boolean(isMatch && matchesBase);
+  });
+  const sortedCards = matchingCards
+    .map((card) => ({
+      card,
+      score: scoreBotanical(card, baseAlignment),
+      title: card.dataset.botanicalTitle || "",
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.title.localeCompare(b.title);
+    })
+    .slice(0, 6);
+
+  currentBotanicalOptionIds = new Set(
+    sortedCards.map((entry) => entry.card.dataset.botanicalId),
+  );
+
   botanicalGrids.forEach((grid) => {
     const isMatch = grid.dataset.botanicalGrid === outcomeId;
     grid.hidden = !isMatch || !baseId;
+    if (isMatch && baseId) {
+      sortedCards.forEach((entry) => {
+        grid.appendChild(entry.card);
+      });
+    }
   });
+
   if (botanicalEmpty) {
-    botanicalEmpty.hidden = Boolean(outcomeId && baseId);
+    botanicalEmpty.hidden = Boolean(outcomeId && baseId && sortedCards.length > 0);
   }
 
   botanicalCards.forEach((card) => {
     const isMatch = card.dataset.outcomeId === outcomeId;
     const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
     const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
-    card.hidden = !(isMatch && baseId && matchesBase);
+    const isAllowed = currentBotanicalOptionIds.has(card.dataset.botanicalId);
+    card.hidden = !(isMatch && baseId && matchesBase && isAllowed);
   });
 };
 
@@ -510,6 +595,7 @@ const applySelection = (card) => {
   resetBasePreview();
   showBotanicalGrid(card.dataset.outcomeId, null);
   resetBotanicalSelection();
+  updateBotanicalWarning("");
   showFlavorGrid(card.dataset.outcomeId, null);
   resetFlavorSelection();
 
@@ -575,12 +661,13 @@ const applyBaseSelection = (card) => {
     baseAlignment: alignment,
   };
 
-  showBotanicalGrid(selection.outcomeId, selection.baseId);
+  showBotanicalGrid(selection.outcomeId, selection.baseId, alignment);
   showFlavorGrid(selection.outcomeId, selection.baseId);
   selection.selectedBotanicals = reconcileBotanicals(selection);
   selection.selectedFlavors = reconcileFlavors(selection);
   storeSelection(selection);
   updateBotanicalPreview(selection);
+  updateBotanicalRequirement(selection);
   updateFlavorPreview(selection);
   updateFlavorWarning("");
   updateAlignmentPreview(selection);
@@ -696,6 +783,7 @@ const restoreSelection = () => {
       selection.selectedBotanicals = reconcileBotanicals(selection);
       storeSelection(selection);
       updateBotanicalPreview(selection);
+      updateBotanicalRequirement(selection);
       updateAlignmentPreview(selection);
     }
 
@@ -757,6 +845,9 @@ const isBotanicalAllowed = (card, outcomeId, baseId) => {
     return false;
   }
   const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+  if (currentBotanicalOptionIds.size > 0) {
+    return currentBotanicalOptionIds.has(card.dataset.botanicalId);
+  }
   return baseIds.length === 0 || baseIds.includes(baseId);
 };
 
@@ -766,15 +857,16 @@ const reconcileBotanicals = (selection) => {
     const card = botanicalCardById.get(botanical.id);
     return isBotanicalAllowed(card, selection.outcomeId, selection.baseId);
   });
+  const limited = filtered.slice(0, BOTANICAL_MAX);
 
   botanicalCards.forEach((card) => {
-    const isSelected = filtered.some(
+    const isSelected = limited.some(
       (botanical) => botanical.id === card.dataset.botanicalId,
     );
     card.classList.toggle("is-selected", isSelected);
   });
 
-  return filtered;
+  return limited;
 };
 
 const isFlavorAllowed = (card, outcomeId, baseId) => {
@@ -844,21 +936,27 @@ const toggleBotanicalSelection = (card) => {
   let updated = existing;
 
   if (isSelected) {
+    if (existing.length <= BOTANICAL_MIN) {
+      updateBotanicalWarning(
+        `Select at least ${BOTANICAL_MIN} botanical${BOTANICAL_MIN === 1 ? "" : "s"}.`,
+      );
+      return;
+    }
     card.classList.remove("is-selected");
     updated = existing.filter(
       (botanical) => botanical.id !== card.dataset.botanicalId,
     );
   } else {
-    card.classList.add("is-selected");
-    let contributions = {};
-    let attributes = [];
-    if (card.dataset.botanicalContributions) {
-      try {
-        contributions = JSON.parse(card.dataset.botanicalContributions);
-      } catch (error) {
-        console.warn("Unable to read botanical contributions", error);
-      }
+    if (existing.length >= BOTANICAL_MAX) {
+      updateBotanicalWarning(`Select up to ${BOTANICAL_MAX} botanicals.`);
+      return;
     }
+    if (!isBotanicalAllowed(card, selection.outcomeId, selection.baseId)) {
+      return;
+    }
+    card.classList.add("is-selected");
+    let attributes = [];
+    const contributions = parseBotanicalContributions(card);
     if (card.dataset.botanicalAttributes) {
       try {
         attributes = JSON.parse(card.dataset.botanicalAttributes);
@@ -888,6 +986,7 @@ const toggleBotanicalSelection = (card) => {
 
   storeSelection(nextSelection);
   updateBotanicalPreview(nextSelection);
+  updateBotanicalRequirement(nextSelection);
   updateAlignmentPreview(nextSelection);
 };
 

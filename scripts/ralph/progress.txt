@@ -1,126 +1,25 @@
 # Ralph Progress Log
+Started: Mon Jan 19 09:48:34 AEDT 2026
+---
 ## Codebase Patterns
-- FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
-- Pre-made product data is currently defined in `app/data.py` for listing and detail views.
-- Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
-- Cart review uses `/cart` and reads both `teaAlchemyCart` and `teaAlchemyBlend`, with removal actions handled in `APP/static/cart.js`.
-- Checkout lives at `/checkout` and renders shipping/order totals client-side from localStorage in `APP/static/checkout.js`.
-- Order confirmation uses `/confirmation` with client-side rendering in `APP/static/confirmation.js` from localStorage under `teaAlchemyOrder`.
-- Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
-- Base tea alignment data is modeled in `app/data.py` with `BlendBase` and `BLEND_OUTCOME_AXES` for the custom blend builder.
-- Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
-- Outcome visualization is rendered as an SVG radar chart in `APP/static/blend.js`, driven by `BLEND_OUTCOME_AXES`.
-- Flavor botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedFlavors`, with the spectrum rendered in `APP/static/blend.js`.
-- Custom blend sizes are defined in `APP/data.py` as `CUSTOM_BLEND_SIZES` and stored in localStorage under `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice`.
-- Custom blend names are stored in localStorage under `teaAlchemyBlend.blendName` and previewed in `APP/static/blend.js`.
-Started: Sun Jan 18 23:26:54 AEDT 2026
----
-## 2026-01-18 23:59:27 AEDT - US-101
+- Energy outcome alignment should map to the "Alertness" axis when sorting base relevance.
+- Botanical option relevance is scored via base alignment weighted by botanical contributions, capped to six options in `APP/static/blend.js`.
+
+## 2026-01-19 09:52:08 AEDT - US-CB-201
 Thread: N/A
-- What was implemented: FastAPI storefront with pre-made product listing and detail pages, plus in-memory product catalog with outcomes, sizes, and pricing
-- Files changed: app/main.py, app/data.py, app/templates/index.html, app/templates/product_detail.html, app/static/styles.css, app/db.py, app/requirements.txt, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- What was implemented: Sorted and capped Step 2 base teas by outcome alignment (max 6) on custom blend route.
+- Files changed: APP/main.py, scripts/ralph/prd.json, scripts/ralph/progress.txt
 - **Learnings for future iterations:**
-  - Product data is rendered via Jinja2 templates from `app/data.py`
-  - Static assets are served from `app/static` and referenced in templates
-  - No automated tests yet; `python -m compileall app` used as a syntax check
-  - Browser verification pending; dev-browser skill not available in this session
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Base relevance is derived from the outcome axis (energy maps to Alertness).
 ---
-## 2026-01-19 00:14:22 AEDT - US-102
+## 2026-01-19 09:58:17 AEDT - US-CB-202
 Thread: N/A
-- What was implemented: Added client-side cart behavior on product detail with add-to-cart buttons per size and live cart summary
-- Files changed: app/templates/product_detail.html, app/static/styles.css, app/static/cart.js, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- What was implemented: Filtered and sorted Step 3 botanicals by base tea relevance (top 6), enforced 1-2 botanical selections with warnings, and reset invalid selections on base changes.
+- Files changed: APP/static/blend.js, APP/templates/custom_blend.html, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
 - **Learnings for future iterations:**
-  - Cart UI lives on the product detail page and reads/writes localStorage under `teaAlchemyCart`
-  - Cart rendering happens client-side in `app/static/cart.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 00:28:10 AEDT - US-201
-Thread: N/A
-- What was implemented: Custom blend step 1 outcome selection with outcome cards, preview panel, and localStorage persistence
-- Files changed: app/data.py, app/main.py, app/templates/custom_blend.html, app/static/blend.js, app/static/styles.css, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Outcome selection data is sourced from `app/data.py` and stored in localStorage under `teaAlchemyBlend`
-  - Preview panel content updates client-side in `app/static/blend.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 00:34:17 AEDT - US-202
-Thread: N/A
-- What was implemented: Added base tea selection step with outcome-aligned base cards, alignment visualization, and persistence in blend flow
-- Files changed: APP/data.py, APP/main.py, APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Base tea alignment data is sourced from `APP/data.py` via `BlendBase` and `BLEND_OUTCOME_AXES`
-  - Base selection UI renders per-outcome grids and stores selection in localStorage under `teaAlchemyBlend`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 00:40:18 AEDT - US-203
-Thread: N/A
-- What was implemented: Added functional botanicals step with selectable botanical cards, compatibility filtering by base, and real-time outcome alignment updates that combine base + botanical contributions
-- Files changed: APP/data.py, APP/templates/custom_blend.html, APP/static/styles.css, APP/static/blend.js, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Functional botanical data now includes attributes and outcome contribution values in `APP/data.py`
-  - Botanical selections are persisted in `teaAlchemyBlend.selectedBotanicals` and filtered by base selection in `APP/static/blend.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 00:47:31 AEDT - US-204
-Thread: N/A
-- What was implemented: Added SVG radar chart outcome visualization with alertness axis, dynamic updates based on base + botanicals, and numeric score list
-- Files changed: APP/data.py, APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Outcome axes now use Alertness in `BLEND_OUTCOME_AXES`; keep alignment keys in sync with visualization labels
-  - Radar chart UI is built in `APP/static/blend.js` and styled in `APP/static/styles.css`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 00:56:11 AEDT - US-205
-Thread: N/A
-- What was implemented: Added flavor botanicals step with compatible flavor cards, soft conflict prevention messaging, and real-time flavor spectrum visualization alongside preview updates
-- Files changed: APP/data.py, APP/main.py, APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Flavor botanicals live in `APP/data.py` with `BlendFlavor` and `FLAVOR_CATEGORIES` and render in step 4 cards
-  - Flavor selections persist in `teaAlchemyBlend.selectedFlavors` and drive the spectrum UI in `APP/static/blend.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 01:01:35 AEDT - US-206
-Thread: N/A
-- What was implemented: Added custom blend size selection (50g/100g) with dynamic pricing, preview updates, and localStorage persistence in the custom blend flow
-- Files changed: APP/data.py, APP/main.py, APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Custom blend sizes are rendered from `CUSTOM_BLEND_SIZES` and persisted in `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice`
-  - Size selection UI lives in `APP/templates/custom_blend.html` and is driven by `APP/static/blend.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 01:21:22 AEDT - US-207
-Thread: N/A (no URL)
-- What was implemented: Added custom blend naming step with input validation, localStorage persistence, and preview panel updates
-- Files changed: APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Blend names persist in `teaAlchemyBlend.blendName` and should be kept in sync with preview rendering
-  - Name input validation uses a 3-32 character constraint in `APP/static/blend.js`
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 02:35:20 AEDT - US-301
-Thread: N/A
-- What was implemented: Added cart review page with pre-made and custom blend summaries, client-side removal, and updated cart rendering to include custom blend details
-- Files changed: APP/main.py, APP/templates/cart.html, APP/templates/product_detail.html, APP/templates/custom_blend.html, APP/static/cart.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Cart review UI lives at `/cart` and reuses `APP/static/cart.js` for rendering and removal
-  - Custom blend summaries are derived from `teaAlchemyBlend` and require a size selection to price
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 02:39:49 AEDT - US-302
-Thread: N/A
-- What was implemented: Checkout page with shipping form, AU/NZ shipping calculation, and order summary derived from localStorage cart + blend data, plus cart review CTA enabling.
-- Files changed: APP/main.py, APP/templates/checkout.html, APP/static/checkout.js, APP/static/cart.js, APP/templates/cart.html, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Checkout summary and shipping totals are computed client-side in `APP/static/checkout.js` from localStorage cart data.
-  - Cart review checkout button state is driven by total items in `APP/static/cart.js`.
-  - Browser verification pending; dev-browser skill not available in this session
----
-## 2026-01-19 03:57:21 AEDT - US-303
-Thread: N/A
-- What was implemented: Added checkout payment panel, client-side order creation with secure payment messaging, order confirmation page rendering stored order details, and cart clearing after submission.
-- Files changed: APP/main.py, APP/templates/checkout.html, APP/templates/confirmation.html, APP/static/checkout.js, APP/static/confirmation.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
-- **Learnings for future iterations:**
-  - Order confirmation reads `teaAlchemyOrder` from localStorage and renders via `APP/static/confirmation.js`.
-  - Checkout submission builds the order payload client-side in `APP/static/checkout.js` and clears `teaAlchemyCart` + `teaAlchemyBlend`.
-  - Browser verification pending; dev-browser skill not available in this session
+  - Patterns discovered: Botanical relevance uses base alignment weighted by botanical contributions and is capped to six options in `APP/static/blend.js`.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Botanical selection enforces a 1-2 range via warning messaging in `APP/static/blend.js`.
 ---

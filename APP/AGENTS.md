@@ -5,7 +5,9 @@
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `APP/static/cart.js` on product detail.
 - Custom blend selection is stored in localStorage under `teaAlchemyBlend` and driven by `APP/static/blend.js`.
 - Custom blend base data and outcome alignment live in `APP/data.py` (`BlendBase`, `BLEND_OUTCOME_AXES`) and drive step 2 UI.
+- Base relevance sorting treats the Energy outcome as aligned to the "Alertness" axis.
 - Functional botanicals are modeled in `APP/data.py` (`BlendBotanical`) and selected botanicals are persisted in `teaAlchemyBlend.selectedBotanicals`, with outcome visualization combining base + botanicals in `APP/static/blend.js`.
+- Step 3 botanicals are sorted by relevance to the selected base (base alignment weighted by botanical contributions), capped at six options, and must stay within a 1-2 selection range in `APP/static/blend.js`.
 - Outcome visualization is rendered as an SVG radar chart driven by `BLEND_OUTCOME_AXES` in `APP/static/blend.js`.
 - Flavor botanicals are modeled in `APP/data.py` (`BlendFlavor`, `FLAVOR_CATEGORIES`) and stored in `teaAlchemyBlend.selectedFlavors`, with the spectrum rendered in `APP/static/blend.js`.
 - Custom blend size selection uses `CUSTOM_BLEND_SIZES` in `APP/data.py` and persists to `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice` in `APP/static/blend.js`.

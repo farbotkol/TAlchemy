@@ -10,7 +10,12 @@
     <main class="page">
       <header class="page-hero detail">
         <a class="back-link" href="/">&larr; Back to blends</a>
-        <p class="eyebrow">Custom Blend Builder</p>
+        <div class="brand-lockup">
+          <a class="brand-link" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">Tea Alchemy</span>
+          </a>
+        </div>
         <h1>Step 1: Choose how you want to feel.</h1>
         <p class="subhead">
           Start with the outcome and we will tailor the base teas and botanicals to match
@@ -90,6 +95,9 @@
           </p>
           <p class="base-empty" data-botanical-empty>
             Choose a base tea to unlock functional botanicals.
+          </p>
+          <p class="botanical-warning" data-botanical-warning hidden>
+            Select at least one botanical to continue.
           </p>
           {% for outcome in outcomes %}
           <div class="botanical-grid" data-botanical-grid="{{ outcome.id }}" hidden>
