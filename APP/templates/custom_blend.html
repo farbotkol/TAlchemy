@@ -126,6 +126,57 @@
           {% endfor %}
         </div>
 
+        <div class="blend-panel">
+          <h2 class="section-title">Step 4: Add flavor botanicals</h2>
+          <p class="step-hint">
+            Layer in flavor accents that stay compatible with your base tea and functional goal.
+          </p>
+          <p class="base-empty" data-flavor-empty>
+            Choose a base tea to unlock flavor botanicals.
+          </p>
+          <p class="flavor-warning" data-flavor-warning hidden>
+            That pairing clashes with your current flavor profile. Try a different note.
+          </p>
+          {% for outcome in outcomes %}
+          <div class="flavor-grid" data-flavor-grid="{{ outcome.id }}" hidden>
+            {% for flavor in outcome.flavors %}
+            <button
+              class="flavor-card"
+              type="button"
+              data-flavor-id="{{ flavor.id }}"
+              data-outcome-id="{{ outcome.id }}"
+              data-flavor-title="{{ flavor.title }}"
+              data-flavor-category="{{ flavor.category }}"
+              data-flavor-notes='{{ flavor.notes | tojson }}'
+              data-flavor-spectrum='{{ flavor.spectrum | tojson }}'
+              data-base-ids="{{ flavor.base_ids | join(',') }}"
+              data-incompatible='{{ flavor.incompatible_with | tojson }}'
+            >
+              <div class="flavor-card-header">
+                <span class="flavor-title">{{ flavor.title }}</span>
+                <span class="flavor-tag">{{ flavor.category }}</span>
+              </div>
+              <div class="attribute-list">
+                {% for note in flavor.notes %}
+                <span class="attribute-pill">{{ note }}</span>
+                {% endfor %}
+              </div>
+              <div class="alignment-grid">
+                {% for category in flavor_categories %}
+                <div class="alignment-item">
+                  <span class="alignment-label">{{ category }}</span>
+                  <div class="alignment-meter">
+                    <span style="width: {{ flavor.spectrum.get(category, 0) * 20 }}%"></span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </button>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+
         <aside class="blend-panel blend-preview" aria-live="polite">
           <h2 class="section-title">Your blend path</h2>
           <div class="preview-card" data-outcome-preview>
@@ -172,6 +223,20 @@
             <ul class="preview-list" data-preview-botanicals>
               <li>Add botanicals to amplify your blend.</li>
             </ul>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Flavor botanicals</p>
+            <ul class="preview-list" data-preview-flavors>
+              <li>Add flavor notes to complete the aroma profile.</li>
+            </ul>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Flavor spectrum</p>
+            <div
+              class="flavor-spectrum"
+              data-flavor-spectrum
+              data-flavor-categories='{{ flavor_categories | tojson }}'
+            ></div>
           </div>
           <button class="primary-action" type="button" data-continue disabled>
             Continue to botanicals

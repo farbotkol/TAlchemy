@@ -26,12 +26,23 @@ class BlendBase(BaseModel):
     alignment: dict[str, int]
 
 
+class BlendFlavor(BaseModel):
+    id: str
+    title: str
+    category: str
+    notes: List[str]
+    spectrum: dict[str, int]
+    base_ids: List[str]
+    incompatible_with: List[str]
+
+
 class BlendOutcome(BaseModel):
     id: str
     title: str
     description: str
     bases: List[BlendBase]
     botanicals: List["BlendBotanical"]
+    flavors: List[BlendFlavor]
 
 
 class BlendBotanical(BaseModel):
@@ -86,6 +97,7 @@ PRODUCTS: List[Product] = [
 ]
 
 BLEND_OUTCOME_AXES = ["Sleep", "Calm", "Focus", "Alertness"]
+FLAVOR_CATEGORIES = ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"]
 
 CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
     BlendOutcome(
@@ -133,6 +145,53 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 attributes=["Deep calm", "Evening", "Herbal"],
                 contributions={"Sleep": 2, "Calm": 1, "Focus": 0, "Alertness": 0},
                 base_ids=["sleep-honeybush", "sleep-decaf-black"],
+            ),
+        ],
+        flavors=[
+            BlendFlavor(
+                id="vanilla-bean",
+                title="Vanilla Bean",
+                category="Sweet",
+                notes=["Creamy", "Dessert-like", "Soft finish"],
+                spectrum={"Sweet": 3, "Floral": 1},
+                base_ids=["sleep-rooibos", "sleep-honeybush", "sleep-decaf-black"],
+                incompatible_with=["smoked-ginger"],
+            ),
+            BlendFlavor(
+                id="lavender-bloom",
+                title="Lavender Bloom",
+                category="Floral",
+                notes=["Aromatic", "Spa-like", "Gentle"],
+                spectrum={"Floral": 3, "Sweet": 1},
+                base_ids=["sleep-rooibos", "sleep-honeybush"],
+                incompatible_with=["smoked-ginger"],
+            ),
+            BlendFlavor(
+                id="citrus-peel",
+                title="Citrus Peel",
+                category="Citrus",
+                notes=["Bright lift", "Lightly tart"],
+                spectrum={"Citrus": 3, "Sweet": 1},
+                base_ids=["sleep-decaf-black"],
+                incompatible_with=["lavender-bloom"],
+            ),
+            BlendFlavor(
+                id="cocoa-husk",
+                title="Cocoa Husk",
+                category="Earthy",
+                notes=["Chocolatey", "Grounded"],
+                spectrum={"Earthy": 3, "Sweet": 1},
+                base_ids=["sleep-decaf-black", "sleep-honeybush"],
+                incompatible_with=[],
+            ),
+            BlendFlavor(
+                id="smoked-ginger",
+                title="Smoked Ginger",
+                category="Spicy",
+                notes=["Warming", "Toasty"],
+                spectrum={"Spicy": 3, "Earthy": 1},
+                base_ids=["sleep-decaf-black"],
+                incompatible_with=["vanilla-bean", "lavender-bloom"],
             ),
         ],
     ),
@@ -183,6 +242,53 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 base_ids=["calm-green-tea", "calm-rooibos"],
             ),
         ],
+        flavors=[
+            BlendFlavor(
+                id="rose-petal",
+                title="Rose Petal",
+                category="Floral",
+                notes=["Romantic", "Soft", "Velvety"],
+                spectrum={"Floral": 3, "Sweet": 1},
+                base_ids=["calm-white-tea", "calm-rooibos"],
+                incompatible_with=["cardamom-spark"],
+            ),
+            BlendFlavor(
+                id="lemongrass",
+                title="Lemongrass",
+                category="Citrus",
+                notes=["Clean citrus", "Bright"],
+                spectrum={"Citrus": 3, "Floral": 1},
+                base_ids=["calm-green-tea", "calm-white-tea"],
+                incompatible_with=["sandalwood"],
+            ),
+            BlendFlavor(
+                id="sandalwood",
+                title="Sandalwood",
+                category="Earthy",
+                notes=["Resinous", "Meditative"],
+                spectrum={"Earthy": 3, "Spicy": 1},
+                base_ids=["calm-rooibos"],
+                incompatible_with=["lemongrass"],
+            ),
+            BlendFlavor(
+                id="cardamom-spark",
+                title="Cardamom Spark",
+                category="Spicy",
+                notes=["Aromatic", "Warm"],
+                spectrum={"Spicy": 3, "Sweet": 1},
+                base_ids=["calm-green-tea", "calm-rooibos"],
+                incompatible_with=["rose-petal"],
+            ),
+            BlendFlavor(
+                id="honey-nut",
+                title="Honeyed Nut",
+                category="Sweet",
+                notes=["Toasty", "Comforting"],
+                spectrum={"Sweet": 3, "Earthy": 1},
+                base_ids=["calm-rooibos", "calm-white-tea"],
+                incompatible_with=[],
+            ),
+        ],
     ),
     BlendOutcome(
         id="focus",
@@ -231,6 +337,53 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 base_ids=["focus-sencha", "focus-black-tea"],
             ),
         ],
+        flavors=[
+            BlendFlavor(
+                id="jasmine-veil",
+                title="Jasmine Veil",
+                category="Floral",
+                notes=["Silky aroma", "Elegant"],
+                spectrum={"Floral": 3, "Citrus": 1},
+                base_ids=["focus-sencha", "focus-oolong"],
+                incompatible_with=["toasted-nut"],
+            ),
+            BlendFlavor(
+                id="bergamot-zest",
+                title="Bergamot Zest",
+                category="Citrus",
+                notes=["Bright", "Tea-room classic"],
+                spectrum={"Citrus": 3, "Floral": 1},
+                base_ids=["focus-black-tea", "focus-oolong"],
+                incompatible_with=["brown-sugar"],
+            ),
+            BlendFlavor(
+                id="toasted-nut",
+                title="Toasted Nut",
+                category="Earthy",
+                notes=["Grounded", "Nutty"],
+                spectrum={"Earthy": 3, "Sweet": 1},
+                base_ids=["focus-oolong", "focus-black-tea"],
+                incompatible_with=["jasmine-veil"],
+            ),
+            BlendFlavor(
+                id="pepper-mint",
+                title="Pepper Mint",
+                category="Spicy",
+                notes=["Cooling bite", "Sharp"],
+                spectrum={"Spicy": 3, "Citrus": 1},
+                base_ids=["focus-sencha", "focus-black-tea"],
+                incompatible_with=["brown-sugar"],
+            ),
+            BlendFlavor(
+                id="brown-sugar",
+                title="Brown Sugar",
+                category="Sweet",
+                notes=["Caramelized", "Warm"],
+                spectrum={"Sweet": 3, "Earthy": 1},
+                base_ids=["focus-black-tea"],
+                incompatible_with=["bergamot-zest", "pepper-mint"],
+            ),
+        ],
     ),
     BlendOutcome(
         id="energy",
@@ -277,6 +430,53 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 attributes=["Zesty", "Aromatic", "Bright"],
                 contributions={"Sleep": 0, "Calm": 0, "Focus": 1, "Alertness": 2},
                 base_ids=["energy-yerba", "energy-smoked-oolong"],
+            ),
+        ],
+        flavors=[
+            BlendFlavor(
+                id="hibiscus-glow",
+                title="Hibiscus Glow",
+                category="Floral",
+                notes=["Tart floral", "Vibrant"],
+                spectrum={"Floral": 3, "Citrus": 1},
+                base_ids=["energy-yerba", "energy-assam"],
+                incompatible_with=["clove-heat"],
+            ),
+            BlendFlavor(
+                id="blood-orange",
+                title="Blood Orange",
+                category="Citrus",
+                notes=["Juicy", "Lively"],
+                spectrum={"Citrus": 3, "Sweet": 1},
+                base_ids=["energy-yerba", "energy-smoked-oolong"],
+                incompatible_with=["molasses-sugar"],
+            ),
+            BlendFlavor(
+                id="cacao-bark",
+                title="Cacao Bark",
+                category="Earthy",
+                notes=["Roasted", "Bold"],
+                spectrum={"Earthy": 3, "Sweet": 1},
+                base_ids=["energy-assam", "energy-smoked-oolong"],
+                incompatible_with=["hibiscus-glow"],
+            ),
+            BlendFlavor(
+                id="clove-heat",
+                title="Clove Heat",
+                category="Spicy",
+                notes=["Spiced", "Fiery"],
+                spectrum={"Spicy": 3, "Earthy": 1},
+                base_ids=["energy-assam", "energy-smoked-oolong"],
+                incompatible_with=["hibiscus-glow"],
+            ),
+            BlendFlavor(
+                id="molasses-sugar",
+                title="Molasses Sugar",
+                category="Sweet",
+                notes=["Dark sweetness", "Rich"],
+                spectrum={"Sweet": 3, "Earthy": 1},
+                base_ids=["energy-assam"],
+                incompatible_with=["blood-orange"],
             ),
         ],
     ),
