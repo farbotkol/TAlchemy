@@ -95,6 +95,20 @@ const renderCart = (cart) => {
 const blendHasPrice = (blend) =>
   blend && typeof blend.sizePrice === "number" && !Number.isNaN(blend.sizePrice);
 
+const updateCheckoutAction = (hasItems) => {
+  const button = document.querySelector("[data-checkout-button]");
+  if (!button) {
+    return;
+  }
+
+  button.disabled = !hasItems;
+  if (hasItems) {
+    button.removeAttribute("aria-disabled");
+  } else {
+    button.setAttribute("aria-disabled", "true");
+  }
+};
+
 const updateCartSummary = (cart, blend) => {
   const countContainer = document.querySelector("[data-cart-count]");
   const totalContainer = document.querySelector("[data-cart-total]");
@@ -114,6 +128,7 @@ const updateCartSummary = (cart, blend) => {
 
   countContainer.textContent = `${totalItems} item${totalItems === 1 ? "" : "s"}`;
   totalContainer.textContent = formatCurrency(cartTotal + blendTotal);
+  updateCheckoutAction(totalItems > 0);
 };
 
 const renderCartReviewItems = (cart) => {
@@ -282,6 +297,20 @@ const bindCartReviewActions = () => {
   });
 };
 
+const bindCheckoutButton = () => {
+  const button = document.querySelector("[data-checkout-button]");
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", () => {
+    if (button.disabled) {
+      return;
+    }
+    window.location.href = "/checkout";
+  });
+};
+
 const initCart = () => {
   const cart = readCart();
   const hasReview = Boolean(document.querySelector("[data-cart-review]"));
@@ -294,6 +323,7 @@ const initCart = () => {
   }
 
   bindAddToCartButtons();
+  bindCheckoutButton();
 };
 
 if (document.readyState === "loading") {

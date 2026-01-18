@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Checkout</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/cart">&larr; Back to cart</a>
+        <p class="eyebrow">Checkout</p>
+        <h1>Shipping details for your Tea Alchemy order.</h1>
+        <p class="subhead">
+          We deliver across Australia and New Zealand. Confirm your shipping details and
+          review the order summary before submitting.
+        </p>
+      </header>
+
+      <section class="checkout-layout">
+        <form class="checkout-form" data-checkout-form>
+          <div class="checkout-panel">
+            <h2 class="section-title">Shipping details</h2>
+            <div class="form-grid">
+              <label class="field-group">
+                <span class="field-label">First name</span>
+                <input class="field-input" name="first_name" type="text" required />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Last name</span>
+                <input class="field-input" name="last_name" type="text" required />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Email</span>
+                <input class="field-input" name="email" type="email" required />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Phone</span>
+                <input class="field-input" name="phone" type="tel" required />
+              </label>
+              <label class="field-group full-width">
+                <span class="field-label">Address line 1</span>
+                <input class="field-input" name="address_line1" type="text" required />
+              </label>
+              <label class="field-group full-width">
+                <span class="field-label">Address line 2 (optional)</span>
+                <input class="field-input" name="address_line2" type="text" />
+              </label>
+              <label class="field-group">
+                <span class="field-label">City</span>
+                <input class="field-input" name="city" type="text" required />
+              </label>
+              <label class="field-group">
+                <span class="field-label" data-shipping-state-label>State / Territory</span>
+                <input class="field-input" name="state" type="text" required data-shipping-state />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Postal code</span>
+                <input class="field-input" name="postal" type="text" required data-shipping-postal />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Country</span>
+                <select class="field-input" name="country" required data-shipping-country>
+                  <option value="" selected disabled>Select country</option>
+                  <option value="AU">Australia</option>
+                  <option value="NZ">New Zealand</option>
+                </select>
+              </label>
+            </div>
+            <p class="field-note" data-shipping-note>
+              Shipping is calculated after you select Australia or New Zealand.
+            </p>
+          </div>
+
+          <div class="checkout-panel">
+            <h2 class="section-title">Delivery preferences</h2>
+            <label class="field-group full-width">
+              <span class="field-label">Delivery notes (optional)</span>
+              <textarea class="field-input field-textarea" name="delivery_notes" rows="3"></textarea>
+            </label>
+          </div>
+
+          <div class="checkout-actions">
+            <button class="primary-action" type="submit" data-checkout-submit disabled>
+              Place order
+            </button>
+            <p class="field-note" data-checkout-message>
+              Add at least one item to your cart to place an order.
+            </p>
+          </div>
+        </form>
+
+        <aside class="cart-panel" aria-live="polite">
+          <div class="cart-header">
+            <h2>Order summary</h2>
+            <span class="cart-count" data-order-count>0 items</span>
+          </div>
+          <div class="cart-items" data-order-items>
+            <p class="cart-empty">No items in your cart yet.</p>
+          </div>
+          <div class="checkout-summary">
+            <div class="checkout-line">
+              <span>Subtotal</span>
+              <span data-order-subtotal>A$0.00</span>
+            </div>
+            <div class="checkout-line">
+              <span>Shipping</span>
+              <span data-order-shipping>--</span>
+            </div>
+            <div class="checkout-line total">
+              <span>Total</span>
+              <span data-order-total>A$0.00</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/checkout.js"></script>
+  </body>
+</html>

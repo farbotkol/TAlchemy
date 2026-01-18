@@ -68,3 +68,8 @@ async def custom_blend_step_one(request: Request):
 @app.get("/cart", response_class=HTMLResponse)
 async def cart_review(request: Request):
     return templates.TemplateResponse("cart.html", {"request": request})
+
+
+@app.get("/checkout", response_class=HTMLResponse)
+async def checkout(request: Request):
+    return templates.TemplateResponse("checkout.html", {"request": request})

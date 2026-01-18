@@ -11,3 +11,4 @@
 - Custom blend size selection uses `CUSTOM_BLEND_SIZES` in `APP/data.py` and persists to `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice` in `APP/static/blend.js`.
 - Custom blend names persist in `teaAlchemyBlend.blendName` and preview in `APP/static/blend.js`.
 - Cart review lives at `/cart`, rendering both `teaAlchemyCart` and `teaAlchemyBlend` via `APP/static/cart.js`, with removal actions handled client-side.
+- Checkout lives at `/checkout`, with shipping and order summary computed client-side in `APP/static/checkout.js` from localStorage cart data.

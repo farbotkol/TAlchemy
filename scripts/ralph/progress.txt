@@ -4,6 +4,7 @@
 - Pre-made product data is currently defined in `app/data.py` for listing and detail views.
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
 - Cart review uses `/cart` and reads both `teaAlchemyCart` and `teaAlchemyBlend`, with removal actions handled in `APP/static/cart.js`.
+- Checkout lives at `/checkout` and renders shipping/order totals client-side from localStorage in `APP/static/checkout.js`.
 - Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
 - Base tea alignment data is modeled in `app/data.py` with `BlendBase` and `BLEND_OUTCOME_AXES` for the custom blend builder.
 - Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
@@ -102,5 +103,14 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Cart review UI lives at `/cart` and reuses `APP/static/cart.js` for rendering and removal
   - Custom blend summaries are derived from `teaAlchemyBlend` and require a size selection to price
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 02:39:49 AEDT - US-302
+Thread: N/A
+- What was implemented: Checkout page with shipping form, AU/NZ shipping calculation, and order summary derived from localStorage cart + blend data, plus cart review CTA enabling.
+- Files changed: APP/main.py, APP/templates/checkout.html, APP/static/checkout.js, APP/static/cart.js, APP/templates/cart.html, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Checkout summary and shipping totals are computed client-side in `APP/static/checkout.js` from localStorage cart data.
+  - Cart review checkout button state is driven by total items in `APP/static/cart.js`.
   - Browser verification pending; dev-browser skill not available in this session
 ---
