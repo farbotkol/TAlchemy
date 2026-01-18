@@ -31,7 +31,15 @@ class BlendOutcome(BaseModel):
     title: str
     description: str
     bases: List[BlendBase]
-    botanicals: List[str]
+    botanicals: List["BlendBotanical"]
+
+
+class BlendBotanical(BaseModel):
+    id: str
+    title: str
+    attributes: List[str]
+    contributions: dict[str, int]
+    base_ids: List[str]
 
 
 PRODUCTS: List[Product] = [
@@ -104,7 +112,29 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 alignment={"Sleep": 3, "Calm": 2, "Focus": 2, "Energy": 2},
             ),
         ],
-        botanicals=["Chamomile", "Lavender", "Skullcap"],
+        botanicals=[
+            BlendBotanical(
+                id="chamomile",
+                title="Chamomile",
+                attributes=["Nervine", "Gentle floral", "Night ritual"],
+                contributions={"Sleep": 2, "Calm": 2, "Focus": 0, "Energy": 0},
+                base_ids=["sleep-rooibos", "sleep-honeybush", "sleep-decaf-black"],
+            ),
+            BlendBotanical(
+                id="lavender",
+                title="Lavender",
+                attributes=["Soothing", "Aromatic", "Floral"],
+                contributions={"Sleep": 1, "Calm": 2, "Focus": 0, "Energy": 0},
+                base_ids=["sleep-rooibos", "sleep-honeybush"],
+            ),
+            BlendBotanical(
+                id="skullcap",
+                title="Skullcap",
+                attributes=["Deep calm", "Evening", "Herbal"],
+                contributions={"Sleep": 2, "Calm": 1, "Focus": 0, "Energy": 0},
+                base_ids=["sleep-honeybush", "sleep-decaf-black"],
+            ),
+        ],
     ),
     BlendOutcome(
         id="calm",
@@ -130,7 +160,29 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 alignment={"Sleep": 4, "Calm": 4, "Focus": 1, "Energy": 1},
             ),
         ],
-        botanicals=["Lemon Balm", "Rose", "Tulsi"],
+        botanicals=[
+            BlendBotanical(
+                id="lemon-balm",
+                title="Lemon Balm",
+                attributes=["Stress ease", "Citrus lift", "Herbal"],
+                contributions={"Sleep": 1, "Calm": 2, "Focus": 1, "Energy": 0},
+                base_ids=["calm-white-tea", "calm-green-tea", "calm-rooibos"],
+            ),
+            BlendBotanical(
+                id="rose",
+                title="Rose",
+                attributes=["Heart soothing", "Aromatic", "Floral"],
+                contributions={"Sleep": 1, "Calm": 2, "Focus": 0, "Energy": 0},
+                base_ids=["calm-white-tea", "calm-rooibos"],
+            ),
+            BlendBotanical(
+                id="tulsi",
+                title="Tulsi",
+                attributes=["Adaptogen", "Grounding", "Herbal"],
+                contributions={"Sleep": 0, "Calm": 2, "Focus": 1, "Energy": 1},
+                base_ids=["calm-green-tea", "calm-rooibos"],
+            ),
+        ],
     ),
     BlendOutcome(
         id="focus",
@@ -156,7 +208,29 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 4, "Energy": 4},
             ),
         ],
-        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
+        botanicals=[
+            BlendBotanical(
+                id="ginkgo",
+                title="Ginkgo",
+                attributes=["Cognitive", "Circulation", "Bright"],
+                contributions={"Sleep": 0, "Calm": 1, "Focus": 2, "Energy": 1},
+                base_ids=["focus-sencha", "focus-oolong", "focus-black-tea"],
+            ),
+            BlendBotanical(
+                id="gotu-kola",
+                title="Gotu Kola",
+                attributes=["Mindful focus", "Adaptogen", "Herbal"],
+                contributions={"Sleep": 0, "Calm": 1, "Focus": 2, "Energy": 0},
+                base_ids=["focus-oolong", "focus-black-tea"],
+            ),
+            BlendBotanical(
+                id="peppermint",
+                title="Peppermint",
+                attributes=["Cooling", "Alertness", "Fresh"],
+                contributions={"Sleep": 0, "Calm": 1, "Focus": 1, "Energy": 2},
+                base_ids=["focus-sencha", "focus-black-tea"],
+            ),
+        ],
     ),
     BlendOutcome(
         id="energy",
@@ -182,7 +256,29 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 3, "Energy": 4},
             ),
         ],
-        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
+        botanicals=[
+            BlendBotanical(
+                id="cacao-nibs",
+                title="Cacao Nibs",
+                attributes=["Mood lift", "Rich", "Uplifting"],
+                contributions={"Sleep": 0, "Calm": 0, "Focus": 1, "Energy": 2},
+                base_ids=["energy-assam", "energy-smoked-oolong"],
+            ),
+            BlendBotanical(
+                id="ginseng",
+                title="Ginseng",
+                attributes=["Adaptogen", "Vitality", "Rooty"],
+                contributions={"Sleep": 0, "Calm": 0, "Focus": 2, "Energy": 2},
+                base_ids=["energy-assam", "energy-yerba"],
+            ),
+            BlendBotanical(
+                id="orange-peel",
+                title="Orange Peel",
+                attributes=["Zesty", "Aromatic", "Bright"],
+                contributions={"Sleep": 0, "Calm": 0, "Focus": 1, "Energy": 2},
+                base_ids=["energy-yerba", "energy-smoked-oolong"],
+            ),
+        ],
     ),
 ]
 

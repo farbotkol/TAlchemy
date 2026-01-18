@@ -30,7 +30,7 @@
               data-outcome-title="{{ outcome.title }}"
               data-outcome-description="{{ outcome.description }}"
               data-bases="{{ outcome.bases | map(attribute='title') | join(',') }}"
-              data-botanicals="{{ outcome.botanicals | join(',') }}"
+              data-botanicals="{{ outcome.botanicals | map(attribute='title') | join(',') }}"
             >
               <span class="outcome-title">{{ outcome.title }}</span>
               <span class="outcome-description">{{ outcome.description }}</span>
@@ -70,6 +70,52 @@
                   <span class="alignment-label">{{ axis }}</span>
                   <div class="alignment-meter">
                     <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </button>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="blend-panel">
+          <h2 class="section-title">Step 3: Add functional botanicals</h2>
+          <p class="step-hint">
+            Select botanicals that deepen the outcome. Each one nudges the blend's balance.
+          </p>
+          <p class="base-empty" data-botanical-empty>
+            Choose a base tea to unlock functional botanicals.
+          </p>
+          {% for outcome in outcomes %}
+          <div class="botanical-grid" data-botanical-grid="{{ outcome.id }}" hidden>
+            {% for botanical in outcome.botanicals %}
+            <button
+              class="botanical-card"
+              type="button"
+              data-botanical-id="{{ botanical.id }}"
+              data-outcome-id="{{ outcome.id }}"
+              data-botanical-title="{{ botanical.title }}"
+              data-botanical-attributes='{{ botanical.attributes | tojson }}'
+              data-botanical-contributions='{{ botanical.contributions | tojson }}'
+              data-base-ids="{{ botanical.base_ids | join(',') }}"
+            >
+              <div class="botanical-card-header">
+                <span class="botanical-title">{{ botanical.title }}</span>
+                <span class="botanical-tag">Functional</span>
+              </div>
+              <div class="attribute-list">
+                {% for attribute in botanical.attributes %}
+                <span class="attribute-pill">{{ attribute }}</span>
+                {% endfor %}
+              </div>
+              <div class="alignment-grid">
+                {% for axis in outcome_axes %}
+                <div class="alignment-item">
+                  <span class="alignment-label">{{ axis }}</span>
+                  <div class="alignment-meter">
+                    <span style="width: {{ botanical.contributions[axis] * 20 }}%"></span>
                   </div>
                 </div>
                 {% endfor %}
@@ -138,7 +184,7 @@
           <div class="preview-card">
             <p class="preview-label">Functional botanicals</p>
             <ul class="preview-list" data-preview-botanicals>
-              <li>Select an outcome to see botanicals.</li>
+              <li>Add botanicals to amplify your blend.</li>
             </ul>
           </div>
           <button class="primary-action" type="button" data-continue disabled>

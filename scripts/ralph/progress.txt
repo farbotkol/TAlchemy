@@ -5,6 +5,7 @@
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
 - Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
 - Base tea alignment data is modeled in `app/data.py` with `BlendBase` and `BLEND_OUTCOME_AXES` for the custom blend builder.
+- Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
 Started: Sun Jan 18 23:26:54 AEDT 2026
 ---
 ## 2026-01-18 23:59:27 AEDT - US-101
@@ -42,5 +43,14 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Base tea alignment data is sourced from `APP/data.py` via `BlendBase` and `BLEND_OUTCOME_AXES`
   - Base selection UI renders per-outcome grids and stores selection in localStorage under `teaAlchemyBlend`
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 00:40:18 AEDT - US-203
+Thread: N/A
+- What was implemented: Added functional botanicals step with selectable botanical cards, compatibility filtering by base, and real-time outcome alignment updates that combine base + botanical contributions
+- Files changed: APP/data.py, APP/templates/custom_blend.html, APP/static/styles.css, APP/static/blend.js, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Functional botanical data now includes attributes and outcome contribution values in `APP/data.py`
+  - Botanical selections are persisted in `teaAlchemyBlend.selectedBotanicals` and filtered by base selection in `APP/static/blend.js`
   - Browser verification pending; dev-browser skill not available in this session
 ---

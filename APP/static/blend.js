@@ -11,6 +11,9 @@ const previewAlignment = document.querySelector("[data-preview-alignment]");
 const baseEmpty = document.querySelector("[data-base-empty]");
 const baseGrids = document.querySelectorAll("[data-base-grid]");
 const baseCards = document.querySelectorAll(".base-card");
+const botanicalEmpty = document.querySelector("[data-botanical-empty]");
+const botanicalGrids = document.querySelectorAll("[data-botanical-grid]");
+const botanicalCards = document.querySelectorAll(".botanical-card");
 const continueButton = document.querySelector("[data-continue]");
 
 const outcomeAxes = (() => {
@@ -32,17 +35,38 @@ const outcomeAxes = (() => {
   }
 })();
 
-const updateList = (container, items) => {
+const updateList = (container, items, emptyMessage) => {
   if (!container) {
     return;
   }
 
   container.innerHTML = "";
+  if (items.length === 0 && emptyMessage) {
+    const li = document.createElement("li");
+    li.textContent = emptyMessage;
+    container.appendChild(li);
+    return;
+  }
+
   items.forEach((item) => {
     const li = document.createElement("li");
     li.textContent = item;
     container.appendChild(li);
   });
+};
+
+const getStoredSelection = () => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.warn("Unable to parse stored blend selection", error);
+    return {};
+  }
 };
 
 const storeSelection = (selection) => {
@@ -86,6 +110,36 @@ const renderAlignment = (alignment = {}) => {
   });
 };
 
+const calculateCombinedAlignment = (baseAlignment = {}, botanicals = []) => {
+  const combined = {};
+  outcomeAxes.forEach((axis) => {
+    let value = baseAlignment[axis] || 0;
+    botanicals.forEach((botanical) => {
+      if (botanical.contributions && botanical.contributions[axis]) {
+        value += botanical.contributions[axis];
+      }
+    });
+    combined[axis] = Math.min(5, value);
+  });
+  return combined;
+};
+
+const updateAlignmentPreview = (selection) => {
+  const baseAlignment = selection.baseAlignment || {};
+  const botanicals = selection.selectedBotanicals || [];
+  renderAlignment(calculateCombinedAlignment(baseAlignment, botanicals));
+};
+
+const updateBotanicalPreview = (selection) => {
+  const botanicals = selection.selectedBotanicals || [];
+  const titles = botanicals.map((botanical) => botanical.title);
+  updateList(
+    previewBotanicals,
+    titles,
+    "Add botanicals to amplify your blend.",
+  );
+};
+
 const resetBasePreview = () => {
   baseCards.forEach((item) => item.classList.remove("is-selected"));
   if (previewBaseTitle) {
@@ -95,7 +149,7 @@ const resetBasePreview = () => {
     previewBaseDescription.textContent =
       "The base tea will steer the balance of calm, focus, and energy in your blend.";
   }
-  renderAlignment({});
+  updateAlignmentPreview({});
   if (continueButton) {
     continueButton.disabled = true;
   }
@@ -109,6 +163,28 @@ const showBaseGrid = (outcomeId) => {
   if (baseEmpty) {
     baseEmpty.hidden = Boolean(outcomeId);
   }
+};
+
+const showBotanicalGrid = (outcomeId, baseId) => {
+  botanicalGrids.forEach((grid) => {
+    const isMatch = grid.dataset.botanicalGrid === outcomeId;
+    grid.hidden = !isMatch || !baseId;
+  });
+  if (botanicalEmpty) {
+    botanicalEmpty.hidden = Boolean(outcomeId && baseId);
+  }
+
+  botanicalCards.forEach((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    card.hidden = !(isMatch && baseId && matchesBase);
+  });
+};
+
+const resetBotanicalSelection = () => {
+  botanicalCards.forEach((item) => item.classList.remove("is-selected"));
+  updateBotanicalPreview({ selectedBotanicals: [] });
 };
 
 const applySelection = (card) => {
@@ -128,10 +204,12 @@ const applySelection = (card) => {
   }
 
   updateList(previewBases, bases);
-  updateList(previewBotanicals, botanicals);
+  updateList(previewBotanicals, [], "Add botanicals to amplify your blend.");
 
   showBaseGrid(card.dataset.outcomeId);
   resetBasePreview();
+  showBotanicalGrid(card.dataset.outcomeId, null);
+  resetBotanicalSelection();
 
   storeSelection({
     outcomeId: card.dataset.outcomeId,
@@ -142,6 +220,7 @@ const applySelection = (card) => {
     baseTitle: null,
     baseDescription: null,
     baseAlignment: {},
+    selectedBotanicals: [],
   });
 };
 
@@ -172,29 +251,24 @@ const applyBaseSelection = (card) => {
     previewBaseDescription.textContent = description;
   }
 
-  renderAlignment(alignment);
-
   if (continueButton) {
     continueButton.disabled = false;
   }
 
-  const stored = localStorage.getItem(STORAGE_KEY);
-  let selection = {};
-  if (stored) {
-    try {
-      selection = JSON.parse(stored);
-    } catch (error) {
-      console.warn("Unable to parse stored blend selection", error);
-    }
-  }
-
-  storeSelection({
-    ...selection,
+  const stored = getStoredSelection();
+  const selection = {
+    ...stored,
     baseId: card.dataset.baseId,
     baseTitle: title,
     baseDescription: description,
     baseAlignment: alignment,
-  });
+  };
+
+  showBotanicalGrid(selection.outcomeId, selection.baseId);
+  selection.selectedBotanicals = reconcileBotanicals(selection);
+  storeSelection(selection);
+  updateBotanicalPreview(selection);
+  updateAlignmentPreview(selection);
 };
 
 baseCards.forEach((card) => {
@@ -202,13 +276,12 @@ baseCards.forEach((card) => {
 });
 
 const restoreSelection = () => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    return;
-  }
-
   try {
-    const selection = JSON.parse(stored);
+    const selection = getStoredSelection();
+    if (!selection.outcomeId) {
+      return;
+    }
+
     const matchOutcome = Array.from(outcomeCards).find(
       (card) => card.dataset.outcomeId === selection.outcomeId,
     );
@@ -226,9 +299,123 @@ const restoreSelection = () => {
         applyBaseSelection(matchBase);
       }
     }
+
+    if (selection.selectedBotanicals) {
+      selection.selectedBotanicals.forEach((botanical) => {
+        const matchBotanical = Array.from(botanicalCards).find(
+          (card) =>
+            card.dataset.botanicalId === botanical.id &&
+            card.dataset.outcomeId === selection.outcomeId,
+        );
+        if (matchBotanical) {
+          matchBotanical.classList.add("is-selected");
+        }
+      });
+      selection.selectedBotanicals = reconcileBotanicals(selection);
+      storeSelection(selection);
+      updateBotanicalPreview(selection);
+      updateAlignmentPreview(selection);
+    }
   } catch (error) {
     console.warn("Unable to restore blend selection", error);
   }
 };
+
+const botanicalCardById = new Map();
+botanicalCards.forEach((card) => {
+  if (card.dataset.botanicalId) {
+    botanicalCardById.set(card.dataset.botanicalId, card);
+  }
+});
+
+const isBotanicalAllowed = (card, outcomeId, baseId) => {
+  if (!card || !outcomeId || !baseId) {
+    return false;
+  }
+  if (card.dataset.outcomeId !== outcomeId) {
+    return false;
+  }
+  const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+  return baseIds.length === 0 || baseIds.includes(baseId);
+};
+
+const reconcileBotanicals = (selection) => {
+  const selected = selection.selectedBotanicals || [];
+  const filtered = selected.filter((botanical) => {
+    const card = botanicalCardById.get(botanical.id);
+    return isBotanicalAllowed(card, selection.outcomeId, selection.baseId);
+  });
+
+  botanicalCards.forEach((card) => {
+    const isSelected = filtered.some(
+      (botanical) => botanical.id === card.dataset.botanicalId,
+    );
+    card.classList.toggle("is-selected", isSelected);
+  });
+
+  return filtered;
+};
+
+const toggleBotanicalSelection = (card) => {
+  const selection = getStoredSelection();
+  if (!selection.baseId) {
+    return;
+  }
+
+  const existing = selection.selectedBotanicals || [];
+  const isSelected = card.classList.contains("is-selected");
+  let updated = existing;
+
+  if (isSelected) {
+    card.classList.remove("is-selected");
+    updated = existing.filter(
+      (botanical) => botanical.id !== card.dataset.botanicalId,
+    );
+  } else {
+    card.classList.add("is-selected");
+    let contributions = {};
+    let attributes = [];
+    if (card.dataset.botanicalContributions) {
+      try {
+        contributions = JSON.parse(card.dataset.botanicalContributions);
+      } catch (error) {
+        console.warn("Unable to read botanical contributions", error);
+      }
+    }
+    if (card.dataset.botanicalAttributes) {
+      try {
+        attributes = JSON.parse(card.dataset.botanicalAttributes);
+      } catch (error) {
+        console.warn("Unable to read botanical attributes", error);
+      }
+    }
+    updated = [
+      ...existing,
+      {
+        id: card.dataset.botanicalId,
+        title: card.dataset.botanicalTitle || "",
+        attributes,
+        contributions,
+      },
+    ];
+  }
+
+  const reconciled = reconcileBotanicals({
+    ...selection,
+    selectedBotanicals: updated,
+  });
+  const nextSelection = {
+    ...selection,
+    selectedBotanicals: reconciled,
+  };
+
+  storeSelection(nextSelection);
+  updateBotanicalPreview(nextSelection);
+  updateAlignmentPreview(nextSelection);
+};
+
+botanicalCards.forEach((card) => {
+  card.addEventListener("click", () => toggleBotanicalSelection(card));
+});
 
 restoreSelection();
