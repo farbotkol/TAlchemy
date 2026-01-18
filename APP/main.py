@@ -73,3 +73,8 @@ async def cart_review(request: Request):
 @app.get("/checkout", response_class=HTMLResponse)
 async def checkout(request: Request):
     return templates.TemplateResponse("checkout.html", {"request": request})
+
+
+@app.get("/confirmation", response_class=HTMLResponse)
+async def confirmation(request: Request):
+    return templates.TemplateResponse("confirmation.html", {"request": request})

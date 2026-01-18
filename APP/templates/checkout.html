@@ -81,6 +81,58 @@
             </label>
           </div>
 
+          <div class="checkout-panel">
+            <h2 class="section-title">Payment</h2>
+            <p class="field-note">
+              Secure card payments are processed by Tea Alchemy Payments (demo).
+            </p>
+            <div class="form-grid">
+              <label class="field-group full-width">
+                <span class="field-label">Name on card</span>
+                <input class="field-input" name="card_name" type="text" required />
+              </label>
+              <label class="field-group full-width">
+                <span class="field-label">Card number</span>
+                <input
+                  class="field-input"
+                  name="card_number"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="cc-number"
+                  placeholder="4242 4242 4242 4242"
+                  required
+                />
+              </label>
+              <label class="field-group">
+                <span class="field-label">Expiry</span>
+                <input
+                  class="field-input"
+                  name="card_expiry"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="cc-exp"
+                  placeholder="MM/YY"
+                  required
+                />
+              </label>
+              <label class="field-group">
+                <span class="field-label">CVC</span>
+                <input
+                  class="field-input"
+                  name="card_cvc"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="cc-csc"
+                  placeholder="123"
+                  required
+                />
+              </label>
+            </div>
+            <p class="field-note">
+              Your payment details are encrypted and never stored on Tea Alchemy servers.
+            </p>
+          </div>
+
           <div class="checkout-actions">
             <button class="primary-action" type="submit" data-checkout-submit disabled>
               Place order

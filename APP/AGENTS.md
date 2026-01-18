@@ -12,3 +12,4 @@
 - Custom blend names persist in `teaAlchemyBlend.blendName` and preview in `APP/static/blend.js`.
 - Cart review lives at `/cart`, rendering both `teaAlchemyCart` and `teaAlchemyBlend` via `APP/static/cart.js`, with removal actions handled client-side.
 - Checkout lives at `/checkout`, with shipping and order summary computed client-side in `APP/static/checkout.js` from localStorage cart data.
+- Checkout submission stores order details in localStorage under `teaAlchemyOrder` and redirects to `/confirmation`, which renders via `APP/static/confirmation.js`.

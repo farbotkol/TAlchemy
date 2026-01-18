@@ -1,5 +1,6 @@
 const CART_KEY = "teaAlchemyCart";
 const BLEND_KEY = "teaAlchemyBlend";
+const ORDER_KEY = "teaAlchemyOrder";
 
 const SHIPPING_RATES = {
   AU: { base: 6.5, freeThreshold: 65 },
@@ -121,6 +122,42 @@ const calculateShipping = (country, subtotal) => {
   return base;
 };
 
+const normalizeCardNumber = (value) => value.replace(/\D/g, "");
+
+const buildOrderAddress = (data) => {
+  const parts = [data.address_line1];
+  if (data.address_line2) {
+    parts.push(data.address_line2);
+  }
+  parts.push(`${data.city} ${data.state} ${data.postal}`);
+  parts.push(data.country === "NZ" ? "New Zealand" : "Australia");
+  return parts.filter(Boolean).join(", ");
+};
+
+const buildOrder = (data, cart, blend, totals, shipping) => {
+  const items = buildOrderItems(cart, blend);
+  const cardNumber = normalizeCardNumber(data.card_number || "");
+  const last4 = cardNumber.length >= 4 ? cardNumber.slice(-4) : "0000";
+
+  return {
+    id: `TA-${Date.now().toString(36).toUpperCase()}`,
+    placedAt: new Date().toLocaleString("en-AU"),
+    recipient: `${data.first_name} ${data.last_name}`,
+    address: buildOrderAddress(data),
+    email: data.email,
+    count: totals.count,
+    items,
+    subtotal: totals.subtotal,
+    shipping,
+    total: totals.subtotal + shipping,
+    payment: {
+      provider: "Tea Alchemy Payments",
+      method: "Card",
+      last4,
+    },
+  };
+};
+
 const updateStateLabels = (country) => {
   const label = document.querySelector("[data-shipping-state-label]");
   const stateInput = document.querySelector("[data-shipping-state]");
@@ -207,9 +244,35 @@ const bindCheckoutForm = () => {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const message = document.querySelector("[data-checkout-message]");
-    if (message) {
-      message.textContent = "Demo checkout complete. Your order details are ready to process.";
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
     }
+
+    const cart = readCart();
+    const blend = readBlend();
+    const totals = calculateTotals(cart, blend);
+    if (totals.count === 0) {
+      if (message) {
+        message.textContent = "Add at least one item to your cart to place an order.";
+      }
+      return;
+    }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    const shipping = calculateShipping(data.country, totals.subtotal);
+    if (shipping === null) {
+      if (message) {
+        message.textContent = "Select Australia or New Zealand to calculate shipping.";
+      }
+      return;
+    }
+
+    const order = buildOrder(data, cart, blend, totals, shipping);
+    localStorage.setItem(ORDER_KEY, JSON.stringify(order));
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(BLEND_KEY);
+    window.location.href = "/confirmation";
   });
 
   form.addEventListener("input", (event) => {

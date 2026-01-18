@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Order Confirmation</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <p class="eyebrow">Order Confirmation</p>
+        <h1>Your tea journey is now in motion.</h1>
+        <p class="subhead">
+          We have received your order and sent a confirmation email with the full
+          details. Keep this page for your reference.
+        </p>
+      </header>
+
+      <section class="confirmation-layout" data-confirmation>
+        <div class="confirmation-panel">
+          <div class="confirmation-banner">
+            <div>
+              <p class="label">Order ID</p>
+              <p class="confirmation-id" data-order-id>--</p>
+            </div>
+            <div>
+              <p class="label">Placed</p>
+              <p class="confirmation-date" data-order-date>--</p>
+            </div>
+          </div>
+
+          <div class="confirmation-section">
+            <h2 class="section-title">Delivery details</h2>
+            <p class="confirmation-text" data-order-recipient>--</p>
+            <p class="confirmation-text" data-order-address>--</p>
+            <p class="confirmation-text" data-order-email>--</p>
+          </div>
+
+          <div class="confirmation-section">
+            <h2 class="section-title">Items in your order</h2>
+            <div class="cart-items" data-order-items>
+              <p class="cart-empty">No order details available.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="cart-panel" aria-live="polite">
+          <div class="cart-header">
+            <h2>Order total</h2>
+            <span class="cart-count" data-order-count>0 items</span>
+          </div>
+          <div class="checkout-summary">
+            <div class="checkout-line">
+              <span>Subtotal</span>
+              <span data-order-subtotal>A$0.00</span>
+            </div>
+            <div class="checkout-line">
+              <span>Shipping</span>
+              <span data-order-shipping>A$0.00</span>
+            </div>
+            <div class="checkout-line total">
+              <span>Total</span>
+              <span data-order-total>A$0.00</span>
+            </div>
+          </div>
+          <div class="confirmation-note" data-order-note>
+            A confirmation email has been sent with your receipt.
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/confirmation.js"></script>
+  </body>
+</html>

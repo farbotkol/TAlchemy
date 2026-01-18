@@ -5,6 +5,7 @@
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
 - Cart review uses `/cart` and reads both `teaAlchemyCart` and `teaAlchemyBlend`, with removal actions handled in `APP/static/cart.js`.
 - Checkout lives at `/checkout` and renders shipping/order totals client-side from localStorage in `APP/static/checkout.js`.
+- Order confirmation uses `/confirmation` with client-side rendering in `APP/static/confirmation.js` from localStorage under `teaAlchemyOrder`.
 - Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
 - Base tea alignment data is modeled in `app/data.py` with `BlendBase` and `BLEND_OUTCOME_AXES` for the custom blend builder.
 - Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
@@ -112,5 +113,14 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Checkout summary and shipping totals are computed client-side in `APP/static/checkout.js` from localStorage cart data.
   - Cart review checkout button state is driven by total items in `APP/static/cart.js`.
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 03:57:21 AEDT - US-303
+Thread: N/A
+- What was implemented: Added checkout payment panel, client-side order creation with secure payment messaging, order confirmation page rendering stored order details, and cart clearing after submission.
+- Files changed: APP/main.py, APP/templates/checkout.html, APP/templates/confirmation.html, APP/static/checkout.js, APP/static/confirmation.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Order confirmation reads `teaAlchemyOrder` from localStorage and renders via `APP/static/confirmation.js`.
+  - Checkout submission builds the order payload client-side in `APP/static/checkout.js` and clears `teaAlchemyCart` + `teaAlchemyBlend`.
   - Browser verification pending; dev-browser skill not available in this session
 ---
