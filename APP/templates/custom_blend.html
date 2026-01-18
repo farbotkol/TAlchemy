@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Custom Blend</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <p class="eyebrow">Custom Blend Builder</p>
+        <h1>Step 1: Choose how you want to feel.</h1>
+        <p class="subhead">
+          Start with the outcome and we will tailor the base teas and botanicals to match
+          your intention.
+        </p>
+      </header>
+
+      <section class="blend-layout">
+        <div class="blend-panel">
+          <h2 class="section-title">Select an outcome</h2>
+          <div class="outcome-grid">
+            {% for outcome in outcomes %}
+            <button
+              class="outcome-card"
+              type="button"
+              data-outcome-id="{{ outcome.id }}"
+              data-outcome-title="{{ outcome.title }}"
+              data-outcome-description="{{ outcome.description }}"
+              data-bases="{{ outcome.bases | join(',') }}"
+              data-botanicals="{{ outcome.botanicals | join(',') }}"
+            >
+              <span class="outcome-title">{{ outcome.title }}</span>
+              <span class="outcome-description">{{ outcome.description }}</span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <aside class="blend-panel blend-preview" aria-live="polite">
+          <h2 class="section-title">Your blend path</h2>
+          <div class="preview-card" data-outcome-preview>
+            <p class="preview-label">Outcome</p>
+            <h3 class="preview-title" data-preview-title>Choose an outcome</h3>
+            <p class="preview-description" data-preview-description>
+              We will reveal the best bases and botanicals once you pick a direction.
+            </p>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Base teas available</p>
+            <ul class="preview-list" data-preview-bases>
+              <li>Select an outcome to see base teas.</li>
+            </ul>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Functional botanicals</p>
+            <ul class="preview-list" data-preview-botanicals>
+              <li>Select an outcome to see botanicals.</li>
+            </ul>
+          </div>
+          <button class="primary-action" type="button" data-continue disabled>
+            Continue to base selection
+          </button>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/blend.js"></script>
+  </body>
+</html>

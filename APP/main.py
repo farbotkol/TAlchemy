@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from APP.data import PRODUCTS, get_product
+from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -40,5 +40,16 @@ async def product_detail(request: Request, product_id: str):
         {
             "request": request,
             "product": product,
+        },
+    )
+
+
+@app.get("/custom-blend", response_class=HTMLResponse)
+async def custom_blend_step_one(request: Request):
+    return templates.TemplateResponse(
+        "custom_blend.html",
+        {
+            "request": request,
+            "outcomes": CUSTOM_BLEND_OUTCOMES,
         },
     )

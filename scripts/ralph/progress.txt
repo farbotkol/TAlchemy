@@ -3,6 +3,7 @@
 - FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
 - Pre-made product data is currently defined in `app/data.py` for listing and detail views.
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
+- Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
 Started: Sun Jan 18 23:26:54 AEDT 2026
 ---
 ## 2026-01-18 23:59:27 AEDT - US-101
@@ -22,5 +23,14 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Cart UI lives on the product detail page and reads/writes localStorage under `teaAlchemyCart`
   - Cart rendering happens client-side in `app/static/cart.js`
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 00:28:10 AEDT - US-201
+Thread: N/A
+- What was implemented: Custom blend step 1 outcome selection with outcome cards, preview panel, and localStorage persistence
+- Files changed: app/data.py, app/main.py, app/templates/custom_blend.html, app/static/blend.js, app/static/styles.css, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Outcome selection data is sourced from `app/data.py` and stored in localStorage under `teaAlchemyBlend`
+  - Preview panel content updates client-side in `app/static/blend.js`
   - Browser verification pending; dev-browser skill not available in this session
 ---

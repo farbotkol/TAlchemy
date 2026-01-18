@@ -69,12 +69,15 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | "$AGENT_CMD" $AGENT_ARGS 2>&1 | tee /dev/stderr) || true
   fi
   
-  # Check for completion signal
-  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
-    echo ""
-    echo "Ralph completed all tasks!"
-    echo "Completed at iteration $i of $MAX_ITERATIONS"
-    exit 0
+  # Check PRD for remaining work instead of relying on agent output
+  if [ -f "$PRD_FILE" ]; then
+    REMAINING_STORY=$(jq -r '.userStories[]? | select(.passes == false) | .id' "$PRD_FILE" | head -n 1)
+    if [ -z "$REMAINING_STORY" ]; then
+      echo ""
+      echo "Ralph completed all tasks!"
+      echo "Completed at iteration $i of $MAX_ITERATIONS"
+      exit 0
+    fi
   fi
   
   echo "Iteration $i complete. Continuing..."
