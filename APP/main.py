@@ -63,3 +63,8 @@ async def custom_blend_step_one(request: Request):
             "blend_sizes": CUSTOM_BLEND_SIZES,
         },
     )
+
+
+@app.get("/cart", response_class=HTMLResponse)
+async def cart_review(request: Request):
+    return templates.TemplateResponse("cart.html", {"request": request})

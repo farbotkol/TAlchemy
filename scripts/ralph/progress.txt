@@ -3,6 +3,7 @@
 - FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
 - Pre-made product data is currently defined in `app/data.py` for listing and detail views.
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
+- Cart review uses `/cart` and reads both `teaAlchemyCart` and `teaAlchemyBlend`, with removal actions handled in `APP/static/cart.js`.
 - Custom blend selections persist in localStorage under `teaAlchemyBlend` and are managed by `app/static/blend.js`.
 - Base tea alignment data is modeled in `app/data.py` with `BlendBase` and `BLEND_OUTCOME_AXES` for the custom blend builder.
 - Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
@@ -92,5 +93,14 @@ Thread: N/A (no URL)
 - **Learnings for future iterations:**
   - Blend names persist in `teaAlchemyBlend.blendName` and should be kept in sync with preview rendering
   - Name input validation uses a 3-32 character constraint in `APP/static/blend.js`
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 02:35:20 AEDT - US-301
+Thread: N/A
+- What was implemented: Added cart review page with pre-made and custom blend summaries, client-side removal, and updated cart rendering to include custom blend details
+- Files changed: APP/main.py, APP/templates/cart.html, APP/templates/product_detail.html, APP/templates/custom_blend.html, APP/static/cart.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Cart review UI lives at `/cart` and reuses `APP/static/cart.js` for rendering and removal
+  - Custom blend summaries are derived from `teaAlchemyBlend` and require a size selection to price
   - Browser verification pending; dev-browser skill not available in this session
 ---
