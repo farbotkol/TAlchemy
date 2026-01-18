@@ -56,6 +56,14 @@ body {
   margin-bottom: 24px;
 }
 
+.step-indicator {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  color: var(--leaf);
+  margin: 0 0 12px;
+}
+
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -234,6 +242,14 @@ h1 {
   margin-top: 18px;
   display: flex;
   flex-wrap: wrap;
+  gap: 12px;
+}
+
+.step-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 

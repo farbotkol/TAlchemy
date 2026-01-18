@@ -34,6 +34,8 @@ const continueButton = document.querySelector("[data-continue]");
 const sizeCards = document.querySelectorAll(".size-card");
 const nameInput = document.querySelector("[data-blend-name]");
 const nameHelp = document.querySelector("[data-blend-name-help]");
+const stepContainer = document.querySelector("[data-blend-step]");
+const stepNextButton = document.querySelector("[data-step-next]");
 
 const NAME_MIN = 3;
 const NAME_MAX = 32;
@@ -42,6 +44,13 @@ const BOTANICAL_MIN = 1;
 const BOTANICAL_MAX = 2;
 const FLAVOR_MIN = 1;
 const FLAVOR_MAX = 2;
+const currentStep = stepContainer ? stepContainer.dataset.blendStep : null;
+const stepRoutes = {
+  1: "/custom-blend/step-1",
+  2: "/custom-blend/step-2",
+  3: "/custom-blend/step-3",
+  4: "/custom-blend/step-4",
+};
 
 const outcomeAxes = (() => {
   if (!radarChart) {
@@ -168,6 +177,79 @@ const updateBotanicalWarning = (message) => {
     botanicalWarning.hidden = false;
   } else {
     botanicalWarning.hidden = true;
+  }
+};
+
+const navigateToStep = (step) => {
+  const destination = stepRoutes[step];
+  if (destination && window.location.pathname !== destination) {
+    window.location.href = destination;
+  }
+};
+
+const enforceStepRequirements = (selection) => {
+  if (!currentStep) {
+    return false;
+  }
+  if (currentStep === "2" && !selection.outcomeId) {
+    navigateToStep(1);
+    return true;
+  }
+  if (currentStep === "3" && (!selection.outcomeId || !selection.baseId)) {
+    navigateToStep(2);
+    return true;
+  }
+  if (
+    currentStep === "4" &&
+    (!selection.outcomeId ||
+      !selection.baseId ||
+      (selection.selectedBotanicals || []).length < BOTANICAL_MIN)
+  ) {
+    navigateToStep(3);
+    return true;
+  }
+  return false;
+};
+
+const updateStepNavigation = (selection) => {
+  if (!stepNextButton || !currentStep) {
+    return;
+  }
+  let shouldEnable = false;
+  if (currentStep === "1") {
+    shouldEnable = Boolean(selection.outcomeId);
+  } else if (currentStep === "2") {
+    shouldEnable = Boolean(selection.baseId);
+  } else if (currentStep === "3") {
+    shouldEnable = (selection.selectedBotanicals || []).length >= BOTANICAL_MIN;
+  }
+  stepNextButton.disabled = !shouldEnable;
+};
+
+const updateOutcomePreviewFromSelection = (selection) => {
+  if (previewTitle) {
+    previewTitle.textContent = selection.outcomeTitle || "Choose an outcome";
+  }
+  if (previewDescription) {
+    previewDescription.textContent =
+      selection.outcomeDescription ||
+      "We will reveal the best bases and botanicals once you pick a direction.";
+  }
+  updateList(
+    previewBases,
+    selection.bases || [],
+    "Select an outcome to see base teas.",
+  );
+};
+
+const updateBasePreviewFromSelection = (selection) => {
+  if (previewBaseTitle) {
+    previewBaseTitle.textContent = selection.baseTitle || "Pick a base tea";
+  }
+  if (previewBaseDescription) {
+    previewBaseDescription.textContent =
+      selection.baseDescription ||
+      "The base tea will steer the balance of calm, focus, and alertness in your blend.";
   }
 };
 
@@ -686,6 +768,7 @@ const applySelection = (card) => {
   const nextSelection = {
     outcomeId: card.dataset.outcomeId,
     outcomeTitle: title,
+    outcomeDescription: description,
     bases,
     botanicals,
     baseId: null,
@@ -703,6 +786,7 @@ const applySelection = (card) => {
   storeSelection(nextSelection);
   updateSizePreview(nextSelection);
   updateNamePreview(nextSelection);
+  updateStepNavigation(nextSelection);
 };
 
 outcomeCards.forEach((card) => {
@@ -755,6 +839,7 @@ const applyBaseSelection = (card) => {
   updateFlavorPreview(selection);
   updateFlavorRequirement(selection);
   updateAlignmentPreview(selection);
+  updateStepNavigation(selection);
 };
 
 baseCards.forEach((card) => {
@@ -821,9 +906,24 @@ if (nameInput) {
   nameInput.addEventListener("input", applyNameSelection);
 }
 
+if (stepNextButton) {
+  stepNextButton.addEventListener("click", () => {
+    if (stepNextButton.disabled) {
+      return;
+    }
+    const nextUrl = stepNextButton.dataset.nextStepUrl;
+    if (nextUrl) {
+      window.location.href = nextUrl;
+    }
+  });
+}
+
 const restoreSelection = () => {
   try {
     const selection = getStoredSelection();
+    if (enforceStepRequirements(selection)) {
+      return;
+    }
     if (!selection.outcomeId) {
       updateFlavorPreview({ selectedFlavors: [] });
       updateSizePreview(selection);
@@ -832,6 +932,7 @@ const restoreSelection = () => {
         nameInput.value = selection.blendName || "";
         updateNameHelp(NAME_HELP_DEFAULT, false);
       }
+      updateStepNavigation(selection);
       return;
     }
 
@@ -840,6 +941,19 @@ const restoreSelection = () => {
     );
     if (matchOutcome) {
       applySelection(matchOutcome);
+    } else {
+      updateOutcomePreviewFromSelection(selection);
+      showBaseGrid(selection.outcomeId);
+      showBotanicalGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.baseAlignment || {},
+      );
+      showFlavorGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.selectedBotanicals || [],
+      );
     }
 
     if (selection.baseId) {
@@ -850,7 +964,23 @@ const restoreSelection = () => {
       );
       if (matchBase) {
         applyBaseSelection(matchBase);
+      } else {
+        updateBasePreviewFromSelection(selection);
+        updateAlignmentPreview(selection);
+        showBotanicalGrid(
+          selection.outcomeId,
+          selection.baseId,
+          selection.baseAlignment || {},
+        );
+        showFlavorGrid(
+          selection.outcomeId,
+          selection.baseId,
+          selection.selectedBotanicals || [],
+        );
       }
+    } else {
+      showBotanicalGrid(selection.outcomeId, null);
+      showFlavorGrid(selection.outcomeId, null);
     }
 
     if (selection.selectedBotanicals) {
@@ -907,6 +1037,7 @@ const restoreSelection = () => {
       nameInput.value = selection.blendName || "";
       updateNameHelp(NAME_HELP_DEFAULT, false);
     }
+    updateStepNavigation(selection);
   } catch (error) {
     console.warn("Unable to restore blend selection", error);
   }
@@ -1096,6 +1227,7 @@ const toggleBotanicalSelection = (card) => {
   updateAlignmentPreview(nextSelection);
   updateFlavorPreview(nextSelection);
   updateFlavorRequirement(nextSelection);
+  updateStepNavigation(nextSelection);
 };
 
 botanicalCards.forEach((card) => {
@@ -1196,6 +1328,7 @@ const toggleFlavorSelection = (card) => {
   storeSelection(nextSelection);
   updateFlavorPreview(nextSelection);
   updateFlavorRequirement(nextSelection);
+  updateStepNavigation(nextSelection);
 };
 
 flavorCards.forEach((card) => {

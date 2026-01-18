@@ -5,6 +5,7 @@ Started: Mon Jan 19 09:48:34 AEDT 2026
 - Energy outcome alignment should map to the "Alertness" axis when sorting base relevance.
 - Botanical option relevance is scored via base alignment weighted by botanical contributions, capped to six options in `APP/static/blend.js`.
 - Flavor options are filtered by base + selected botanicals (via `BlendFlavor.botanical_ids`), capped to six in `APP/static/blend.js`.
+- Custom blend step routes use `data-blend-step` and `data-step-next` gating in `APP/static/blend.js`.
 
 ## 2026-01-19 09:52:08 AEDT - US-CB-201
 Thread: N/A
@@ -32,4 +33,13 @@ Thread: N/A
   - Patterns discovered: Flavor filtering now depends on `BlendFlavor.botanical_ids` plus base matching in `APP/static/blend.js`.
   - Gotchas encountered: dev-browser skill not available for required UI verification.
   - Useful context: Flavor selection enforces a 1-2 range with warnings in `APP/static/blend.js`.
+---
+## Mon Jan 19 10:14:12 AEDT 2026 - US-CB-204
+Thread: N/A
+- What was implemented: Split custom blend flow into step-specific pages with new routes, navigation gating, and step-specific templates while preserving localStorage selections.
+- Files changed: APP/main.py, APP/static/blend.js, APP/static/styles.css, APP/templates/custom_blend_step1.html, APP/templates/custom_blend_step2.html, APP/templates/custom_blend_step3.html, APP/templates/custom_blend_step4.html, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: Custom blend step routes use `data-blend-step` and `data-step-next` gating in `APP/static/blend.js`.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Step routing relies on localStorage selections for redirecting users who skip required steps.
 ---

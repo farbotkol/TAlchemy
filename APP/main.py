@@ -42,6 +42,16 @@ def build_blend_outcomes() -> list[BlendOutcome]:
     return outcomes
 
 
+def build_blend_context(request: Request) -> dict:
+    return {
+        "request": request,
+        "outcomes": build_blend_outcomes(),
+        "outcome_axes": BLEND_OUTCOME_AXES,
+        "flavor_categories": FLAVOR_CATEGORIES,
+        "blend_sizes": CUSTOM_BLEND_SIZES,
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def product_listing(request: Request):
     return templates.TemplateResponse(
@@ -71,14 +81,40 @@ async def product_detail(request: Request, product_id: str):
 @app.get("/custom-blend", response_class=HTMLResponse)
 async def custom_blend_step_one(request: Request):
     return templates.TemplateResponse(
-        "custom_blend.html",
-        {
-            "request": request,
-            "outcomes": build_blend_outcomes(),
-            "outcome_axes": BLEND_OUTCOME_AXES,
-            "flavor_categories": FLAVOR_CATEGORIES,
-            "blend_sizes": CUSTOM_BLEND_SIZES,
-        },
+        "custom_blend_step1.html",
+        build_blend_context(request),
+    )
+
+
+@app.get("/custom-blend/step-1", response_class=HTMLResponse)
+async def custom_blend_step_one_page(request: Request):
+    return templates.TemplateResponse(
+        "custom_blend_step1.html",
+        build_blend_context(request),
+    )
+
+
+@app.get("/custom-blend/step-2", response_class=HTMLResponse)
+async def custom_blend_step_two_page(request: Request):
+    return templates.TemplateResponse(
+        "custom_blend_step2.html",
+        build_blend_context(request),
+    )
+
+
+@app.get("/custom-blend/step-3", response_class=HTMLResponse)
+async def custom_blend_step_three_page(request: Request):
+    return templates.TemplateResponse(
+        "custom_blend_step3.html",
+        build_blend_context(request),
+    )
+
+
+@app.get("/custom-blend/step-4", response_class=HTMLResponse)
+async def custom_blend_step_four_page(request: Request):
+    return templates.TemplateResponse(
+        "custom_blend_step4.html",
+        build_blend_context(request),
     )
 
 
