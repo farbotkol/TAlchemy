@@ -40,6 +40,8 @@ const NAME_MAX = 32;
 const NAME_HELP_DEFAULT = nameHelp ? nameHelp.dataset.default || "" : "";
 const BOTANICAL_MIN = 1;
 const BOTANICAL_MAX = 2;
+const FLAVOR_MIN = 1;
+const FLAVOR_MAX = 2;
 
 const outcomeAxes = (() => {
   if (!radarChart) {
@@ -202,6 +204,7 @@ let radarScoreNodes = [];
 let flavorSpectrumReady = false;
 let flavorSpectrumRows = [];
 let currentBotanicalOptionIds = new Set();
+let currentFlavorOptionIds = new Set();
 
 const createSvgElement = (tag) =>
   document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -316,6 +319,24 @@ const parseBotanicalContributions = (card) => {
     console.warn("Unable to read botanical contributions", error);
     return {};
   }
+};
+
+const parseFlavorBotanicalIds = (card) => {
+  if (!card || !card.dataset.flavorBotanicalIds) {
+    return [];
+  }
+  return card.dataset.flavorBotanicalIds.split(",").filter(Boolean);
+};
+
+const scoreFlavor = (card, selectedBotanicals = []) => {
+  const selectedIds = new Set(selectedBotanicals.map((botanical) => botanical.id));
+  if (selectedIds.size === 0) {
+    return 0;
+  }
+  return parseFlavorBotanicalIds(card).reduce(
+    (total, botanicalId) => total + (selectedIds.has(botanicalId) ? 1 : 0),
+    0,
+  );
 };
 
 const scoreBotanical = (card, baseAlignment = {}) => {
@@ -470,6 +491,25 @@ const updateFlavorPreview = (selection) => {
   renderFlavorSpectrum(calculateFlavorProfile(flavors));
 };
 
+const updateFlavorRequirement = (selection) => {
+  if (!selection.baseId) {
+    updateFlavorWarning("");
+    return;
+  }
+  if ((selection.selectedBotanicals || []).length === 0) {
+    updateFlavorWarning("Select functional botanicals to unlock flavors.");
+    return;
+  }
+  const count = (selection.selectedFlavors || []).length;
+  if (count < FLAVOR_MIN) {
+    updateFlavorWarning(
+      `Select at least ${FLAVOR_MIN} flavor botanical${FLAVOR_MIN === 1 ? "" : "s"}.`,
+    );
+    return;
+  }
+  updateFlavorWarning("");
+};
+
 const resetBasePreview = () => {
   baseCards.forEach((item) => item.classList.remove("is-selected"));
   if (previewBaseTitle) {
@@ -543,20 +583,63 @@ const showBotanicalGrid = (outcomeId, baseId, baseAlignment = {}) => {
   });
 };
 
-const showFlavorGrid = (outcomeId, baseId) => {
+const showFlavorGrid = (outcomeId, baseId, selectedBotanicals = []) => {
+  const selectedIds = new Set(
+    selectedBotanicals.map((botanical) => botanical.id),
+  );
+  const matchingCards = Array.from(flavorCards).filter((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    if (!isMatch || !matchesBase) {
+      return false;
+    }
+    if (selectedIds.size === 0) {
+      return false;
+    }
+    const botanicalIds = parseFlavorBotanicalIds(card);
+    return botanicalIds.some((id) => selectedIds.has(id));
+  });
+  const sortedCards = matchingCards
+    .map((card) => ({
+      card,
+      score: scoreFlavor(card, selectedBotanicals),
+      title: card.dataset.flavorTitle || "",
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.title.localeCompare(b.title);
+    })
+    .slice(0, 6);
+
+  currentFlavorOptionIds = new Set(
+    sortedCards.map((entry) => entry.card.dataset.flavorId),
+  );
+
   flavorGrids.forEach((grid) => {
     const isMatch = grid.dataset.flavorGrid === outcomeId;
     grid.hidden = !isMatch || !baseId;
+    if (isMatch && baseId) {
+      sortedCards.forEach((entry) => {
+        grid.appendChild(entry.card);
+      });
+    }
   });
+
   if (flavorEmpty) {
-    flavorEmpty.hidden = Boolean(outcomeId && baseId);
+    flavorEmpty.hidden = Boolean(
+      outcomeId && baseId && selectedIds.size > 0 && sortedCards.length > 0,
+    );
   }
 
   flavorCards.forEach((card) => {
     const isMatch = card.dataset.outcomeId === outcomeId;
     const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
     const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
-    card.hidden = !(isMatch && baseId && matchesBase);
+    const isAllowed = currentFlavorOptionIds.has(card.dataset.flavorId);
+    card.hidden = !(isMatch && baseId && matchesBase && isAllowed);
   });
 };
 
@@ -598,6 +681,7 @@ const applySelection = (card) => {
   updateBotanicalWarning("");
   showFlavorGrid(card.dataset.outcomeId, null);
   resetFlavorSelection();
+  updateFlavorRequirement({ selectedFlavors: [], selectedBotanicals: [] });
 
   const nextSelection = {
     outcomeId: card.dataset.outcomeId,
@@ -662,14 +746,14 @@ const applyBaseSelection = (card) => {
   };
 
   showBotanicalGrid(selection.outcomeId, selection.baseId, alignment);
-  showFlavorGrid(selection.outcomeId, selection.baseId);
   selection.selectedBotanicals = reconcileBotanicals(selection);
+  showFlavorGrid(selection.outcomeId, selection.baseId, selection.selectedBotanicals);
   selection.selectedFlavors = reconcileFlavors(selection);
   storeSelection(selection);
   updateBotanicalPreview(selection);
   updateBotanicalRequirement(selection);
   updateFlavorPreview(selection);
-  updateFlavorWarning("");
+  updateFlavorRequirement(selection);
   updateAlignmentPreview(selection);
 };
 
@@ -785,6 +869,11 @@ const restoreSelection = () => {
       updateBotanicalPreview(selection);
       updateBotanicalRequirement(selection);
       updateAlignmentPreview(selection);
+      showFlavorGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.selectedBotanicals,
+      );
     }
 
     if (selection.selectedFlavors) {
@@ -801,8 +890,8 @@ const restoreSelection = () => {
       selection.selectedFlavors = reconcileFlavors(selection);
       storeSelection(selection);
       updateFlavorPreview(selection);
-      updateFlavorWarning("");
     }
+    updateFlavorRequirement(selection);
 
     if (selection.sizeLabel) {
       const matchSize = Array.from(sizeCards).find(
@@ -877,7 +966,13 @@ const isFlavorAllowed = (card, outcomeId, baseId) => {
     return false;
   }
   const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
-  return baseIds.length === 0 || baseIds.includes(baseId);
+  if (!(baseIds.length === 0 || baseIds.includes(baseId))) {
+    return false;
+  }
+  if (currentFlavorOptionIds.size === 0) {
+    return false;
+  }
+  return currentFlavorOptionIds.has(card.dataset.flavorId);
 };
 
 const updateFlavorConflicts = (selection) => {
@@ -900,6 +995,13 @@ const updateFlavorConflicts = (selection) => {
 };
 
 const reconcileFlavors = (selection) => {
+  if ((selection.selectedBotanicals || []).length === 0) {
+    flavorCards.forEach((card) => {
+      card.classList.remove("is-selected");
+    });
+    updateFlavorConflicts({ selectedFlavors: [] });
+    return [];
+  }
   const selected = selection.selectedFlavors || [];
   const filtered = [];
   const blocked = new Set();
@@ -916,13 +1018,15 @@ const reconcileFlavors = (selection) => {
     (flavor.incompatibleWith || []).forEach((id) => blocked.add(id));
   });
 
+  const limited = filtered.slice(0, FLAVOR_MAX);
+
   flavorCards.forEach((card) => {
-    const isSelected = filtered.some((flavor) => flavor.id === card.dataset.flavorId);
+    const isSelected = limited.some((flavor) => flavor.id === card.dataset.flavorId);
     card.classList.toggle("is-selected", isSelected);
   });
 
-  updateFlavorConflicts({ selectedFlavors: filtered });
-  return filtered;
+  updateFlavorConflicts({ selectedFlavors: limited });
+  return limited;
 };
 
 const toggleBotanicalSelection = (card) => {
@@ -984,10 +1088,14 @@ const toggleBotanicalSelection = (card) => {
     selectedBotanicals: reconciled,
   };
 
+  showFlavorGrid(nextSelection.outcomeId, nextSelection.baseId, reconciled);
+  nextSelection.selectedFlavors = reconcileFlavors(nextSelection);
   storeSelection(nextSelection);
   updateBotanicalPreview(nextSelection);
   updateBotanicalRequirement(nextSelection);
   updateAlignmentPreview(nextSelection);
+  updateFlavorPreview(nextSelection);
+  updateFlavorRequirement(nextSelection);
 };
 
 botanicalCards.forEach((card) => {
@@ -999,16 +1107,32 @@ const toggleFlavorSelection = (card) => {
   if (!selection.baseId) {
     return;
   }
+  if ((selection.selectedBotanicals || []).length === 0) {
+    updateFlavorWarning("Select functional botanicals to unlock flavors.");
+    return;
+  }
 
   const existing = selection.selectedFlavors || [];
   const isSelected = card.classList.contains("is-selected");
   let updated = existing;
 
   if (isSelected) {
+    if (existing.length <= FLAVOR_MIN) {
+      updateFlavorWarning(
+        `Select at least ${FLAVOR_MIN} flavor botanical${FLAVOR_MIN === 1 ? "" : "s"}.`,
+      );
+      return;
+    }
     card.classList.remove("is-selected");
     updated = existing.filter((flavor) => flavor.id !== card.dataset.flavorId);
-    updateFlavorWarning("");
   } else {
+    if (existing.length >= FLAVOR_MAX) {
+      updateFlavorWarning(`Select up to ${FLAVOR_MAX} flavor botanicals.`);
+      return;
+    }
+    if (!isFlavorAllowed(card, selection.outcomeId, selection.baseId)) {
+      return;
+    }
     let incompatibleWith = [];
     if (card.dataset.incompatible) {
       try {
@@ -1047,7 +1171,6 @@ const toggleFlavorSelection = (card) => {
       }
     }
 
-    updateFlavorWarning("");
     updated = [
       ...existing,
       {
@@ -1072,6 +1195,7 @@ const toggleFlavorSelection = (card) => {
 
   storeSelection(nextSelection);
   updateFlavorPreview(nextSelection);
+  updateFlavorRequirement(nextSelection);
 };
 
 flavorCards.forEach((card) => {

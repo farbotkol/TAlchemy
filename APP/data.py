@@ -33,6 +33,7 @@ class BlendFlavor(BaseModel):
     notes: List[str]
     spectrum: dict[str, int]
     base_ids: List[str]
+    botanical_ids: List[str]
     incompatible_with: List[str]
 
 
@@ -160,6 +161,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Creamy", "Dessert-like", "Soft finish"],
                 spectrum={"Sweet": 3, "Floral": 1},
                 base_ids=["sleep-rooibos", "sleep-honeybush", "sleep-decaf-black"],
+                botanical_ids=["chamomile", "skullcap"],
                 incompatible_with=["smoked-ginger"],
             ),
             BlendFlavor(
@@ -169,6 +171,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Aromatic", "Spa-like", "Gentle"],
                 spectrum={"Floral": 3, "Sweet": 1},
                 base_ids=["sleep-rooibos", "sleep-honeybush"],
+                botanical_ids=["lavender", "chamomile"],
                 incompatible_with=["smoked-ginger"],
             ),
             BlendFlavor(
@@ -178,6 +181,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Bright lift", "Lightly tart"],
                 spectrum={"Citrus": 3, "Sweet": 1},
                 base_ids=["sleep-decaf-black"],
+                botanical_ids=["skullcap"],
                 incompatible_with=["lavender-bloom"],
             ),
             BlendFlavor(
@@ -187,6 +191,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Chocolatey", "Grounded"],
                 spectrum={"Earthy": 3, "Sweet": 1},
                 base_ids=["sleep-decaf-black", "sleep-honeybush"],
+                botanical_ids=["skullcap", "chamomile"],
                 incompatible_with=[],
             ),
             BlendFlavor(
@@ -196,6 +201,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Warming", "Toasty"],
                 spectrum={"Spicy": 3, "Earthy": 1},
                 base_ids=["sleep-decaf-black"],
+                botanical_ids=["skullcap"],
                 incompatible_with=["vanilla-bean", "lavender-bloom"],
             ),
         ],
@@ -255,6 +261,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Romantic", "Soft", "Velvety"],
                 spectrum={"Floral": 3, "Sweet": 1},
                 base_ids=["calm-white-tea", "calm-rooibos"],
+                botanical_ids=["rose", "lemon-balm"],
                 incompatible_with=["cardamom-spark"],
             ),
             BlendFlavor(
@@ -264,6 +271,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Clean citrus", "Bright"],
                 spectrum={"Citrus": 3, "Floral": 1},
                 base_ids=["calm-green-tea", "calm-white-tea"],
+                botanical_ids=["lemon-balm", "tulsi"],
                 incompatible_with=["sandalwood"],
             ),
             BlendFlavor(
@@ -273,6 +281,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Resinous", "Meditative"],
                 spectrum={"Earthy": 3, "Spicy": 1},
                 base_ids=["calm-rooibos"],
+                botanical_ids=["tulsi"],
                 incompatible_with=["lemongrass"],
             ),
             BlendFlavor(
@@ -282,6 +291,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Aromatic", "Warm"],
                 spectrum={"Spicy": 3, "Sweet": 1},
                 base_ids=["calm-green-tea", "calm-rooibos"],
+                botanical_ids=["tulsi", "lemon-balm"],
                 incompatible_with=["rose-petal"],
             ),
             BlendFlavor(
@@ -291,6 +301,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Toasty", "Comforting"],
                 spectrum={"Sweet": 3, "Earthy": 1},
                 base_ids=["calm-rooibos", "calm-white-tea"],
+                botanical_ids=["rose", "tulsi"],
                 incompatible_with=[],
             ),
         ],
@@ -350,6 +361,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Silky aroma", "Elegant"],
                 spectrum={"Floral": 3, "Citrus": 1},
                 base_ids=["focus-sencha", "focus-oolong"],
+                botanical_ids=["ginkgo"],
                 incompatible_with=["toasted-nut"],
             ),
             BlendFlavor(
@@ -359,6 +371,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Bright", "Tea-room classic"],
                 spectrum={"Citrus": 3, "Floral": 1},
                 base_ids=["focus-black-tea", "focus-oolong"],
+                botanical_ids=["ginkgo", "peppermint"],
                 incompatible_with=["brown-sugar"],
             ),
             BlendFlavor(
@@ -368,6 +381,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Grounded", "Nutty"],
                 spectrum={"Earthy": 3, "Sweet": 1},
                 base_ids=["focus-oolong", "focus-black-tea"],
+                botanical_ids=["gotu-kola"],
                 incompatible_with=["jasmine-veil"],
             ),
             BlendFlavor(
@@ -377,6 +391,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Cooling bite", "Sharp"],
                 spectrum={"Spicy": 3, "Citrus": 1},
                 base_ids=["focus-sencha", "focus-black-tea"],
+                botanical_ids=["peppermint", "ginkgo"],
                 incompatible_with=["brown-sugar"],
             ),
             BlendFlavor(
@@ -386,6 +401,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Caramelized", "Warm"],
                 spectrum={"Sweet": 3, "Earthy": 1},
                 base_ids=["focus-black-tea"],
+                botanical_ids=["gotu-kola"],
                 incompatible_with=["bergamot-zest", "pepper-mint"],
             ),
         ],
@@ -445,6 +461,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Tart floral", "Vibrant"],
                 spectrum={"Floral": 3, "Citrus": 1},
                 base_ids=["energy-yerba", "energy-assam"],
+                botanical_ids=["orange-peel"],
                 incompatible_with=["clove-heat"],
             ),
             BlendFlavor(
@@ -454,6 +471,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Juicy", "Lively"],
                 spectrum={"Citrus": 3, "Sweet": 1},
                 base_ids=["energy-yerba", "energy-smoked-oolong"],
+                botanical_ids=["orange-peel", "ginseng"],
                 incompatible_with=["molasses-sugar"],
             ),
             BlendFlavor(
@@ -463,6 +481,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Roasted", "Bold"],
                 spectrum={"Earthy": 3, "Sweet": 1},
                 base_ids=["energy-assam", "energy-smoked-oolong"],
+                botanical_ids=["cacao-nibs"],
                 incompatible_with=["hibiscus-glow"],
             ),
             BlendFlavor(
@@ -472,6 +491,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Spiced", "Fiery"],
                 spectrum={"Spicy": 3, "Earthy": 1},
                 base_ids=["energy-assam", "energy-smoked-oolong"],
+                botanical_ids=["ginseng", "cacao-nibs"],
                 incompatible_with=["hibiscus-glow"],
             ),
             BlendFlavor(
@@ -481,6 +501,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 notes=["Dark sweetness", "Rich"],
                 spectrum={"Sweet": 3, "Earthy": 1},
                 base_ids=["energy-assam"],
+                botanical_ids=["cacao-nibs"],
                 incompatible_with=["blood-orange"],
             ),
         ],
