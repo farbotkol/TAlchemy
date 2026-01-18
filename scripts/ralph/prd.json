@@ -1,0 +1,186 @@
+{
+  "project": "Tea Alchemy",
+  "branchName": "ralph/tea-alchemy-prd",
+  "description": "Tea Alchemy e-commerce and custom blend experience (Phase 1 + Phase 2)",
+  "userStories": [
+    {
+      "id": "US-101",
+      "title": "Browse pre-made products",
+      "description": "As a customer, I want to browse pre-made tea blends so I can quickly purchase without customization.",
+      "acceptanceCriteria": [
+        "Product listing page shows product name, description, intended outcomes, available sizes, and price",
+        "Products are clickable to view detail pages",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Phase 1 foundation"
+    },
+    {
+      "id": "US-102",
+      "title": "Add pre-made product to cart",
+      "description": "As a customer, I want to add pre-made teas to my cart.",
+      "acceptanceCriteria": [
+        "Add to Cart button available on product detail",
+        "Cart updates immediately",
+        "Cart reflects correct product, size, and price",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Phase 1 foundation"
+    },
+    {
+      "id": "US-201",
+      "title": "Custom blend step 1: outcome selection",
+      "description": "As a customer, I want to start by choosing how I want to feel so the system can guide me.",
+      "acceptanceCriteria": [
+        "Step 1 presents outcomes: Sleep, Calm, Focus, Energy (with short explanations)",
+        "Selecting an outcome determines available bases and botanicals downstream",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-202",
+      "title": "Custom blend step 2: base tea selection",
+      "description": "As a customer, I want to choose a base tea aligned to my desired outcome.",
+      "acceptanceCriteria": [
+        "System displays 2-4 base teas per outcome",
+        "Each base shows outcome alignment indicators and a short description",
+        "Selecting a base updates the outcome visualization",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-203",
+      "title": "Custom blend step 3: functional botanicals",
+      "description": "As a customer, I want to add functional botanicals that enhance the outcome.",
+      "acceptanceCriteria": [
+        "System displays botanicals relevant to selected outcome and base",
+        "Each botanical has functional attributes and outcome contribution values",
+        "Users can add and remove botanicals",
+        "Outcome visualization updates in real time",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-204",
+      "title": "Gamified outcome visualization",
+      "description": "As a customer, I want to see how my blend performs across outcomes as I build it.",
+      "acceptanceCriteria": [
+        "Radar/radial/spectrum chart displayed for outcomes: Sleep, Calm, Focus, Alertness",
+        "Chart updates dynamically with each selection",
+        "Visualization reflects relative strength (1-5 scale)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-205",
+      "title": "Custom blend step 4: flavor selection",
+      "description": "As a customer, I want to customize flavor without breaking the functional goal.",
+      "acceptanceCriteria": [
+        "System shows flavor botanicals compatible with current blend",
+        "Flavor categories include Floral, Citrus, Earthy, Spicy, Sweet",
+        "Flavor spectrum visualization updates in real time",
+        "System prevents incompatible flavor combinations (soft constraints)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-206",
+      "title": "Custom blend step 5: size selection",
+      "description": "As a customer, I want to choose how much tea I want.",
+      "acceptanceCriteria": [
+        "Available sizes: 50g, 100g",
+        "Price updates dynamically based on size",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-207",
+      "title": "Custom blend step 6: naming and labeling",
+      "description": "As a customer, I want to name my blend so it feels personal.",
+      "acceptanceCriteria": [
+        "Text input allows custom blend name",
+        "Name is shown on product preview, cart, and order confirmation",
+        "Basic validation applied (length; profanity filter optional)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "Phase 2 differentiation"
+    },
+    {
+      "id": "US-301",
+      "title": "Cart review",
+      "description": "As a customer, I want to review my cart before paying.",
+      "acceptanceCriteria": [
+        "Cart shows products, custom blend details, size, and price",
+        "Ability to remove items",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "Phase 1 foundation"
+    },
+    {
+      "id": "US-302",
+      "title": "Checkout",
+      "description": "As a customer, I want a simple checkout process.",
+      "acceptanceCriteria": [
+        "Shipping details collected",
+        "Shipping cost calculated",
+        "Order summary displayed",
+        "Supports AU/NZ addresses",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Phase 1 foundation"
+    },
+    {
+      "id": "US-303",
+      "title": "Payment and confirmation",
+      "description": "As a customer, I want to pay securely and receive confirmation.",
+      "acceptanceCriteria": [
+        "Secure payment gateway integrated",
+        "Order confirmation page shown",
+        "Confirmation email sent with order details",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Phase 1 foundation"
+    }
+  ]
+}

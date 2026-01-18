@@ -1,0 +1,16 @@
+# Ralph Progress Log
+## Codebase Patterns
+- FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
+- Pre-made product data is currently defined in `app/data.py` for listing and detail views.
+Started: Sun Jan 18 23:26:54 AEDT 2026
+---
+## 2026-01-18 23:59:27 AEDT - US-101
+Thread: N/A
+- What was implemented: FastAPI storefront with pre-made product listing and detail pages, plus in-memory product catalog with outcomes, sizes, and pricing
+- Files changed: app/main.py, app/data.py, app/templates/index.html, app/templates/product_detail.html, app/static/styles.css, app/db.py, app/requirements.txt, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Product data is rendered via Jinja2 templates from `app/data.py`
+  - Static assets are served from `app/static` and referenced in templates
+  - No automated tests yet; `python -m compileall app` used as a syntax check
+  - Browser verification pending; dev-browser skill not available in this session
+---

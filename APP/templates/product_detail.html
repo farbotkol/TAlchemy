@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | {{ product.name }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <h1>{{ product.name }}</h1>
+        <p class="subhead">{{ product.description }}</p>
+      </header>
+
+      <section class="detail-panel">
+        <div class="detail-block">
+          <p class="label">Intended outcomes</p>
+          <div class="pill-row">
+            {% for outcome in product.outcomes %}
+            <span class="pill">{{ outcome }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="detail-block">
+          <p class="label">Available sizes</p>
+          <ul class="size-list">
+            {% for size in product.sizes %}
+            <li>
+              <span>{{ size.label }}</span>
+              <span>A${{ '%.2f'|format(size.price_aud) }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
