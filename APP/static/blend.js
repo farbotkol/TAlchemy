@@ -6,6 +6,8 @@ const previewDescription = document.querySelector("[data-preview-description]");
 const previewBases = document.querySelector("[data-preview-bases]");
 const previewBotanicals = document.querySelector("[data-preview-botanicals]");
 const previewFlavors = document.querySelector("[data-preview-flavors]");
+const previewSize = document.querySelector("[data-preview-size]");
+const previewPrice = document.querySelector("[data-preview-price]");
 const previewBaseTitle = document.querySelector("[data-preview-base-title]");
 const previewBaseDescription = document.querySelector("[data-preview-base-description]");
 const radarChart = document.querySelector("[data-radar-chart]");
@@ -27,6 +29,7 @@ const flavorCards = document.querySelectorAll(".flavor-card");
 const flavorWarning = document.querySelector("[data-flavor-warning]");
 const flavorSpectrum = document.querySelector("[data-flavor-spectrum]");
 const continueButton = document.querySelector("[data-continue]");
+const sizeCards = document.querySelectorAll(".size-card");
 
 const outcomeAxes = (() => {
   if (!radarChart) {
@@ -84,6 +87,28 @@ const updateList = (container, items, emptyMessage) => {
     li.textContent = item;
     container.appendChild(li);
   });
+};
+
+const formatPrice = (price) => {
+  if (typeof price !== "number" || Number.isNaN(price)) {
+    return "";
+  }
+  return `A$${price.toFixed(2)}`;
+};
+
+const updateSizePreview = (selection) => {
+  if (!previewSize || !previewPrice) {
+    return;
+  }
+
+  if (selection.sizeLabel && selection.sizeGrams && selection.sizePrice != null) {
+    previewSize.textContent = `${selection.sizeLabel} (${selection.sizeGrams}g)`;
+    previewPrice.textContent = `Price: ${formatPrice(selection.sizePrice)}`;
+    return;
+  }
+
+  previewSize.textContent = "Choose a size";
+  previewPrice.textContent = "Pricing updates as soon as you select a size.";
 };
 
 const updateFlavorWarning = (message) => {
@@ -436,6 +461,7 @@ const applySelection = (card) => {
   outcomeCards.forEach((item) => item.classList.remove("is-selected"));
   card.classList.add("is-selected");
 
+  const stored = getStoredSelection();
   const title = card.dataset.outcomeTitle || "";
   const description = card.dataset.outcomeDescription || "";
   const bases = (card.dataset.bases || "").split(",").filter(Boolean);
@@ -458,7 +484,7 @@ const applySelection = (card) => {
   showFlavorGrid(card.dataset.outcomeId, null);
   resetFlavorSelection();
 
-  storeSelection({
+  const nextSelection = {
     outcomeId: card.dataset.outcomeId,
     outcomeTitle: title,
     bases,
@@ -469,7 +495,13 @@ const applySelection = (card) => {
     baseAlignment: {},
     selectedBotanicals: [],
     selectedFlavors: [],
-  });
+    sizeLabel: stored.sizeLabel || null,
+    sizeGrams: stored.sizeGrams || null,
+    sizePrice: stored.sizePrice || null,
+  };
+
+  storeSelection(nextSelection);
+  updateSizePreview(nextSelection);
 };
 
 outcomeCards.forEach((card) => {
@@ -527,11 +559,38 @@ baseCards.forEach((card) => {
   card.addEventListener("click", () => applyBaseSelection(card));
 });
 
+const applySizeSelection = (card) => {
+  sizeCards.forEach((item) => item.classList.remove("is-selected"));
+  card.classList.add("is-selected");
+
+  const label = card.dataset.sizeLabel || "";
+  const grams = Number.parseInt(card.dataset.sizeGrams || "", 10);
+  const price = Number.parseFloat(card.dataset.sizePrice || "");
+  if (!label || Number.isNaN(grams) || Number.isNaN(price)) {
+    return;
+  }
+
+  const selection = {
+    ...getStoredSelection(),
+    sizeLabel: label,
+    sizeGrams: grams,
+    sizePrice: price,
+  };
+
+  storeSelection(selection);
+  updateSizePreview(selection);
+};
+
+sizeCards.forEach((card) => {
+  card.addEventListener("click", () => applySizeSelection(card));
+});
+
 const restoreSelection = () => {
   try {
     const selection = getStoredSelection();
     if (!selection.outcomeId) {
       updateFlavorPreview({ selectedFlavors: [] });
+      updateSizePreview(selection);
       return;
     }
 
@@ -586,6 +645,16 @@ const restoreSelection = () => {
       updateFlavorPreview(selection);
       updateFlavorWarning("");
     }
+
+    if (selection.sizeLabel) {
+      const matchSize = Array.from(sizeCards).find(
+        (card) => card.dataset.sizeLabel === selection.sizeLabel,
+      );
+      if (matchSize) {
+        matchSize.classList.add("is-selected");
+      }
+    }
+    updateSizePreview(selection);
   } catch (error) {
     console.warn("Unable to restore blend selection", error);
   }

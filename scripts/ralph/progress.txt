@@ -8,6 +8,7 @@
 - Functional botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedBotanicals`, with alignment previews combining base + botanical contributions in `APP/static/blend.js`.
 - Outcome visualization is rendered as an SVG radar chart in `APP/static/blend.js`, driven by `BLEND_OUTCOME_AXES`.
 - Flavor botanicals are modeled in `APP/data.py` and stored in `teaAlchemyBlend.selectedFlavors`, with the spectrum rendered in `APP/static/blend.js`.
+- Custom blend sizes are defined in `APP/data.py` as `CUSTOM_BLEND_SIZES` and stored in localStorage under `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice`.
 Started: Sun Jan 18 23:26:54 AEDT 2026
 ---
 ## 2026-01-18 23:59:27 AEDT - US-101
@@ -72,5 +73,14 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Flavor botanicals live in `APP/data.py` with `BlendFlavor` and `FLAVOR_CATEGORIES` and render in step 4 cards
   - Flavor selections persist in `teaAlchemyBlend.selectedFlavors` and drive the spectrum UI in `APP/static/blend.js`
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 01:01:35 AEDT - US-206
+Thread: N/A
+- What was implemented: Added custom blend size selection (50g/100g) with dynamic pricing, preview updates, and localStorage persistence in the custom blend flow
+- Files changed: APP/data.py, APP/main.py, APP/templates/custom_blend.html, APP/static/blend.js, APP/static/styles.css, APP/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Custom blend sizes are rendered from `CUSTOM_BLEND_SIZES` and persisted in `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice`
+  - Size selection UI lives in `APP/templates/custom_blend.html` and is driven by `APP/static/blend.js`
   - Browser verification pending; dev-browser skill not available in this session
 ---

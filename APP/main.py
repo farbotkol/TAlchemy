@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from APP.data import (
     BLEND_OUTCOME_AXES,
+    CUSTOM_BLEND_SIZES,
     CUSTOM_BLEND_OUTCOMES,
     FLAVOR_CATEGORIES,
     PRODUCTS,
@@ -59,5 +60,6 @@ async def custom_blend_step_one(request: Request):
             "outcomes": CUSTOM_BLEND_OUTCOMES,
             "outcome_axes": BLEND_OUTCOME_AXES,
             "flavor_categories": FLAVOR_CATEGORIES,
+            "blend_sizes": CUSTOM_BLEND_SIZES,
         },
     )

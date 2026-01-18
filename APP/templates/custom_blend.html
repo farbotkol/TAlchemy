@@ -177,6 +177,30 @@
           {% endfor %}
         </div>
 
+        <div class="blend-panel">
+          <h2 class="section-title">Step 5: Choose your size</h2>
+          <p class="step-hint">
+            Pick the amount that fits your ritual. Pricing updates instantly.
+          </p>
+          <div class="size-grid">
+            {% for size in blend_sizes %}
+            <button
+              class="size-card"
+              type="button"
+              data-size-label="{{ size.label }}"
+              data-size-grams="{{ size.grams }}"
+              data-size-price="{{ '%.2f'|format(size.price_aud) }}"
+            >
+              <div class="size-card-header">
+                <span class="size-title">{{ size.label }}</span>
+                <span class="size-price">A${{ '%.2f'|format(size.price_aud) }}</span>
+              </div>
+              <p class="size-description">{{ size.grams }}g of your custom blend.</p>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
         <aside class="blend-panel blend-preview" aria-live="polite">
           <h2 class="section-title">Your blend path</h2>
           <div class="preview-card" data-outcome-preview>
@@ -237,6 +261,13 @@
               data-flavor-spectrum
               data-flavor-categories='{{ flavor_categories | tojson }}'
             ></div>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Blend size</p>
+            <h3 class="preview-title" data-preview-size>Choose a size</h3>
+            <p class="preview-description" data-preview-price>
+              Pricing updates as soon as you select a size.
+            </p>
           </div>
           <button class="primary-action" type="button" data-continue disabled>
             Continue to botanicals

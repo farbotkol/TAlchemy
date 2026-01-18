@@ -96,6 +96,11 @@ PRODUCTS: List[Product] = [
     ),
 ]
 
+CUSTOM_BLEND_SIZES: List[ProductSize] = [
+    ProductSize(label="50g", grams=50, price_aud=24.0),
+    ProductSize(label="100g", grams=100, price_aud=42.0),
+]
+
 BLEND_OUTCOME_AXES = ["Sleep", "Calm", "Focus", "Alertness"]
 FLAVOR_CATEGORIES = ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"]
 
