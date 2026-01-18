@@ -564,6 +564,44 @@ h1 {
   font-size: 0.9rem;
 }
 
+.name-field {
+  display: grid;
+  gap: 8px;
+}
+
+.name-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--leaf);
+}
+
+.name-input {
+  border-radius: 16px;
+  border: 1px solid rgba(90, 70, 51, 0.2);
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: "Work Sans", "Trebuchet MS", sans-serif;
+  background: rgba(255, 250, 243, 0.9);
+  color: var(--ink);
+}
+
+.name-input:focus {
+  outline: 2px solid rgba(61, 91, 69, 0.35);
+  border-color: rgba(61, 91, 69, 0.6);
+}
+
+.name-input[aria-invalid="true"] {
+  border-color: rgba(196, 135, 85, 0.8);
+  box-shadow: 0 0 0 3px rgba(196, 135, 85, 0.18);
+}
+
+.name-help {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
 .base-tag {
   font-size: 0.7rem;
   text-transform: uppercase;

@@ -201,6 +201,27 @@
           </div>
         </div>
 
+        <div class="blend-panel">
+          <h2 class="section-title">Step 6: Name your blend</h2>
+          <p class="step-hint">
+            Give your ritual a title that feels personal. Keep it short and memorable.
+          </p>
+          <label class="name-field">
+            <span class="name-label">Blend name</span>
+            <input
+              class="name-input"
+              type="text"
+              name="blend-name"
+              placeholder="Midnight Garden"
+              maxlength="32"
+              data-blend-name
+            />
+          </label>
+          <p class="name-help" data-blend-name-help data-default="Keep it between 3 and 32 characters.">
+            Keep it between 3 and 32 characters.
+          </p>
+        </div>
+
         <aside class="blend-panel blend-preview" aria-live="polite">
           <h2 class="section-title">Your blend path</h2>
           <div class="preview-card" data-outcome-preview>
@@ -267,6 +288,13 @@
             <h3 class="preview-title" data-preview-size>Choose a size</h3>
             <p class="preview-description" data-preview-price>
               Pricing updates as soon as you select a size.
+            </p>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Blend name</p>
+            <h3 class="preview-title" data-preview-blend-name>Name your blend</h3>
+            <p class="preview-description">
+              Your custom label will follow the blend through checkout.
             </p>
           </div>
           <button class="primary-action" type="button" data-continue disabled>

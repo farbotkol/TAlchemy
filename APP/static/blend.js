@@ -8,6 +8,7 @@ const previewBotanicals = document.querySelector("[data-preview-botanicals]");
 const previewFlavors = document.querySelector("[data-preview-flavors]");
 const previewSize = document.querySelector("[data-preview-size]");
 const previewPrice = document.querySelector("[data-preview-price]");
+const previewBlendName = document.querySelector("[data-preview-blend-name]");
 const previewBaseTitle = document.querySelector("[data-preview-base-title]");
 const previewBaseDescription = document.querySelector("[data-preview-base-description]");
 const radarChart = document.querySelector("[data-radar-chart]");
@@ -30,6 +31,12 @@ const flavorWarning = document.querySelector("[data-flavor-warning]");
 const flavorSpectrum = document.querySelector("[data-flavor-spectrum]");
 const continueButton = document.querySelector("[data-continue]");
 const sizeCards = document.querySelectorAll(".size-card");
+const nameInput = document.querySelector("[data-blend-name]");
+const nameHelp = document.querySelector("[data-blend-name-help]");
+
+const NAME_MIN = 3;
+const NAME_MAX = 32;
+const NAME_HELP_DEFAULT = nameHelp ? nameHelp.dataset.default || "" : "";
 
 const outcomeAxes = (() => {
   if (!radarChart) {
@@ -109,6 +116,28 @@ const updateSizePreview = (selection) => {
 
   previewSize.textContent = "Choose a size";
   previewPrice.textContent = "Pricing updates as soon as you select a size.";
+};
+
+const updateNamePreview = (selection) => {
+  if (!previewBlendName) {
+    return;
+  }
+
+  if (selection.blendName) {
+    previewBlendName.textContent = selection.blendName;
+    return;
+  }
+
+  previewBlendName.textContent = "Name your blend";
+};
+
+const updateNameHelp = (message, isError) => {
+  if (!nameHelp || !nameInput) {
+    return;
+  }
+
+  nameHelp.textContent = message;
+  nameInput.setAttribute("aria-invalid", isError ? "true" : "false");
 };
 
 const updateFlavorWarning = (message) => {
@@ -498,10 +527,12 @@ const applySelection = (card) => {
     sizeLabel: stored.sizeLabel || null,
     sizeGrams: stored.sizeGrams || null,
     sizePrice: stored.sizePrice || null,
+    blendName: stored.blendName || null,
   };
 
   storeSelection(nextSelection);
   updateSizePreview(nextSelection);
+  updateNamePreview(nextSelection);
 };
 
 outcomeCards.forEach((card) => {
@@ -585,12 +616,51 @@ sizeCards.forEach((card) => {
   card.addEventListener("click", () => applySizeSelection(card));
 });
 
+const applyNameSelection = () => {
+  if (!nameInput) {
+    return;
+  }
+
+  const rawValue = nameInput.value || "";
+  const trimmed = rawValue.trim();
+
+  if (!trimmed) {
+    const selection = { ...getStoredSelection(), blendName: null };
+    storeSelection(selection);
+    updateNamePreview(selection);
+    updateNameHelp(NAME_HELP_DEFAULT, false);
+    return;
+  }
+
+  if (trimmed.length < NAME_MIN || trimmed.length > NAME_MAX) {
+    updateNameHelp(
+      `Name should be ${NAME_MIN}-${NAME_MAX} characters.`,
+      true,
+    );
+    return;
+  }
+
+  const selection = { ...getStoredSelection(), blendName: trimmed };
+  storeSelection(selection);
+  updateNamePreview(selection);
+  updateNameHelp(NAME_HELP_DEFAULT, false);
+};
+
+if (nameInput) {
+  nameInput.addEventListener("input", applyNameSelection);
+}
+
 const restoreSelection = () => {
   try {
     const selection = getStoredSelection();
     if (!selection.outcomeId) {
       updateFlavorPreview({ selectedFlavors: [] });
       updateSizePreview(selection);
+      updateNamePreview(selection);
+      if (nameInput) {
+        nameInput.value = selection.blendName || "";
+        updateNameHelp(NAME_HELP_DEFAULT, false);
+      }
       return;
     }
 
@@ -655,6 +725,11 @@ const restoreSelection = () => {
       }
     }
     updateSizePreview(selection);
+    updateNamePreview(selection);
+    if (nameInput) {
+      nameInput.value = selection.blendName || "";
+      updateNameHelp(NAME_HELP_DEFAULT, false);
+    }
   } catch (error) {
     console.warn("Unable to restore blend selection", error);
   }

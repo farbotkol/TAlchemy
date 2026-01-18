@@ -9,3 +9,4 @@
 - Outcome visualization is rendered as an SVG radar chart driven by `BLEND_OUTCOME_AXES` in `APP/static/blend.js`.
 - Flavor botanicals are modeled in `APP/data.py` (`BlendFlavor`, `FLAVOR_CATEGORIES`) and stored in `teaAlchemyBlend.selectedFlavors`, with the spectrum rendered in `APP/static/blend.js`.
 - Custom blend size selection uses `CUSTOM_BLEND_SIZES` in `APP/data.py` and persists to `teaAlchemyBlend.sizeLabel/sizeGrams/sizePrice` in `APP/static/blend.js`.
+- Custom blend names persist in `teaAlchemyBlend.blendName` and preview in `APP/static/blend.js`.
