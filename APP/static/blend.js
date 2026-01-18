@@ -7,7 +7,13 @@ const previewBases = document.querySelector("[data-preview-bases]");
 const previewBotanicals = document.querySelector("[data-preview-botanicals]");
 const previewBaseTitle = document.querySelector("[data-preview-base-title]");
 const previewBaseDescription = document.querySelector("[data-preview-base-description]");
-const previewAlignment = document.querySelector("[data-preview-alignment]");
+const radarChart = document.querySelector("[data-radar-chart]");
+const radarGrid = radarChart ? radarChart.querySelector("[data-radar-grid]") : null;
+const radarAxes = radarChart ? radarChart.querySelector("[data-radar-axes]") : null;
+const radarShape = radarChart ? radarChart.querySelector("[data-radar-shape]") : null;
+const radarPoints = radarChart ? radarChart.querySelector("[data-radar-points]") : null;
+const radarLabels = radarChart ? radarChart.querySelector("[data-radar-labels]") : null;
+const radarScores = document.querySelector("[data-radar-scores]");
 const baseEmpty = document.querySelector("[data-base-empty]");
 const baseGrids = document.querySelectorAll("[data-base-grid]");
 const baseCards = document.querySelectorAll(".base-card");
@@ -17,21 +23,21 @@ const botanicalCards = document.querySelectorAll(".botanical-card");
 const continueButton = document.querySelector("[data-continue]");
 
 const outcomeAxes = (() => {
-  if (!previewAlignment) {
-    return ["Sleep", "Calm", "Focus", "Energy"];
+  if (!radarChart) {
+    return ["Sleep", "Calm", "Focus", "Alertness"];
   }
 
-  const stored = previewAlignment.dataset.outcomeAxes;
+  const stored = radarChart.dataset.outcomeAxes;
   if (!stored) {
-    return ["Sleep", "Calm", "Focus", "Energy"];
+    return ["Sleep", "Calm", "Focus", "Alertness"];
   }
 
   try {
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : ["Sleep", "Calm", "Focus", "Energy"];
+    return Array.isArray(parsed) ? parsed : ["Sleep", "Calm", "Focus", "Alertness"];
   } catch (error) {
     console.warn("Unable to read outcome axes", error);
-    return ["Sleep", "Calm", "Focus", "Energy"];
+    return ["Sleep", "Calm", "Focus", "Alertness"];
   }
 })();
 
@@ -77,47 +83,146 @@ const storeSelection = (selection) => {
   }
 };
 
-const renderAlignment = (alignment = {}) => {
-  if (!previewAlignment) {
+const RADAR_SIZE = 240;
+const RADAR_CENTER = RADAR_SIZE / 2;
+const RADAR_RADIUS = 78;
+const RADAR_STEPS = 5;
+
+let radarReady = false;
+let radarPointNodes = [];
+let radarScoreNodes = [];
+
+const createSvgElement = (tag) =>
+  document.createElementNS("http://www.w3.org/2000/svg", tag);
+
+const axisAngle = (index, total) => (Math.PI * 2 * index) / total - Math.PI / 2;
+
+const pointAtRadius = (index, total, radius) => {
+  const angle = axisAngle(index, total);
+  return {
+    x: RADAR_CENTER + radius * Math.cos(angle),
+    y: RADAR_CENTER + radius * Math.sin(angle),
+  };
+};
+
+const initRadarChart = () => {
+  if (!radarChart || radarReady) {
     return;
   }
 
-  previewAlignment.innerHTML = "";
-  outcomeAxes.forEach((axis) => {
-    const value = alignment[axis] || 0;
-    const row = document.createElement("div");
-    row.className = "alignment-row";
+  if (!radarGrid || !radarAxes || !radarLabels || !radarPoints) {
+    return;
+  }
 
-    const label = document.createElement("span");
-    label.className = "alignment-label";
+  radarGrid.innerHTML = "";
+  radarAxes.innerHTML = "";
+  radarLabels.innerHTML = "";
+  radarPoints.innerHTML = "";
+  if (radarScores) {
+    radarScores.innerHTML = "";
+  }
+
+  const total = outcomeAxes.length;
+  radarPointNodes = [];
+  radarScoreNodes = [];
+
+  for (let step = 1; step <= RADAR_STEPS; step += 1) {
+    const radius = (RADAR_RADIUS * step) / RADAR_STEPS;
+    const ringPoints = outcomeAxes.map((axis, index) => {
+      const point = pointAtRadius(index, total, radius);
+      return `${point.x},${point.y}`;
+    });
+    const ring = createSvgElement("polygon");
+    ring.setAttribute("points", ringPoints.join(" "));
+    ring.classList.add("radar-ring");
+    radarGrid.appendChild(ring);
+  }
+
+  outcomeAxes.forEach((axis, index) => {
+    const axisEnd = pointAtRadius(index, total, RADAR_RADIUS);
+    const line = createSvgElement("line");
+    line.setAttribute("x1", RADAR_CENTER);
+    line.setAttribute("y1", RADAR_CENTER);
+    line.setAttribute("x2", axisEnd.x);
+    line.setAttribute("y2", axisEnd.y);
+    line.classList.add("radar-axis");
+    radarAxes.appendChild(line);
+
+    const labelPoint = pointAtRadius(index, total, RADAR_RADIUS + 18);
+    const label = createSvgElement("text");
+    label.setAttribute("x", labelPoint.x);
+    label.setAttribute("y", labelPoint.y);
+    label.setAttribute("dominant-baseline", "middle");
+    const cosValue = Math.cos(axisAngle(index, total));
+    if (Math.abs(cosValue) < 0.2) {
+      label.setAttribute("text-anchor", "middle");
+    } else {
+      label.setAttribute("text-anchor", cosValue > 0 ? "start" : "end");
+    }
+    label.classList.add("radar-label");
     label.textContent = axis;
+    radarLabels.appendChild(label);
 
-    const meter = document.createElement("div");
-    meter.className = "alignment-meter";
+    const point = createSvgElement("circle");
+    point.setAttribute("r", "4");
+    point.classList.add("radar-point");
+    radarPoints.appendChild(point);
+    radarPointNodes.push(point);
 
-    const fill = document.createElement("span");
-    fill.style.width = `${value * 20}%`;
-    meter.appendChild(fill);
-
-    const score = document.createElement("span");
-    score.className = "alignment-score";
-    score.textContent = `${value}/5`;
-
-    row.appendChild(label);
-    row.appendChild(meter);
-    row.appendChild(score);
-    previewAlignment.appendChild(row);
+    if (radarScores) {
+      const item = document.createElement("li");
+      item.className = "radar-score-item";
+      item.textContent = `${axis}: 0/5`;
+      radarScores.appendChild(item);
+      radarScoreNodes.push(item);
+    }
   });
+
+  radarReady = true;
+};
+
+const getAxisValue = (source, axis) => {
+  if (!source || typeof source !== "object") {
+    return 0;
+  }
+  if (Object.prototype.hasOwnProperty.call(source, axis)) {
+    return source[axis] || 0;
+  }
+  if (axis === "Alertness" && Object.prototype.hasOwnProperty.call(source, "Energy")) {
+    return source.Energy || 0;
+  }
+  return 0;
+};
+
+const renderRadarChart = (alignment = {}) => {
+  if (!radarChart || !radarShape) {
+    return;
+  }
+
+  initRadarChart();
+  const total = outcomeAxes.length;
+  const points = outcomeAxes.map((axis, index) => {
+    const value = Math.min(5, getAxisValue(alignment, axis));
+    const radius = (RADAR_RADIUS * value) / RADAR_STEPS;
+    const point = pointAtRadius(index, total, radius);
+    if (radarPointNodes[index]) {
+      radarPointNodes[index].setAttribute("cx", point.x);
+      radarPointNodes[index].setAttribute("cy", point.y);
+    }
+    if (radarScoreNodes[index]) {
+      radarScoreNodes[index].textContent = `${axis}: ${value}/5`;
+    }
+    return `${point.x},${point.y}`;
+  });
+  radarShape.setAttribute("points", points.join(" "));
 };
 
 const calculateCombinedAlignment = (baseAlignment = {}, botanicals = []) => {
   const combined = {};
   outcomeAxes.forEach((axis) => {
-    let value = baseAlignment[axis] || 0;
+    let value = getAxisValue(baseAlignment, axis);
     botanicals.forEach((botanical) => {
-      if (botanical.contributions && botanical.contributions[axis]) {
-        value += botanical.contributions[axis];
-      }
+      value += getAxisValue(botanical.contributions, axis);
     });
     combined[axis] = Math.min(5, value);
   });
@@ -127,7 +232,7 @@ const calculateCombinedAlignment = (baseAlignment = {}, botanicals = []) => {
 const updateAlignmentPreview = (selection) => {
   const baseAlignment = selection.baseAlignment || {};
   const botanicals = selection.selectedBotanicals || [];
-  renderAlignment(calculateCombinedAlignment(baseAlignment, botanicals));
+  renderRadarChart(calculateCombinedAlignment(baseAlignment, botanicals));
 };
 
 const updateBotanicalPreview = (selection) => {
@@ -147,7 +252,7 @@ const resetBasePreview = () => {
   }
   if (previewBaseDescription) {
     previewBaseDescription.textContent =
-      "The base tea will steer the balance of calm, focus, and energy in your blend.";
+      "The base tea will steer the balance of calm, focus, and alertness in your blend.";
   }
   updateAlignmentPreview({});
   if (continueButton) {
