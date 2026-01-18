@@ -29,7 +29,7 @@
               data-outcome-id="{{ outcome.id }}"
               data-outcome-title="{{ outcome.title }}"
               data-outcome-description="{{ outcome.description }}"
-              data-bases="{{ outcome.bases | join(',') }}"
+              data-bases="{{ outcome.bases | map(attribute='title') | join(',') }}"
               data-botanicals="{{ outcome.botanicals | join(',') }}"
             >
               <span class="outcome-title">{{ outcome.title }}</span>
@@ -37,6 +37,47 @@
             </button>
             {% endfor %}
           </div>
+        </div>
+
+        <div class="blend-panel">
+          <h2 class="section-title">Step 2: Choose a base tea</h2>
+          <p class="step-hint">
+            Each base aligns differently with your outcome. Pick one to shape the energy profile.
+          </p>
+          <p class="base-empty" data-base-empty>
+            Select an outcome first to reveal matching base teas.
+          </p>
+          {% for outcome in outcomes %}
+          <div class="base-grid" data-base-grid="{{ outcome.id }}" hidden>
+            {% for base in outcome.bases %}
+            <button
+              class="base-card"
+              type="button"
+              data-base-id="{{ base.id }}"
+              data-outcome-id="{{ outcome.id }}"
+              data-base-title="{{ base.title }}"
+              data-base-description="{{ base.description }}"
+              data-alignment='{{ base.alignment | tojson }}'
+            >
+              <div class="base-card-header">
+                <span class="base-title">{{ base.title }}</span>
+                <span class="base-tag">{{ outcome.title }} aligned</span>
+              </div>
+              <p class="base-description">{{ base.description }}</p>
+              <div class="alignment-grid">
+                {% for axis in outcome_axes %}
+                <div class="alignment-item">
+                  <span class="alignment-label">{{ axis }}</span>
+                  <div class="alignment-meter">
+                    <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </button>
+            {% endfor %}
+          </div>
+          {% endfor %}
         </div>
 
         <aside class="blend-panel blend-preview" aria-live="polite">
@@ -55,13 +96,53 @@
             </ul>
           </div>
           <div class="preview-card">
+            <p class="preview-label">Selected base tea</p>
+            <h3 class="preview-title" data-preview-base-title>Pick a base tea</h3>
+            <p class="preview-description" data-preview-base-description>
+              The base tea will steer the balance of calm, focus, and energy in your blend.
+            </p>
+          </div>
+          <div class="preview-card">
+            <p class="preview-label">Outcome visualization</p>
+            <div class="alignment-visual" data-preview-alignment data-outcome-axes='{{ outcome_axes | tojson }}'>
+              <div class="alignment-row">
+                <span class="alignment-label">Sleep</span>
+                <div class="alignment-meter">
+                  <span style="width: 0%"></span>
+                </div>
+                <span class="alignment-score">0/5</span>
+              </div>
+              <div class="alignment-row">
+                <span class="alignment-label">Calm</span>
+                <div class="alignment-meter">
+                  <span style="width: 0%"></span>
+                </div>
+                <span class="alignment-score">0/5</span>
+              </div>
+              <div class="alignment-row">
+                <span class="alignment-label">Focus</span>
+                <div class="alignment-meter">
+                  <span style="width: 0%"></span>
+                </div>
+                <span class="alignment-score">0/5</span>
+              </div>
+              <div class="alignment-row">
+                <span class="alignment-label">Energy</span>
+                <div class="alignment-meter">
+                  <span style="width: 0%"></span>
+                </div>
+                <span class="alignment-score">0/5</span>
+              </div>
+            </div>
+          </div>
+          <div class="preview-card">
             <p class="preview-label">Functional botanicals</p>
             <ul class="preview-list" data-preview-botanicals>
               <li>Select an outcome to see botanicals.</li>
             </ul>
           </div>
           <button class="primary-action" type="button" data-continue disabled>
-            Continue to base selection
+            Continue to botanicals
           </button>
         </aside>
       </section>

@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+from APP.data import BLEND_OUTCOME_AXES, CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -51,5 +51,6 @@ async def custom_blend_step_one(request: Request):
         {
             "request": request,
             "outcomes": CUSTOM_BLEND_OUTCOMES,
+            "outcome_axes": BLEND_OUTCOME_AXES,
         },
     )
