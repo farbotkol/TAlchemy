@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.data import PRODUCTS, get_product
+from APP.data import PRODUCTS, get_product
 
 BASE_DIR = Path(__file__).resolve().parent
 

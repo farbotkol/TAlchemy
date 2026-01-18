@@ -14,27 +14,56 @@
         <p class="subhead">{{ product.description }}</p>
       </header>
 
-      <section class="detail-panel">
-        <div class="detail-block">
-          <p class="label">Intended outcomes</p>
-          <div class="pill-row">
-            {% for outcome in product.outcomes %}
-            <span class="pill">{{ outcome }}</span>
-            {% endfor %}
+      <section class="detail-layout">
+        <div class="detail-panel">
+          <div class="detail-block">
+            <p class="label">Intended outcomes</p>
+            <div class="pill-row">
+              {% for outcome in product.outcomes %}
+              <span class="pill">{{ outcome }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="detail-block">
+            <p class="label">Choose a size</p>
+            <ul class="size-list">
+              {% for size in product.sizes %}
+              <li class="size-item">
+                <div class="size-meta">
+                  <span>{{ size.label }}</span>
+                  <span>A${{ '%.2f'|format(size.price_aud) }}</span>
+                </div>
+                <button
+                  class="add-to-cart"
+                  type="button"
+                  data-product-id="{{ product.id }}"
+                  data-product-name="{{ product.name }}"
+                  data-size-label="{{ size.label }}"
+                  data-price="{{ '%.2f'|format(size.price_aud) }}"
+                >
+                  Add to cart
+                </button>
+              </li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
-        <div class="detail-block">
-          <p class="label">Available sizes</p>
-          <ul class="size-list">
-            {% for size in product.sizes %}
-            <li>
-              <span>{{ size.label }}</span>
-              <span>A${{ '%.2f'|format(size.price_aud) }}</span>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
+
+        <aside class="cart-panel" aria-live="polite">
+          <div class="cart-header">
+            <h2>Cart</h2>
+            <span class="cart-count" data-cart-count>0 items</span>
+          </div>
+          <div class="cart-items" data-cart-items>
+            <p class="cart-empty">Your cart is empty.</p>
+          </div>
+          <div class="cart-total">
+            <span>Total</span>
+            <span data-cart-total>A$0.00</span>
+          </div>
+        </aside>
       </section>
     </main>
+    <script src="/static/cart.js"></script>
   </body>
 </html>

@@ -181,9 +181,114 @@ h1 {
   animation: fadeIn 0.8s ease 0.1s both;
 }
 
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+
 .detail-block {
   display: grid;
   gap: 12px;
+}
+
+.size-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.size-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.add-to-cart {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--leaf);
+  color: var(--card);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-to-cart:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(61, 91, 69, 0.2);
+}
+
+.cart-panel {
+  background: rgba(255, 250, 243, 0.9);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cart-header h2 {
+  margin: 0;
+  font-family: "Fraunces", "Times New Roman", serif;
+  font-size: 1.5rem;
+}
+
+.cart-count {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.cart-items {
+  display: grid;
+  gap: 12px;
+}
+
+.cart-item {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(90, 70, 51, 0.15);
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cart-item strong {
+  font-weight: 600;
+}
+
+.cart-item-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.cart-empty {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1.05rem;
 }
 
 .back-link {
@@ -221,7 +326,15 @@ h1 {
     padding: 32px 18px 64px;
   }
 
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
   .product-card {
     padding: 20px;
+  }
+
+  .cart-panel {
+    position: static;
   }
 }

@@ -5,6 +5,9 @@
 set -e
 
 MAX_ITERATIONS=${1:-10}
+AGENT_CMD=${AGENT_CMD:-codex}
+AGENT_SUBCOMMAND=${AGENT_SUBCOMMAND:-exec}
+AGENT_ARGS=${AGENT_ARGS:--s danger-full-access}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
@@ -59,8 +62,12 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Ralph Iteration $i of $MAX_ITERATIONS"
   echo "═══════════════════════════════════════════════════════"
   
-  # Run amp with the ralph prompt
-  OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+  # Run codex in non-interactive mode with the ralph prompt
+  if [ -n "$AGENT_SUBCOMMAND" ]; then
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | "$AGENT_CMD" "$AGENT_SUBCOMMAND" $AGENT_ARGS 2>&1 | tee /dev/stderr) || true
+  else
+    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | "$AGENT_CMD" $AGENT_ARGS 2>&1 | tee /dev/stderr) || true
+  fi
   
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then

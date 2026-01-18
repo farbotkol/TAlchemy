@@ -2,6 +2,7 @@
 ## Codebase Patterns
 - FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
 - Pre-made product data is currently defined in `app/data.py` for listing and detail views.
+- Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
 Started: Sun Jan 18 23:26:54 AEDT 2026
 ---
 ## 2026-01-18 23:59:27 AEDT - US-101
@@ -12,5 +13,14 @@ Thread: N/A
   - Product data is rendered via Jinja2 templates from `app/data.py`
   - Static assets are served from `app/static` and referenced in templates
   - No automated tests yet; `python -m compileall app` used as a syntax check
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 00:14:22 AEDT - US-102
+Thread: N/A
+- What was implemented: Added client-side cart behavior on product detail with add-to-cart buttons per size and live cart summary
+- Files changed: app/templates/product_detail.html, app/static/styles.css, app/static/cart.js, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Cart UI lives on the product detail page and reads/writes localStorage under `teaAlchemyCart`
+  - Cart rendering happens client-side in `app/static/cart.js`
   - Browser verification pending; dev-browser skill not available in this session
 ---
