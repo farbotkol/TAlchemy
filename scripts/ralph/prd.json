@@ -1,68 +1,90 @@
 {
   "project": "Tea Alchemy",
-  "branchName": "ralph/custom-blend-dependent-steps",
-  "description": "Custom blend builder: step-dependent options, capped selections, and per-step pages",
+  "branchName": "ralph/bootstrap-ui-refresh",
+  "description": "Adopt Bootstrap 5 for UI consistency across the Tea Alchemy web experience",
   "userStories": [
     {
-      "id": "US-CB-201",
-      "title": "Step 2 options depend on Step 1 outcome",
-      "description": "As a customer, I want Step 2 base tea options to reflect the outcome I selected in Step 1 so the flow feels tailored showing ONLY the top 6 options with the the highest amount of the selected outcome.",
+      "id": "US-BS-001",
+      "title": "Introduce Bootstrap 5 base styling",
+      "description": "As a developer, I want Bootstrap 5 included so the UI has a consistent, production-ready foundation.",
       "acceptanceCriteria": [
-        "Step 2 base tea options are filtered based on the selected Step 1 outcome",
-        "Step 2 shows at most 6 base teas, ordered by relevance to the selected outcome",
-        "Changing the Step 1 outcome updates Step 2 options immediately",
-        "Typecheck passes",
-        "Verify in browser using dev-browser skill"
+        "Bootstrap 5 CSS is loaded for all pages",
+        "Bootstrap 5 JS bundle is available where interactive components are used",
+        "Custom styles still load after Bootstrap",
+        "Typecheck passes"
       ],
       "priority": 1,
       "passes": true,
       "notes": ""
     },
     {
-      "id": "US-CB-202",
-      "title": "Step 3 botanicals depend on Step 2 base tea",
-      "description": "As a customer, I want Step 3 functional botanical options to be derived from my chosen base tea so the blend stays coherent. Show the top 6 items that are inline with the outcome Only",
+      "id": "US-BS-002",
+      "title": "Update homepage layout to Bootstrap",
+      "description": "As a customer, I want a clean, responsive home page layout that looks consistent on mobile and desktop.",
       "acceptanceCriteria": [
-        "Step 3 botanical options are filtered based on the selected base tea",
-        "Step 3 shows at most 6 botanicals, ordered by relevance to the selected base tea",
-        "Step 3 enforces a minimum of 1 and a maximum of 2 botanicals selected",
-        "Changing the base tea resets Step 3 selections if no longer valid",
-        "Typecheck passes",
+        "Homepage uses Bootstrap grid and spacing utilities",
+        "Product cards use Bootstrap card layout or a consistent card pattern",
+        "Typography and buttons use Bootstrap variants",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
-      "passes": true,
+      "passes": false,
       "notes": ""
     },
     {
-      "id": "US-CB-203",
-      "title": "Step 4 flavor options depend on Step 2 base tea and Step 3 botanicals",
-      "description": "As a customer, I want Step 4 flavor botanicals to be constrained by my base tea and selected functional botanicals so flavors stay compatible.",
+      "id": "US-BS-003",
+      "title": "Update product detail page to Bootstrap",
+      "description": "As a customer, I want the product detail layout to be clear and consistent with the rest of the site.",
       "acceptanceCriteria": [
-        "Step 4 flavor options are filtered based on the selected base tea and functional botanicals",
-        "Step 4 shows at most 6 flavor botanicals, ordered by relevance to the prior selections",
-        "Step 4 enforces a minimum of 1 and a maximum of 2 flavor botanicals selected",
-        "Changing Step 2 or Step 3 selections updates Step 4 options and removes invalid selections",
-        "Typecheck passes",
+        "Product detail uses Bootstrap grid for layout",
+        "Add-to-cart and cart summary use Bootstrap buttons and cards",
+        "Spacing and headings use Bootstrap utilities",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 3,
-      "passes": true,
+      "passes": false,
       "notes": ""
     },
     {
-      "id": "US-CB-204",
-      "title": "Separate page for each custom blend step",
-      "description": "As a customer, I want each custom blend step to be on its own page so the flow feels clear and focused.",
+      "id": "US-BS-004",
+      "title": "Update custom blend flow pages to Bootstrap",
+      "description": "As a customer, I want the custom blend steps to feel cohesive and easy to scan.",
       "acceptanceCriteria": [
-        "Each step (Step 1, Step 2, Step 3, Step 4) has its own route and page",
-        "The flow preserves the user's selections across steps",
-        "Navigation between steps is clear and prevents skipping required selections",
-        "Typecheck passes",
+        "Each custom blend step page uses Bootstrap grid and cards",
+        "Step navigation uses Bootstrap buttons and alerts where appropriate",
+        "Forms (size/name) use Bootstrap form controls",
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": true,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-005",
+      "title": "Update cart, checkout, and confirmation pages to Bootstrap",
+      "description": "As a customer, I want cart and checkout flows to be consistent and easy to complete.",
+      "acceptanceCriteria": [
+        "Cart, checkout, and confirmation use Bootstrap grid and cards",
+        "Form fields use Bootstrap input styling and validation states",
+        "Call-to-action buttons use Bootstrap variants",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-006",
+      "title": "Reduce custom CSS to brand overrides",
+      "description": "As a developer, I want custom CSS to be minimal and focused on brand overrides so Bootstrap remains the primary system.",
+      "acceptanceCriteria": [
+        "Custom CSS only handles brand colors, typography, and small layout tweaks",
+        "Legacy layout styles are removed or replaced by Bootstrap utilities",
+        "No visual regressions in core pages",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
       "notes": ""
     }
   ]
