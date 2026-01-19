@@ -62,3 +62,12 @@ Thread: N/A
   - Gotchas encountered: dev-browser skill not available for required UI verification.
   - Useful context: Step 3 filtering uses `scoreBotanical` and selection enforcement in `APP/static/blend.js`.
 ---
+## Mon Jan 19 15:32:29 AEDT 2026 - US-CB-203
+Thread: N/A
+- What was implemented: Confirmed Step 4 flavor options remain filtered by base + botanicals (top 6) with 1-2 selection enforcement; updated PRD status.
+- Files changed: scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Step 4 filtering relies on flavor botanical compatibility plus base matching in `APP/static/blend.js`.
+---
