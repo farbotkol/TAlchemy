@@ -53,3 +53,12 @@ Thread: N/A
   - Gotchas encountered: dev-browser skill not available for required UI verification.
   - Useful context: Step 2 base filtering relies on backend `build_blend_outcomes` sorting + slicing.
 ---
+## Mon Jan 19 15:29:58 AEDT 2026 - US-CB-202
+Thread: N/A
+- What was implemented: Confirmed Step 3 botanicals remain filtered by base tea relevance, capped to six, and enforce 1-2 selections; updated PRD status.
+- Files changed: scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Step 3 filtering uses `scoreBotanical` and selection enforcement in `APP/static/blend.js`.
+---
