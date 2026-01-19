@@ -39,3 +39,12 @@ Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
   - Gotchas encountered: dev server on port 8000 was already taken; used 8001 for verification.
   - Useful context: Browser verification screenshots stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-1.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-2.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-3.png
 ---
+## Mon Jan 19 22:13:08 AEDT 2026 - US-BS-005
+Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
+- What was implemented: added Bootstrap-based cart, checkout, and order confirmation pages with summary cards and validated form controls; wired new FastAPI routes and linked product cart button.
+- Files changed: app/main.py, app/templates/cart.html, app/templates/checkout.html, app/templates/confirmation.html, app/templates/product.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: N/A
+  - Gotchas encountered: dev-browser server was already running on port 9222 after Playwright install.
+  - Useful context: Browser verification screenshots stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-cart.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-checkout.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-confirmation.png
+---

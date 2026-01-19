@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmation | Tea Alchemy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="text-center mb-4">
+        <span class="badge text-bg-success mb-3">Order confirmed</span>
+        <h1 class="h3">Thank you for your order</h1>
+        <p class="text-muted mb-0">We sent a confirmation to {{ confirmation.email }}.</p>
+      </div>
+
+      <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+        <div>
+          <strong>Order {{ confirmation.order_number }}</strong>
+          <div class="small">{{ confirmation.eta }}</div>
+        </div>
+        <button class="btn btn-outline-success btn-sm" type="button">Track shipment</button>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-7">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Order summary</h2>
+              <ul class="list-unstyled mb-3">
+                {% for item in confirmation.items %}
+                <li class="d-flex justify-content-between mb-2">
+                  <span>{{ item.name }}</span>
+                  <span class="text-muted">{{ item.details }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              <div class="d-flex justify-content-between fw-semibold">
+                <span>Total paid</span>
+                <span>${{ "%.2f" | format(confirmation.total) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <h2 class="h6 text-uppercase text-muted">Shipping to</h2>
+              <address class="mb-0">
+                {% for line in confirmation.address %}
+                {{ line }}<br />
+                {% endfor %}
+              </address>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm mt-3">
+            <div class="card-body">
+              <h2 class="h6 text-uppercase text-muted">Need to edit?</h2>
+              <p class="mb-3">Reply to the confirmation email within 2 hours for adjustments.</p>
+              <button class="btn btn-sm btn-outline-secondary" type="button">Contact support</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
+        <a class="btn btn-primary" href="/">Continue shopping</a>
+        <a class="btn btn-outline-secondary" href="/products/midnight-earl-grey">View similar blends</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

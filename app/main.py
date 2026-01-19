@@ -75,3 +75,83 @@ def blend_step_three(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
         "blend-step-3.html", {"request": request, "summary": summary}
     )
+
+
+@app.get("/cart", response_class=HTMLResponse)
+def view_cart(request: Request) -> HTMLResponse:
+    items = [
+        {
+            "name": "Midnight Earl Grey",
+            "details": "50g tin",
+            "price": 18.0,
+            "quantity": 2,
+        },
+        {
+            "name": "Citrus Sencha",
+            "details": "Sampler trio",
+            "price": 22.0,
+            "quantity": 1,
+        },
+        {
+            "name": "Tea filters",
+            "details": "Pack of 50",
+            "price": 8.0,
+            "quantity": 1,
+        },
+    ]
+    subtotal = sum(item["price"] * item["quantity"] for item in items)
+    shipping = 0.0 if subtotal >= 60 else 6.0
+    tax = round(subtotal * 0.08, 2)
+    total = subtotal + shipping + tax
+    return templates.TemplateResponse(
+        "cart.html",
+        {
+            "request": request,
+            "items": items,
+            "subtotal": subtotal,
+            "shipping": shipping,
+            "tax": tax,
+            "total": total,
+        },
+    )
+
+
+@app.get("/checkout", response_class=HTMLResponse)
+def view_checkout(request: Request) -> HTMLResponse:
+    summary = {
+        "items": [
+            {"name": "Midnight Earl Grey", "details": "2 x 50g tin", "price": 36.0},
+            {"name": "Citrus Sencha", "details": "Sampler trio", "price": 22.0},
+            {"name": "Tea filters", "details": "Pack of 50", "price": 8.0},
+        ],
+        "subtotal": 66.0,
+        "shipping": 0.0,
+        "tax": 5.28,
+        "total": 71.28,
+    }
+    return templates.TemplateResponse(
+        "checkout.html", {"request": request, "summary": summary}
+    )
+
+
+@app.get("/confirmation", response_class=HTMLResponse)
+def view_confirmation(request: Request) -> HTMLResponse:
+    confirmation = {
+        "order_number": "TA-1048",
+        "email": "ava.chen@example.com",
+        "total": 71.28,
+        "items": [
+            {"name": "Midnight Earl Grey", "details": "2 x 50g tin"},
+            {"name": "Citrus Sencha", "details": "Sampler trio"},
+            {"name": "Tea filters", "details": "Pack of 50"},
+        ],
+        "address": [
+            "Ava Chen",
+            "129 Orchard Lane",
+            "San Francisco, CA 94110",
+        ],
+        "eta": "Arrives in 3-5 business days",
+    }
+    return templates.TemplateResponse(
+        "confirmation.html", {"request": request, "confirmation": confirmation}
+    )
