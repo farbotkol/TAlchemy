@@ -1,0 +1,69 @@
+{
+  "project": "Tea Alchemy",
+  "branchName": "ralph/custom-blend-dependent-steps",
+  "description": "Custom blend builder: step-dependent options, capped selections, and per-step pages",
+  "userStories": [
+    {
+      "id": "US-CB-201",
+      "title": "Step 2 options depend on Step 1 outcome",
+      "description": "As a customer, I want Step 2 base tea options to reflect the outcome I selected in Step 1 so the flow feels tailored.",
+      "acceptanceCriteria": [
+        "Step 2 base tea options are filtered based on the selected Step 1 outcome",
+        "Step 2 shows at most 6 base teas, ordered by relevance to the selected outcome",
+        "Changing the Step 1 outcome updates Step 2 options immediately",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-CB-202",
+      "title": "Step 3 botanicals depend on Step 2 base tea",
+      "description": "As a customer, I want Step 3 functional botanical options to be derived from my chosen base tea so the blend stays coherent.",
+      "acceptanceCriteria": [
+        "Step 3 botanical options are filtered based on the selected base tea",
+        "Step 3 shows at most 6 botanicals, ordered by relevance to the selected base tea",
+        "Step 3 enforces a minimum of 1 and a maximum of 2 botanicals selected",
+        "Changing the base tea resets Step 3 selections if no longer valid",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-CB-203",
+      "title": "Step 4 flavor options depend on Step 2 base tea and Step 3 botanicals",
+      "description": "As a customer, I want Step 4 flavor botanicals to be constrained by my base tea and selected functional botanicals so flavors stay compatible.",
+      "acceptanceCriteria": [
+        "Step 4 flavor options are filtered based on the selected base tea and functional botanicals",
+        "Step 4 shows at most 6 flavor botanicals, ordered by relevance to the prior selections",
+        "Step 4 enforces a minimum of 1 and a maximum of 2 flavor botanicals selected",
+        "Changing Step 2 or Step 3 selections updates Step 4 options and removes invalid selections",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-CB-204",
+      "title": "Separate page for each custom blend step",
+      "description": "As a customer, I want each custom blend step to be on its own page so the flow feels clear and focused.",
+      "acceptanceCriteria": [
+        "Each step (Step 1, Step 2, Step 3, Step 4) has its own route and page",
+        "The flow preserves the user's selections across steps",
+        "Navigation between steps is clear and prevents skipping required selections",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

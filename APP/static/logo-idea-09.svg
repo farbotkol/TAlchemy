@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tea Alchemy logo idea 9">
+  <rect x="64" y="64" width="384" height="384" rx="110" fill="#FAFAFA" stroke="#111827" stroke-width="10"/>
+  <path d="M172 250H340" stroke="#111827" stroke-width="22" stroke-linecap="round"/>
+  <path d="M256 250V352" stroke="#111827" stroke-width="22" stroke-linecap="round"/>
+  <path d="M210 352L256 260L302 352" stroke="#F43F5E" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 210C238 196 242 170 266 164" stroke="#22D3EE" stroke-width="12" stroke-linecap="round"/>
+</svg>

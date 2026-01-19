@@ -1,0 +1,1121 @@
+Starting Ralph - Max iterations: 50
+
+═══════════════════════════════════════════════════════
+  Ralph Iteration 1 of 50
+═══════════════════════════════════════════════════════
+Reading prompt from stdin...
+OpenAI Codex v0.87.0 (research preview)
+--------
+workdir: /Users/lukefarbotko/Documents/projects/TAlchemy
+model: gpt-5.2-codex
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: none
+reasoning summaries: auto
+session id: 019bd144-7cad-7150-bcd2-4c1dc1189cc7
+--------
+user
+# Ralph Agent Instructions
+
+You are an autonomous coding agent working on a software project.
+
+## Your Task
+
+1. Read the PRD at `prd.json` (in the same directory as this file)
+2. Read the progress log at `progress.txt` (check Codebase Patterns section first)
+3. Check you're on the correct branch from PRD `branchName`. If not, check it out or create from main.
+4. If there is no application code yet, scaffold a Python lightweight backend in `app/` using FastAPI and PostgreSQL.
+4. Pick the **highest priority** user story where `passes: false`
+5. Implement that single user story
+6. Run quality checks (e.g., typecheck, lint, test - use whatever your project requires)
+7. Update AGENTS.md files if you discover reusable patterns (see below)
+8. If checks pass, commit ALL changes with message: `feat: [Story ID] - [Story Title]`
+9. Update the PRD to set `passes: true` for the completed story
+10. Append your progress to `progress.txt`
+
+## Progress Report Format
+
+APPEND to progress.txt (never replace, always append):
+```
+## [Date/Time] - [Story ID]
+Thread: (optional) add a link or ID for this run if available
+- What was implemented
+- Files changed
+- **Learnings for future iterations:**
+  - Patterns discovered (e.g., "this codebase uses X for Y")
+  - Gotchas encountered (e.g., "don't forget to update Z when changing W")
+  - Useful context (e.g., "the evaluation panel is in component X")
+---
+```
+
+Include the thread URL so future iterations can use the `read_thread` tool to reference previous work if needed.
+
+The learnings section is critical - it helps future iterations avoid repeating mistakes and understand the codebase better.
+
+## Consolidate Patterns
+
+If you discover a **reusable pattern** that future iterations should know, add it to the `## Codebase Patterns` section at the TOP of progress.txt (create it if it doesn't exist). This section should consolidate the most important learnings:
+
+```
+## Codebase Patterns
+- Example: Use `sql<number>` template for aggregations
+- Example: Always use `IF NOT EXISTS` for migrations
+- Example: Export types from actions.ts for UI components
+```
+
+Only add patterns that are **general and reusable**, not story-specific details.
+
+## Update AGENTS.md Files
+
+Before committing, check if any edited files have learnings worth preserving in nearby AGENTS.md files:
+
+1. **Identify directories with edited files** - Look at which directories you modified
+2. **Check for existing AGENTS.md** - Look for AGENTS.md in those directories or parent directories
+3. **Add valuable learnings** - If you discovered something future developers/agents should know:
+   - API patterns or conventions specific to that module
+   - Gotchas or non-obvious requirements
+   - Dependencies between files
+   - Testing approaches for that area
+   - Configuration or environment requirements
+
+**Examples of good AGENTS.md additions:**
+- "When modifying X, also update Y to keep them in sync"
+- "This module uses pattern Z for all API calls"
+- "Tests require the dev server running on PORT 3000"
+- "Field names must match the template exactly"
+
+**Do NOT add:**
+- Story-specific implementation details
+- Temporary debugging notes
+- Information already in progress.txt
+
+Only update AGENTS.md if you have **genuinely reusable knowledge** that would help future work in that directory.
+
+## Quality Requirements
+
+- ALL commits must pass your project's quality checks (typecheck, lint, test)
+- Do NOT commit broken code
+- Keep changes focused and minimal
+- Follow existing code patterns
+
+## Browser Testing (Required for Frontend Stories)
+
+For any story that changes UI, you MUST verify it works in the browser:
+
+1. Load the `dev-browser` skill
+2. Navigate to the relevant page
+3. Verify the UI changes work as expected
+4. Take a screenshot if helpful for the progress log
+
+A frontend story is NOT complete until browser verification passes.
+
+## Stop Condition
+
+After completing a user story, check if ALL stories have `passes: true`.
+
+If ALL stories are complete and passing, reply with:
+<promise>COMPLETE</promise>
+
+If there are still stories with `passes: false`, end your response normally (another iteration will pick up the next story).
+
+## Important
+
+- Work on ONE story per iteration
+- Commit frequently
+- Keep CI green
+- Read the Codebase Patterns section in progress.txt before starting
+
+mcp startup: no servers
+exec
+/bin/zsh -lc ls in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 30ms:
+APP
+scripts
+
+thinking
+**Listing project files**
+exec
+/bin/zsh -lc 'rg --files' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 46ms:
+scripts/ralph/prd.json.example
+scripts/ralph/prd.json
+scripts/ralph/ralph.sh
+scripts/ralph/prompt.md
+scripts/ralph/progress.txt
+APP/data.py
+APP/main.py
+APP/AGENTS.md
+APP/templates/index.html
+APP/templates/product_detail.html
+APP/static/cart.js
+APP/static/styles.css
+APP/__pycache__/main.cpython-39.pyc
+APP/__pycache__/db.cpython-39.pyc
+APP/__pycache__/data.cpython-39.pyc
+APP/__pycache__/__init__.cpython-39.pyc
+APP/__init__.py
+APP/requirements.txt
+APP/db.py
+
+thinking
+**Noting agent location and next steps**
+
+I see the agents are under the app/agents directory, not in the root; next, I'll read prd.json and track progress accordingly.
+exec
+/bin/zsh -lc 'cat scripts/ralph/prd.json' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 32ms:
+{
+  "project": "Tea Alchemy",
+  "branchName": "ralph/tea-alchemy-prd",
+  "description": "Tea Alchemy e-commerce and custom blend experience (Phase 1 + Phase 2)",
+  "userStories": [
+    {
+      "id": "US-101",
+      "title": "Browse pre-made products",
+      "description": "As a customer, I want to browse pre-made tea blends so I can quickly purchase without customization.",
+      "acceptanceCriteria": [
+        "Product listing page shows product name, description, intended outcomes, available sizes, and price",
+        "Products are clickable to view detail pages",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Phase 1 foundation"
+    },
+    {
+exec
+/bin/zsh -lc 'cat scripts/ralph/progress.txt' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+# Ralph Progress Log
+## Codebase Patterns
+- FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
+- Pre-made product data is currently defined in `app/data.py` for listing and detail views.
+- Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js`.
+Started: Sun Jan 18 23:26:54 AEDT 2026
+---
+## 2026-01-18 23:59:27 AEDT - US-101
+Thread: N/A
+- What was implemented: FastAPI storefront with pre-made product listing and detail pages, plus in-memory product catalog with outcomes, sizes, and pricing
+- Files changed: app/main.py, app/data.py, app/templates/index.html, app/templates/product_detail.html, app/static/styles.css, app/db.py, app/requirements.txt, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Product data is rendered via Jinja2 templates from `app/data.py`
+  - Static assets are served from `app/static` and referenced in templates
+  - No automated tests yet; `python -m compileall app` used as a syntax check
+  - Browser verification pending; dev-browser skill not available in this session
+---
+## 2026-01-19 00:14:22 AEDT - US-102
+Thread: N/A
+- What was implemented: Added client-side cart behavior on product detail with add-to-cart buttons per size and live cart summary
+
+thinking
+**Checking current git branch**
+exec
+/bin/zsh -lc 'git status -sb' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 48ms:
+## ralph/tea-alchemy-prd
+?? .DS_Store
+?? .ralph/ralph.log
+?? .ralph/uvicorn.log
+?? APP/__pycache__/
+?? scripts/ralph/.last-branch
+
+thinking
+**Confirming app directory casing**
+
+The codebase uses an uppercase APP directory despite instructions stating app/, so I'll follow the existing code structure and read AGENTS accordingly.
+exec
+/bin/zsh -lc 'cat APP/AGENTS.md' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+# App Agent Notes
+
+- FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
+- Pre-made product data currently lives in `app/data.py` and is rendered for both listing and detail pages.
+- Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `app/static/cart.js` on product detail.
+
+thinking
+**Identifying UI location for custom blend step**
+
+Noticed references to "app" vs "APP" and confirmed to keep the current naming. Planning to implement the custom blend step 1 outcome selection UI by checking main.py and templates next.
+exec
+/bin/zsh -lc "sed -n '1,200p' APP/main.py" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 33ms:
+from __future__ import annotations
+
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
+from APP.data import PRODUCTS, get_product
+
+BASE_DIR = Path(__file__).resolve().parent
+
+app = FastAPI(title="Tea Alchemy")
+
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
+
+
+thinking
+**Planning custom blend route**
+
+I'll check data.py for necessary data to implement a new /custom-blend page as the first step.
+exec
+/bin/zsh -lc "sed -n '1,200p' APP/data.py" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 32ms:
+from __future__ import annotations
+
+from typing import List
+
+from pydantic import BaseModel
+
+
+class ProductSize(BaseModel):
+    label: str
+    grams: int
+    price_aud: float
+
+
+class Product(BaseModel):
+    id: str
+    name: str
+    description: str
+    outcomes: List[str]
+    sizes: List[ProductSize]
+
+
+
+thinking
+**Planning custom blend step 1**
+
+I'm outlining a /custom-blend page showing outcome cards with explanations that update the UI to preview available bases and botanicals based on the selected outcome. I'll store the selection in localStorage and maintain a local dataset linking outcomes to bases/botanicals to meet acceptance without full later steps.
+thinking
+**Adding navigation and styles**
+
+I'll create the /custom-blend route with a start button linked from the home page and update templates and styles accordingly, following existing static style patterns.
+exec
+/bin/zsh -lc "sed -n '1,200p' APP/static/styles.css" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 39ms:
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Space+Grotesk:wght@400;500;600&display=swap");
+
+:root {
+  color-scheme: light;
+  --ink: #2b1f14;
+  --ink-soft: #5a4633;
+  --cream: #f7efe3;
+  --latte: #e6d3be;
+  --caramel: #c48755;
+  --leaf: #3d5b45;
+  --card: #fffaf3;
+  --shadow: 0 22px 60px rgba(69, 42, 20, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+exec
+/bin/zsh -lc "sed -n '200,400p' APP/static/styles.css" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+  gap: 12px;
+}
+
+.size-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.add-to-cart {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--leaf);
+  color: var(--card);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+thinking
+**Planning custom blend feature**
+
+I'm outlining a new route and static JS file to manage blend selection using localStorage, adding outcome data structures in data.py with four preset outcomes. The UI will update based on selection and show next steps, with templates embedding needed data.
+exec
+/bin/zsh -lc "sed -n '1,200p' APP/templates/index.html" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Pre-made Blends</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero">
+        <p class="eyebrow">Tea Alchemy</p>
+        <h1>Pre-made blends for every intention.</h1>
+        <p class="subhead">
+          Curated rituals for sleep, calm, focus, and bright energy. Choose your mood and
+          pour a little magic into the day.
+        </p>
+      </header>
+
+      <section class="product-grid">
+
+thinking
+**Planning custom blend integration**
+
+I'm planning to add a section or link to the custom blend page with a CTA in the hero or bottom and will create a new template aligned with the existing product_detail layout.
+exec
+/bin/zsh -lc "sed -n '1,220p' APP/templates/product_detail.html" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | {{ product.name }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <h1>{{ product.name }}</h1>
+        <p class="subhead">{{ product.description }}</p>
+      </header>
+
+      <section class="detail-layout">
+        <div class="detail-panel">
+          <div class="detail-block">
+            <p class="label">Intended outcomes</p>
+
+
+thinking
+**Planning new blend template setup**
+
+Planning to create a new template with a selection list and supporting route, data, JS, and CSS. Noted the dev-browser skill is unavailable, so frontend verification can't be done as required and will be mentioned in the final notes.
+thinking
+**Designing custom blend UI and data flow**
+
+Defining blend outcomes with bases and botanicals in data.py and planning the template to render selectable outcome cards with data attributes. The JS will handle selection state, update a preview panel, and persist choices in localStorage under `teaAlchemyBlend` for downstream use.
+file update
+M /Users/lukefarbotko/Documents/projects/TAlchemy/APP/data.py
+@@ -21,2 +21,10 @@
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+@@ -64,2 +72,33 @@
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+apply_patch(auto_approved=true) exited 0 in 12ms:
+Success. Updated the following files:
+M APP/data.py
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+
+
+thinking
+**Updating main routing**
+
+I'm updating main.py to import the new module and add appropriate routing to integrate the feature.
+file update
+M /Users/lukefarbotko/Documents/projects/TAlchemy/APP/main.py
+@@ -9,3 +9,3 @@
+ 
+-from APP.data import PRODUCTS, get_product
++from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+ 
+@@ -44 +44,12 @@
+     )
++
++
++@app.get("/custom-blend", response_class=HTMLResponse)
++async def custom_blend_step_one(request: Request):
++    return templates.TemplateResponse(
++        "custom_blend.html",
++        {
++            "request": request,
++            "outcomes": CUSTOM_BLEND_OUTCOMES,
++        },
++    )
+apply_patch(auto_approved=true) exited 0 in 19ms:
+Success. Updated the following files:
+M APP/main.py
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+diff --git a/APP/main.py b/APP/main.py
+index 6e7e7f9e78cc3b94e19b8c9e337b6bf1b739d561..bb09252dff9cc4edc03dfae036d741f8df9970a9
+--- a/APP/main.py
++++ b/APP/main.py
+@@ -7,7 +7,7 @@
+ from fastapi.staticfiles import StaticFiles
+ from fastapi.templating import Jinja2Templates
+ 
+-from APP.data import PRODUCTS, get_product
++from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+ 
+ BASE_DIR = Path(__file__).resolve().parent
+ 
+@@ -42,3 +42,14 @@
+             "product": product,
+         },
+     )
++
++
++@app.get("/custom-blend", response_class=HTMLResponse)
++async def custom_blend_step_one(request: Request):
++    return templates.TemplateResponse(
++        "custom_blend.html",
++        {
++            "request": request,
++            "outcomes": CUSTOM_BLEND_OUTCOMES,
++        },
++    )
+
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+diff --git a/APP/main.py b/APP/main.py
+index 6e7e7f9e78cc3b94e19b8c9e337b6bf1b739d561..bb09252dff9cc4edc03dfae036d741f8df9970a9
+--- a/APP/main.py
++++ b/APP/main.py
+@@ -7,7 +7,7 @@
+ from fastapi.staticfiles import StaticFiles
+ from fastapi.templating import Jinja2Templates
+ 
+-from APP.data import PRODUCTS, get_product
++from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+ 
+ BASE_DIR = Path(__file__).resolve().parent
+ 
+@@ -42,3 +42,14 @@
+             "product": product,
+         },
+     )
++
++
++@app.get("/custom-blend", response_class=HTMLResponse)
++async def custom_blend_step_one(request: Request):
++    return templates.TemplateResponse(
++        "custom_blend.html",
++        {
++            "request": request,
++            "outcomes": CUSTOM_BLEND_OUTCOMES,
++        },
++    )
+
+
+thinking
+**Creating HTML template**
+
+I'm creating the custom_blend.html template file using a simple file write command.
+exec
+/bin/zsh -lc "cat <<'EOF' > APP/templates/custom_blend.html
+<"'!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Custom Blend</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <p class="eyebrow">Custom Blend Builder</p>
+        <h1>Step 1: Choose how you want to feel.</h1>
+        <p class="subhead">
+          Start with the outcome and we will tailor the base teas and botanicals to match
+          your intention.
+        </p>
+      </header>
+
+      <section class="blend-layout">
+        <div class="blend-panel">
+          <h2 class="section-title">Select an outcome</h2>
+          <div class="outcome-grid">
+            {% for outcome in outcomes %}
+            <button
+              class="outcome-card"
+              type="button"
+              data-outcome-id="{{ outcome.id }}"
+              data-outcome-title="{{ outcome.title }}"
+              data-outcome-description="{{ outcome.description }}"
+              data-bases="{{ outcome.bases | join('"',') }}\"
+              data-botanicals=\"{{ outcome.botanicals | join(',') }}\"
+            >
+              <span class=\"outcome-title\">{{ outcome.title }}</span>
+              <span class=\"outcome-description\">{{ outcome.description }}</span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <aside class=\"blend-panel blend-preview\" aria-live=\"polite\">
+          <h2 class=\"section-title\">Your blend path</h2>
+          <div class=\"preview-card\" data-outcome-preview>
+            <p class=\"preview-label\">Outcome</p>
+            <h3 class=\"preview-title\" data-preview-title>Choose an outcome</h3>
+            <p class=\"preview-description\" data-preview-description>
+              We will reveal the best bases and botanicals once you pick a direction.
+            </p>
+          </div>
+          <div class=\"preview-card\">
+            <p class=\"preview-label\">Base teas available</p>
+            <ul class=\"preview-list\" data-preview-bases>
+              <li>Select an outcome to see base teas.</li>
+            </ul>
+          </div>
+          <div class=\"preview-card\">
+            <p class=\"preview-label\">Functional botanicals</p>
+            <ul class=\"preview-list\" data-preview-botanicals>
+              <li>Select an outcome to see botanicals.</li>
+            </ul>
+          </div>
+          <button class=\"primary-action\" type=\"button\" data-continue disabled>
+            Continue to base selection
+          </button>
+        </aside>
+      </section>
+    </main>
+    <script src=\"/static/blend.js\"></script>
+  </body>
+</html>
+EOF" in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 39ms:
+
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+diff --git a/APP/main.py b/APP/main.py
+index 6e7e7f9e78cc3b94e19b8c9e337b6bf1b739d561..bb09252dff9cc4edc03dfae036d741f8df9970a9
+--- a/APP/main.py
++++ b/APP/main.py
+@@ -7,7 +7,7 @@
+ from fastapi.staticfiles import StaticFiles
+ from fastapi.templating import Jinja2Templates
+ 
+-from APP.data import PRODUCTS, get_product
++from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+ 
+ BASE_DIR = Path(__file__).resolve().parent
+ 
+@@ -42,3 +42,14 @@
+             "product": product,
+         },
+     )
++
++
++@app.get("/custom-blend", response_class=HTMLResponse)
++async def custom_blend_step_one(request: Request):
++    return templates.TemplateResponse(
++        "custom_blend.html",
++        {
++            "request": request,
++            "outcomes": CUSTOM_BLEND_OUTCOMES,
++        },
++    )
+
+
+thinking
+**Planning JavaScript addition**
+exec
+/bin/zsh -lc "cat <<'EOF' > APP/static/blend.js
+const STORAGE_KEY = \"teaAlchemyBlend\";
+
+const outcomeCards = document.querySelectorAll(\".outcome-card\");
+const previewTitle = document.querySelector(\"[data-preview-title]\");
+const previewDescription = document.querySelector(\"[data-preview-description]\");
+const previewBases = document.querySelector(\"[data-preview-bases]\");
+const previewBotanicals = document.querySelector(\"[data-preview-botanicals]\");
+const continueButton = document.querySelector(\"[data-continue]\");
+
+const updateList = (container, items) => {
+  if ("'!container) {
+    return;
+  }
+
+  container.innerHTML = "";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    container.appendChild(li);
+  });
+};
+
+const storeSelection = (selection) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(selection));
+  } catch (error) {
+    console.warn("Unable to store blend selection", error);
+  }
+};
+
+const applySelection = (card) => {
+  outcomeCards.forEach((item) => item.classList.remove("is-selected"));
+  card.classList.add("is-selected");
+
+  const title = card.dataset.outcomeTitle || "";
+  const description = card.dataset.outcomeDescription || "";
+  const bases = (card.dataset.bases || "").split(",").filter(Boolean);
+  const botanicals = (card.dataset.botanicals || "").split(",").filter(Boolean);
+
+  if (previewTitle) {
+    previewTitle.textContent = title;
+  }
+  if (previewDescription) {
+    previewDescription.textContent = description;
+  }
+
+  updateList(previewBases, bases);
+  updateList(previewBotanicals, botanicals);
+
+  if (continueButton) {
+    continueButton.disabled = false;
+  }
+
+  storeSelection({
+    outcomeId: card.dataset.outcomeId,
+    outcomeTitle: title,
+    bases,
+    botanicals,
+  });
+};
+
+outcomeCards.forEach((card) => {
+  card.addEventListener("click", () => applySelection(card));
+});
+
+const restoreSelection = () => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    return;
+  }
+
+  try {
+    const selection = JSON.parse(stored);
+    const match = Array.from(outcomeCards).find(
+      (card) => card.dataset.outcomeId === selection.outcomeId,
+    );
+    if (match) {
+      applySelection(match);
+    }
+  } catch (error) {
+    console.warn("Unable to restore blend selection", error);
+  }
+};
+
+restoreSelection();
+EOF' in /Users/lukefarbotko/Documents/projects/TAlchemy succeeded in 34ms:
+
+file update:
+diff --git a/APP/data.py b/APP/data.py
+index af5b60a74cbcc39aa37b8ddd96852c730576d88a..5d6b8f6ed59546003cef0a45516d601d8fc779e2
+--- a/APP/data.py
++++ b/APP/data.py
+@@ -19,6 +19,14 @@
+     sizes: List[ProductSize]
+ 
+ 
++class BlendOutcome(BaseModel):
++    id: str
++    title: str
++    description: str
++    bases: List[str]
++    botanicals: List[str]
++
++
+ PRODUCTS: List[Product] = [
+     Product(
+         id="solstice-rest",
+@@ -62,6 +70,37 @@
+     ),
+ ]
+ 
++CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
++    BlendOutcome(
++        id="sleep",
++        title="Sleep",
++        description="Slow the evening down with velvety, low-caffeine teas and lullaby botanicals.",
++        bases=["Rooibos", "Honeybush", "Decaf Black Tea"],
++        botanicals=["Chamomile", "Lavender", "Skullcap"],
++    ),
++    BlendOutcome(
++        id="calm",
++        title="Calm",
++        description="Settle the nervous system with gentle florals and softly grounding botanicals.",
++        bases=["White Tea", "Green Tea", "Rooibos"],
++        botanicals=["Lemon Balm", "Rose", "Tulsi"],
++    ),
++    BlendOutcome(
++        id="focus",
++        title="Focus",
++        description="Bright, clean energy with clarity-supporting botanicals and crisp teas.",
++        bases=["Sencha Green Tea", "Oolong Tea", "Black Tea"],
++        botanicals=["Ginkgo", "Gotu Kola", "Peppermint"],
++    ),
++    BlendOutcome(
++        id="energy",
++        title="Energy",
++        description="Spark the senses with bold bases and uplifting botanicals for alert momentum.",
++        bases=["Assam Black Tea", "Yerba Mate", "Smoked Oolong"],
++        botanicals=["Cacao Nibs", "Ginseng", "Orange Peel"],
++    ),
++]
++
+ 
+ def get_product(product_id: str) -> Product | None:
+     for product in PRODUCTS:
+diff --git a/APP/main.py b/APP/main.py
+index 6e7e7f9e78cc3b94e19b8c9e337b6bf1b739d561..bb09252dff9cc4edc03dfae036d741f8df9970a9
+--- a/APP/main.py
++++ b/APP/main.py
+@@ -7,7 +7,7 @@
+ from fastapi.staticfiles import StaticFiles
+ from fastapi.templating import Jinja2Templates
+ 
+-from APP.data import PRODUCTS, get_product
++from APP.data import CUSTOM_BLEND_OUTCOMES, PRODUCTS, get_product
+ 
+ BASE_DIR = Path(__file__).resolve().parent
+ 
+@@ -42,3 +42,14 @@
+             "product": product,
+         },
+     )
++
++
++@app.get("/custom-blend", response_class=HTMLResponse)
++async def custom_blend_step_one(request: Request):
++    return templates.TemplateResponse(
++        "custom_blend.html",
++        {
++            "request": request,
++            "outcomes": CUSTOM_BLEND_OUTCOMES,
++        },
++    )
+
+
+thinking
+**Updating CSS with new classes**
+file update

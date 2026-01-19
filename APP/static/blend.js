@@ -669,7 +669,7 @@ const showFlavorGrid = (outcomeId, baseId, selectedBotanicals = []) => {
   const selectedIds = new Set(
     selectedBotanicals.map((botanical) => botanical.id),
   );
-  const matchingCards = Array.from(flavorCards).filter((card) => {
+  let matchingCards = Array.from(flavorCards).filter((card) => {
     const isMatch = card.dataset.outcomeId === outcomeId;
     const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
     const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
@@ -682,6 +682,15 @@ const showFlavorGrid = (outcomeId, baseId, selectedBotanicals = []) => {
     const botanicalIds = parseFlavorBotanicalIds(card);
     return botanicalIds.some((id) => selectedIds.has(id));
   });
+
+  if (matchingCards.length === 0 && selectedIds.size > 0) {
+    matchingCards = Array.from(flavorCards).filter((card) => {
+      const isMatch = card.dataset.outcomeId === outcomeId;
+      const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+      const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+      return Boolean(isMatch && matchesBase);
+    });
+  }
   const sortedCards = matchingCards
     .map((card) => ({
       card,
