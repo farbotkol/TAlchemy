@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Tea Alchemy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="text-center mb-4">
+        <h1 class="display-5 fw-semibold">Tea Alchemy</h1>
+        <p class="lead text-muted">
+          Craft your next ritual with curated blends and seasonal discoveries.
+        </p>
+      </div>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Bootstrap is live</h2>
+          <p class="mb-3">
+            This starter page confirms Bootstrap 5 styles and scripts are loaded
+            for the full application.
+          </p>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#demo">
+            Toggle sample collapse
+          </button>
+          <div class="collapse mt-3" id="demo">
+            <div class="card card-body">
+              Interactive Bootstrap components are ready to use.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{
+  "project": "Tea Alchemy",
+  "branchName": "ralph/bootstrap-ui-refresh",
+  "description": "Adopt Bootstrap 5 for UI consistency across the Tea Alchemy web experience",
+  "userStories": [
+    {
+      "id": "US-BS-001",
+      "title": "Introduce Bootstrap 5 base styling",
+      "description": "As a developer, I want Bootstrap 5 included so the UI has a consistent, production-ready foundation.",
+      "acceptanceCriteria": [
+        "Bootstrap 5 CSS is loaded for all pages",
+        "Bootstrap 5 JS bundle is available where interactive components are used",
+        "Custom styles still load after Bootstrap",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-002",
+      "title": "Update homepage layout to Bootstrap",
+      "description": "As a customer, I want a clean, responsive home page layout that looks consistent on mobile and desktop.",
+      "acceptanceCriteria": [
+        "Homepage uses Bootstrap grid and spacing utilities",
+        "Product cards use Bootstrap card layout or a consistent card pattern",
+        "Typography and buttons use Bootstrap variants",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-003",
+      "title": "Update product detail page to Bootstrap",
+      "description": "As a customer, I want the product detail layout to be clear and consistent with the rest of the site.",
+      "acceptanceCriteria": [
+        "Product detail uses Bootstrap grid for layout",
+        "Add-to-cart and cart summary use Bootstrap buttons and cards",
+        "Spacing and headings use Bootstrap utilities",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-004",
+      "title": "Update custom blend flow pages to Bootstrap",
+      "description": "As a customer, I want the custom blend steps to feel cohesive and easy to scan.",
+      "acceptanceCriteria": [
+        "Each custom blend step page uses Bootstrap grid and cards",
+        "Step navigation uses Bootstrap buttons and alerts where appropriate",
+        "Forms (size/name) use Bootstrap form controls",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-005",
+      "title": "Update cart, checkout, and confirmation pages to Bootstrap",
+      "description": "As a customer, I want cart and checkout flows to be consistent and easy to complete.",
+      "acceptanceCriteria": [
+        "Cart, checkout, and confirmation use Bootstrap grid and cards",
+        "Form fields use Bootstrap input styling and validation states",
+        "Call-to-action buttons use Bootstrap variants",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-BS-006",
+      "title": "Reduce custom CSS to brand overrides",
+      "description": "As a developer, I want custom CSS to be minimal and focused on brand overrides so Bootstrap remains the primary system.",
+      "acceptanceCriteria": [
+        "Custom CSS only handles brand colors, typography, and small layout tweaks",
+        "Legacy layout styles are removed or replaced by Bootstrap utilities",
+        "No visual regressions in core pages",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
