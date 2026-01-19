@@ -4,6 +4,7 @@ Started: Mon Jan 19 22:46:07 AEDT 2026
 ## Codebase Patterns
 - Templates and static assets live under `app/templates` and `app/static`; use lowercase `app` imports/paths.
 - Cart interactions rely on `.add-to-cart` buttons with data attributes for product info in templates.
+- Custom blend step pages redirect forward/back based on `teaAlchemyBlend` localStorage; seed outcome/base/botanicals to view step 4 directly.
 
 ## 2026-01-19 22:50:20 AEDT - US-BS-001
 Thread: N/A
@@ -30,4 +31,13 @@ Thread: N/A
   - Patterns discovered: Product detail uses Bootstrap `row`/`col` with `card` and `list-group` components; retain `.add-to-cart` class for cart.js bindings.
   - Gotchas encountered: Port 8010 was already in use; used port 8021 for local verification.
   - Useful context: dev-browser server runs via `npx tsx scripts/start-server.ts` in `~/.codex/skills/dev-browser`.
+---
+## 2026-01-19 23:20:11 AEDT - US-BS-004
+Thread: N/A
+- What was implemented: Reworked custom blend steps 1-4 with Bootstrap container/row layout, card-based panels, Bootstrap buttons, alerts, and form controls; updated grid sections for outcomes/bases/botanicals/flavors/sizes to use Bootstrap rows while retaining blend data attributes; browser verified step 1 and step 4 with seeded selection for step 4, capturing screenshots at `~/.codex/skills/dev-browser/tmp/custom-blend-step1.png` and `~/.codex/skills/dev-browser/tmp/custom-blend-step4.png`.
+- Files changed: app/templates/custom_blend_step1.html, app/templates/custom_blend_step2.html, app/templates/custom_blend_step3.html, app/templates/custom_blend_step4.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: Step 4 redirects to step 3 unless `teaAlchemyBlend` contains outcome/base/selected botanicals; seed localStorage to view step 4 directly during UI checks.
+  - Gotchas encountered: `python` is not available in PATH here; use `python3` to start Uvicorn.
+  - Useful context: Browser verification ran against Uvicorn on port 8030.
 ---
