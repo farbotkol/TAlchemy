@@ -3,6 +3,7 @@ Started: Mon Jan 19 09:48:34 AEDT 2026
 ---
 ## Codebase Patterns
 - Energy outcome alignment should map to the "Alertness" axis when sorting base relevance.
+- Step 2 base options are sorted and capped (top 6) in `build_blend_outcomes` within `APP/main.py`.
 - Botanical option relevance is scored via base alignment weighted by botanical contributions, capped to six options in `APP/static/blend.js`.
 - Flavor options are filtered by base + selected botanicals (via `BlendFlavor.botanical_ids`), capped to six in `APP/static/blend.js`.
 - Custom blend step routes use `data-blend-step` and `data-step-next` gating in `APP/static/blend.js`.
@@ -42,4 +43,13 @@ Thread: N/A
   - Patterns discovered: Custom blend step routes use `data-blend-step` and `data-step-next` gating in `APP/static/blend.js`.
   - Gotchas encountered: dev-browser skill not available for required UI verification.
   - Useful context: Step routing relies on localStorage selections for redirecting users who skip required steps.
+---
+## Mon Jan 19 15:25:10 AEDT 2026 - US-CB-201
+Thread: N/A
+- What was implemented: Confirmed Step 2 base options are pre-sorted by selected outcome and capped to six; updated PRD status.
+- Files changed: scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: dev-browser skill not available for required UI verification.
+  - Useful context: Step 2 base filtering relies on backend `build_blend_outcomes` sorting + slicing.
 ---

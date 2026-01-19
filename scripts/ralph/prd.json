@@ -6,7 +6,7 @@
     {
       "id": "US-CB-201",
       "title": "Step 2 options depend on Step 1 outcome",
-      "description": "As a customer, I want Step 2 base tea options to reflect the outcome I selected in Step 1 so the flow feels tailored.",
+      "description": "As a customer, I want Step 2 base tea options to reflect the outcome I selected in Step 1 so the flow feels tailored showing ONLY the top 6 options with the the highest amount of the selected outcome.",
       "acceptanceCriteria": [
         "Step 2 base tea options are filtered based on the selected Step 1 outcome",
         "Step 2 shows at most 6 base teas, ordered by relevance to the selected outcome",
@@ -21,7 +21,7 @@
     {
       "id": "US-CB-202",
       "title": "Step 3 botanicals depend on Step 2 base tea",
-      "description": "As a customer, I want Step 3 functional botanical options to be derived from my chosen base tea so the blend stays coherent.",
+      "description": "As a customer, I want Step 3 functional botanical options to be derived from my chosen base tea so the blend stays coherent. Show the top 6 items that are inline with the outcome Only",
       "acceptanceCriteria": [
         "Step 3 botanical options are filtered based on the selected base tea",
         "Step 3 shows at most 6 botanicals, ordered by relevance to the selected base tea",
@@ -31,7 +31,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
-      "passes": true,
+      "passes": false,
       "notes": ""
     },
     {
@@ -47,7 +47,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 3,
-      "passes": true,
+      "passes": false,
       "notes": ""
     },
     {
@@ -62,7 +62,7 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": true,
+      "passes": false,
       "notes": ""
     }
   ]
