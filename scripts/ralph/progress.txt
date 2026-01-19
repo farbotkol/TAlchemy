@@ -2,7 +2,7 @@
 Started: Mon Jan 19 22:46:07 AEDT 2026
 ---
 ## Codebase Patterns
-- Templates are stored under `APP/templates` (the repo also has an `app` directory, but tracked templates live in `APP`).
+- Templates and static assets live under `app/templates` and `app/static`; use lowercase `app` imports/paths.
 
 ## 2026-01-19 22:50:20 AEDT - US-BS-001
 Thread: N/A
@@ -11,4 +11,13 @@ Thread: N/A
 - **Learnings for future iterations:**
   - Bootstrap includes live in each template head/footer today rather than a shared base template.
   - The repository tracks both APP and app directories on disk; template edits land under APP.
+---
+## 2026-01-19 22:57:45 AEDT - US-BS-002
+Thread: N/A
+- What was implemented: Rebuilt the homepage layout using Bootstrap container/row/card utilities with Bootstrap typography and buttons; corrected the FastAPI import path to use the lowercase `app` package; updated app agent notes to reference the lowercase `app` paths; browser verified the homepage at http://127.0.0.1:8010/ and captured `~/.codex/skills/dev-browser/tmp/tea-home.png`.
+- Files changed: app/templates/index.html, app/main.py, app/AGENTS.md, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: Homepage cards now use Bootstrap `card` with `btn btn-warning` CTAs for consistency.
+  - Gotchas encountered: dev-browser expects Playwright caches under `~/.cache/ms-playwright` on macOS.
+  - Useful context: Uvicorn ran successfully on port 8010 for browser verification.
 ---

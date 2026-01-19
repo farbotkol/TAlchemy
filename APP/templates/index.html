@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <main class="page">
-      <header class="page-hero">
+    <main class="container py-5">
+      <header class="page-hero mb-5">
         <div class="brand-lockup">
           <span class="brand-mark" aria-hidden="true"></span>
           <div>
@@ -22,43 +22,51 @@
             <p class="brand-tagline">Sparked blends &amp; bright rituals</p>
           </div>
         </div>
-        <h1>Pre-made blends for every intention.</h1>
-        <p class="subhead">
+        <h1 class="display-5 fw-semibold">Pre-made blends for every intention.</h1>
+        <p class="subhead lead">
           Curated rituals for sleep, calm, focus, and bright energy. Choose your mood and
           pour a little magic into the day.
         </p>
       </header>
 
-      <section class="product-grid">
+      <section class="row g-4">
         {% for product in products %}
-        <article class="product-card" style="animation-delay: {{ loop.index0 * 0.1 }}s">
-          <div class="card-top">
-            <h2>{{ product.name }}</h2>
-            <p class="description">{{ product.description }}</p>
-          </div>
-          <div class="card-meta">
-            <div>
-              <p class="label">Intended outcomes</p>
-              <div class="pill-row">
-                {% for outcome in product.outcomes %}
-                <span class="pill">{{ outcome }}</span>
-                {% endfor %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <article class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column gap-3">
+              <div>
+                <h2 class="h4 mb-2">{{ product.name }}</h2>
+                <p class="description mb-0">{{ product.description }}</p>
+              </div>
+              <div class="d-grid gap-3 mt-auto">
+                <div>
+                  <p class="label mb-2">Intended outcomes</p>
+                  <div class="pill-row">
+                    {% for outcome in product.outcomes %}
+                    <span class="pill">{{ outcome }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div>
+                  <p class="label mb-2">Sizes &amp; price</p>
+                  <ul class="list-unstyled mb-0">
+                    {% for size in product.sizes %}
+                    <li class="d-flex justify-content-between fw-semibold">
+                      <span>{{ size.label }}</span>
+                      <span>A${{ '%.2f'|format(size.price_aud) }}</span>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
             </div>
-            <div>
-              <p class="label">Sizes &amp; price</p>
-              <ul class="size-list">
-                {% for size in product.sizes %}
-                <li>
-                  <span>{{ size.label }}</span>
-                  <span>A${{ '%.2f'|format(size.price_aud) }}</span>
-                </li>
-                {% endfor %}
-              </ul>
+            <div class="card-footer bg-transparent border-0 pt-0">
+              <a class="btn btn-warning w-100 fw-semibold" href="/products/{{ product.id }}">
+                View details
+              </a>
             </div>
-          </div>
-          <a class="card-link" href="/products/{{ product.id }}">View details</a>
-        </article>
+          </article>
+        </div>
         {% endfor %}
       </section>
     </main>
