@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Blend - Step 1{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row align-items-start g-4">
+    <div class="col-lg-8">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+          <p class="text-uppercase text-muted small mb-1">Custom Blend Studio</p>
+          <h1 class="h3 mb-0">Pick your flavor direction</h1>
+        </div>
+        <div class="btn-group" role="group" aria-label="Blend steps">
+          <button type="button" class="btn btn-primary" disabled>Step 1</button>
+          <button type="button" class="btn btn-outline-primary" disabled>Step 2</button>
+          <button type="button" class="btn btn-outline-primary" disabled>Step 3</button>
+        </div>
+      </div>
+      <div class="alert alert-info d-flex align-items-center gap-2" role="alert">
+        <span class="fw-semibold">Step 1 of 3</span>
+        <span class="text-muted">Choose the vibe that matches your ritual.</span>
+      </div>
+      <div class="row g-4">
+        {% for profile in profiles %}
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <p class="text-uppercase text-muted small mb-2">{{ profile.mood }}</p>
+              <h2 class="h5">{{ profile.title }}</h2>
+              <p class="text-muted mb-4">{{ profile.notes }}</p>
+              <a class="btn btn-outline-primary" href="/blend/step-2">Choose profile</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Your blend progress</h2>
+          <p class="text-muted">Answer three quick prompts to craft a made-for-you tea.</p>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item px-0">Flavor direction</li>
+            <li class="list-group-item px-0">Size + name</li>
+            <li class="list-group-item px-0">Review &amp; finalize</li>
+          </ul>
+          <div class="d-grid">
+            <a class="btn btn-primary" href="/blend/step-2">Continue to step 2</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

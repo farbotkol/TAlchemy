@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Blend - Step 3{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+          <p class="text-uppercase text-muted small mb-1">Custom Blend Studio</p>
+          <h1 class="h3 mb-0">Review and finalize</h1>
+        </div>
+        <div class="btn-group" role="group" aria-label="Blend steps">
+          <button type="button" class="btn btn-outline-primary" disabled>Step 1</button>
+          <button type="button" class="btn btn-outline-primary" disabled>Step 2</button>
+          <button type="button" class="btn btn-primary" disabled>Step 3</button>
+        </div>
+      </div>
+      <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
+        <span class="fw-semibold">Step 3 of 3</span>
+        <span class="text-muted">Confirm the details and add to cart.</span>
+      </div>
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+              <h2 class="h4 mb-1">{{ summary.name }}</h2>
+              <p class="text-muted mb-3">{{ summary.profile }} profile in a {{ summary.size }}.</p>
+              <div class="d-flex flex-wrap gap-2">
+                {% for note in summary.notes %}
+                <span class="badge text-bg-light">{{ note }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <div class="display-6 fw-semibold">${{ "%.2f" | format(summary.price) }}</div>
+              <p class="text-muted mb-0">One-time custom blend</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap gap-3">
+        <a class="btn btn-outline-secondary" href="/blend/step-2">Back</a>
+        <button class="btn btn-primary">Add to cart</button>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Blend checklist</h2>
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item px-0 d-flex justify-content-between">
+              <span>Flavor direction</span>
+              <span class="fw-semibold">{{ summary.profile }}</span>
+            </li>
+            <li class="list-group-item px-0 d-flex justify-content-between">
+              <span>Size</span>
+              <span class="fw-semibold">{{ summary.size }}</span>
+            </li>
+            <li class="list-group-item px-0 d-flex justify-content-between">
+              <span>Label name</span>
+              <span class="fw-semibold">{{ summary.name }}</span>
+            </li>
+          </ul>
+          <div class="alert alert-light mb-0" role="alert">
+            Want changes? Jump back to step 1 or 2 to adjust your blend.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

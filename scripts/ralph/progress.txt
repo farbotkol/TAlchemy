@@ -30,3 +30,12 @@ Thread: https://ampcode.com/threads/UNKNOWN
   - Gotchas encountered: N/A
   - Useful context: Browser verification screenshot stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-product.png
 ---
+## Mon Jan 19 22:08:51 AEDT 2026 - US-BS-004
+Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
+- What was implemented: added Bootstrap-based custom blend step templates with cards, alerts, and form controls; wired FastAPI routes; linked homepage CTA to the flow; captured browser screenshots for each step.
+- Files changed: app/main.py, app/templates/blend-step-1.html, app/templates/blend-step-2.html, app/templates/blend-step-3.html, app/templates/index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: N/A
+  - Gotchas encountered: dev server on port 8000 was already taken; used 8001 for verification.
+  - Useful context: Browser verification screenshots stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-1.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-2.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/blend-step-3.png
+---
