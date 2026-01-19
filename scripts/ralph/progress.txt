@@ -6,7 +6,7 @@ Started: Tue Jan 20 00:00:00 AEDT 2026
 ## Mon Jan 19 21:58:00 AEDT 2026 - US-BS-001
 Thread: N/A
 - What was implemented: scaffolded FastAPI app with base template loading Bootstrap 5 CSS/JS and custom styles, plus a starter homepage using Bootstrap components.
-- Files changed: app/main.py, app/db.py, app/templates/base.html, app/templates/index.html, app/static/styles.css, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- Files changed: app/main.py, app/db.py, app/templates/base.html, app/templates/index.html, app/static/styles.css, scripts/ralph/prd.json, scripts/ralph/progress.txt, .gitignore
 - **Learnings for future iterations:**
   - Patterns discovered: base template is the canonical place to include Bootstrap assets.
   - Gotchas encountered: Python is available as `python3` in the environment.
