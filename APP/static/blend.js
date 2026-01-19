@@ -269,7 +269,18 @@ const getStoredSelection = () => {
 
 const storeSelection = (selection) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(selection));
+    const nextSelection = { ...selection };
+    const existing = getStoredSelection();
+    const shouldPreserveBotanicals =
+      currentStep !== "3" &&
+      (nextSelection.selectedBotanicals || []).length === 0 &&
+      (existing.selectedBotanicals || []).length > 0 &&
+      (!nextSelection.baseId || existing.baseId === nextSelection.baseId) &&
+      (!nextSelection.outcomeId || existing.outcomeId === nextSelection.outcomeId);
+    if (shouldPreserveBotanicals) {
+      nextSelection.selectedBotanicals = existing.selectedBotanicals;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextSelection));
   } catch (error) {
     console.warn("Unable to store blend selection", error);
   }
@@ -930,6 +941,10 @@ if (stepNextButton) {
 const restoreSelection = () => {
   try {
     const selection = getStoredSelection();
+    const hasBotanicalCards = botanicalCards.length > 0;
+    const hasFlavorCards = flavorCards.length > 0;
+    const shouldReconcileBotanicals = currentStep === "3" && hasBotanicalCards;
+    const shouldReconcileFlavors = currentStep === "4" && hasFlavorCards;
     if (enforceStepRequirements(selection)) {
       return;
     }
@@ -1003,8 +1018,9 @@ const restoreSelection = () => {
           matchBotanical.classList.add("is-selected");
         }
       });
-      selection.selectedBotanicals = reconcileBotanicals(selection);
-      storeSelection(selection);
+      if (shouldReconcileBotanicals) {
+        selection.selectedBotanicals = reconcileBotanicals(selection);
+      }
       updateBotanicalPreview(selection);
       updateBotanicalRequirement(selection);
       updateAlignmentPreview(selection);
@@ -1026,8 +1042,9 @@ const restoreSelection = () => {
           matchFlavor.classList.add("is-selected");
         }
       });
-      selection.selectedFlavors = reconcileFlavors(selection);
-      storeSelection(selection);
+      if (shouldReconcileFlavors) {
+        selection.selectedFlavors = reconcileFlavors(selection);
+      }
       updateFlavorPreview(selection);
     }
     updateFlavorRequirement(selection);
@@ -1082,6 +1099,9 @@ const isBotanicalAllowed = (card, outcomeId, baseId) => {
 
 const reconcileBotanicals = (selection) => {
   const selected = selection.selectedBotanicals || [];
+  if (botanicalCards.length === 0) {
+    return selected.slice(0, BOTANICAL_MAX);
+  }
   const filtered = selected.filter((botanical) => {
     const card = botanicalCardById.get(botanical.id);
     return isBotanicalAllowed(card, selection.outcomeId, selection.baseId);

@@ -7,6 +7,7 @@ Started: Mon Jan 19 09:48:34 AEDT 2026
 - Botanical option relevance is scored via base alignment weighted by botanical contributions, capped to six options in `APP/static/blend.js`.
 - Flavor options are filtered by base + selected botanicals (via `BlendFlavor.botanical_ids`), capped to six in `APP/static/blend.js`.
 - Custom blend step routes use `data-blend-step` and `data-step-next` gating in `APP/static/blend.js`.
+- Blend selection reconciliation only persists on its own step page to avoid wiping localStorage state.
 
 ## 2026-01-19 09:52:08 AEDT - US-CB-201
 Thread: N/A
@@ -97,4 +98,22 @@ Thread: N/A
   - Patterns discovered: None this iteration.
   - Gotchas encountered: None.
   - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step3-botanicals.png.
+---
+## Mon Jan 19 20:46:20 AEDT 2026 - US-CB-203
+Thread: N/A
+- What was implemented: Preserved botanical selections on Step 4 so flavor filtering uses stored botanicals, and validated flavor filtering/selection limits in the browser.
+- Files changed: APP/static/blend.js, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: Reconcile and persist blend selections only on their owning step to avoid clearing stored botanicals.
+  - Gotchas encountered: Browser cache required a cache-bust on `blend.js` during dev-browser validation.
+  - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step4-flavor-filter.png.
+---
+## Mon Jan 19 21:08:08 AEDT 2026 - US-CB-204
+Thread: N/A
+- What was implemented: Verified step-specific custom blend flow across /custom-blend/step-1 through /custom-blend/step-4 with navigation gating, preserved selections, and browser validation screenshot.
+- Files changed: APP/static/blend.js, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: dev-browser validations are easier to read when using a fresh page name to avoid stale state.
+  - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step4-flow.png.
 ---

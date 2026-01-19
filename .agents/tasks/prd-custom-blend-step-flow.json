@@ -10,6 +10,9 @@
       "acceptanceCriteria": [
         "Step 2 base tea options are filtered based on the selected Step 1 outcome",
         "Step 2 shows at most 6 base teas, ordered by relevance to the selected outcome",
+        "Relevance is determined by base alignment score for the selected outcome (higher score first)",
+        "Each base card exposes a numeric relevance value (e.g. data-score or badge) so ordering can be verified",
+        "Verify per outcome: count of base cards <= 6 and scores are sorted descending",
         "Changing the Step 1 outcome updates Step 2 options immediately",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
@@ -25,6 +28,9 @@
       "acceptanceCriteria": [
         "Step 3 botanical options are filtered based on the selected base tea",
         "Step 3 shows at most 6 botanicals, ordered by relevance to the selected base tea",
+        "Relevance is determined by botanical contribution score for the selected base tea",
+        "Each botanical card exposes a numeric relevance value (e.g. data-score or badge) so ordering can be verified",
+        "Verify per base tea: count of botanical cards <= 6 and scores are sorted descending",
         "Step 3 enforces a minimum of 1 and a maximum of 2 botanicals selected",
         "Changing the base tea resets Step 3 selections if no longer valid",
         "Typecheck passes",
@@ -41,6 +47,9 @@
       "acceptanceCriteria": [
         "Step 4 flavor options are filtered based on the selected base tea and functional botanicals",
         "Step 4 shows at most 6 flavor botanicals, ordered by relevance to the prior selections",
+        "Relevance is determined by match count to selected botanicals (higher match count first)",
+        "Each flavor card exposes a numeric relevance value (e.g. data-score or badge) so ordering can be verified",
+        "Verify per selection set: count of flavor cards <= 6 and scores are sorted descending",
         "Step 4 enforces a minimum of 1 and a maximum of 2 flavor botanicals selected",
         "Changing Step 2 or Step 3 selections updates Step 4 options and removes invalid selections",
         "Typecheck passes",
@@ -58,6 +67,7 @@
         "Each step (Step 1, Step 2, Step 3, Step 4) has its own route and page",
         "The flow preserves the user's selections across steps",
         "Navigation between steps is clear and prevents skipping required selections",
+        "Manual verification: step navigation blocked until required selections are made (Step 2 requires outcome, Step 3 requires base, Step 4 requires 1+ botanicals)",
         "Typecheck passes",
         "Verify in browser using dev-browser skill"
       ],
