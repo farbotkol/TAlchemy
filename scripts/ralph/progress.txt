@@ -80,3 +80,12 @@ Thread: N/A
   - Gotchas encountered: dev-browser skill not available for required UI verification.
   - Useful context: Step pages already live at `/custom-blend/step-1` through `/custom-blend/step-4` with localStorage-driven gating.
 ---
+## Tue Jan 19 15:45:12 AEDT 2026 - US-CB-201
+Thread: N/A
+- What was implemented: Verified Step 2 base options are filtered by the selected outcome and capped to 6; browser validation captured.
+- Files changed: scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: None.
+  - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step2-bases.png.
+---
