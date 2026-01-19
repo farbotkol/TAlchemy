@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | {{ product.name }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Back to blends</a>
+        <div class="brand-lockup">
+          <a class="brand-link" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">Tea Alchemy</span>
+          </a>
+        </div>
+        <h1>{{ product.name }}</h1>
+        <p class="subhead">{{ product.description }}</p>
+        <div class="hero-actions">
+          <a class="secondary-action" href="/cart">Review cart</a>
+        </div>
+      </header>
+
+      <section class="detail-layout">
+        <div class="detail-panel">
+          <div class="detail-block">
+            <p class="label">Intended outcomes</p>
+            <div class="pill-row">
+              {% for outcome in product.outcomes %}
+              <span class="pill">{{ outcome }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="detail-block">
+            <p class="label">Choose a size</p>
+            <ul class="size-list">
+              {% for size in product.sizes %}
+              <li class="size-item">
+                <div class="size-meta">
+                  <span>{{ size.label }}</span>
+                  <span>A${{ '%.2f'|format(size.price_aud) }}</span>
+                </div>
+                <button
+                  class="add-to-cart"
+                  type="button"
+                  data-product-id="{{ product.id }}"
+                  data-product-name="{{ product.name }}"
+                  data-size-label="{{ size.label }}"
+                  data-price="{{ '%.2f'|format(size.price_aud) }}"
+                >
+                  Add to cart
+                </button>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <aside class="cart-panel" aria-live="polite">
+          <div class="cart-header">
+            <h2>Cart</h2>
+            <span class="cart-count" data-cart-count>0 items</span>
+          </div>
+          <div class="cart-items" data-cart-items>
+            <p class="cart-empty">Your cart is empty.</p>
+          </div>
+          <div class="cart-total">
+            <span>Total</span>
+            <span data-cart-total>A$0.00</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/cart.js"></script>
+  </body>
+</html>

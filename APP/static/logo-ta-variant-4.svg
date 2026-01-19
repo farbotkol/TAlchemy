@@ -1,0 +1,15 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TA monogram variant 4">
+  <defs>
+    <radialGradient id="v4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 160) rotate(45) scale(270)">
+      <stop stop-color="#FFB347"/>
+      <stop offset="0.6" stop-color="#FF6B4A"/>
+      <stop offset="1" stop-color="#6A4C93"/>
+    </radialGradient>
+  </defs>
+  <rect x="72" y="72" width="368" height="368" rx="120" fill="url(#v4)"/>
+  <rect x="128" y="128" width="256" height="256" rx="90" fill="#FFF3E4"/>
+  <path d="M188 204H324" stroke="#2B1E1E" stroke-width="18" stroke-linecap="round"/>
+  <path d="M256 204V328" stroke="#2B1E1E" stroke-width="18" stroke-linecap="round"/>
+  <path d="M222 328L256 236L290 328" stroke="#2B1E1E" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M236 292H276" stroke="#2B1E1E" stroke-width="12" stroke-linecap="round"/>
+</svg>

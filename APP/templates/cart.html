@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Alchemy | Cart Review</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page" data-cart-review>
+      <header class="page-hero detail">
+        <a class="back-link" href="/">&larr; Continue shopping</a>
+        <div class="brand-lockup">
+          <a class="brand-link" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-name">Tea Alchemy</span>
+          </a>
+        </div>
+        <h1>Review your blends before checkout.</h1>
+        <p class="subhead">
+          Confirm your pre-made teas and custom blend details, then continue to checkout
+          when ready.
+        </p>
+      </header>
+
+      <section class="cart-review-layout">
+        <div class="cart-review-main">
+          <div class="cart-review-panel">
+            <div class="cart-review-header">
+              <h2 class="section-title">Pre-made blends</h2>
+              <a class="secondary-action" href="/">Add more blends</a>
+            </div>
+            <div class="cart-items" data-cart-items>
+              <p class="cart-empty">No pre-made blends added yet.</p>
+            </div>
+          </div>
+
+          <div class="cart-review-panel">
+            <div class="cart-review-header">
+              <h2 class="section-title">Custom blend</h2>
+              <a class="secondary-action" href="/custom-blend">Edit blend</a>
+            </div>
+            <div class="cart-custom" data-custom-blend>
+              <p class="cart-empty">No custom blend saved yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="cart-panel" aria-live="polite">
+          <div class="cart-header">
+            <h2>Order summary</h2>
+            <span class="cart-count" data-cart-count>0 items</span>
+          </div>
+          <div class="cart-total">
+            <span>Total</span>
+            <span data-cart-total>A$0.00</span>
+          </div>
+          <button class="primary-action" type="button" data-checkout-button disabled>
+            Proceed to checkout
+          </button>
+        </aside>
+      </section>
+    </main>
+    <script src="/static/cart.js"></script>
+  </body>
+</html>

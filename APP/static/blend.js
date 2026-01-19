@@ -1,0 +1,1367 @@
+const STORAGE_KEY = "teaAlchemyBlend";
+
+const outcomeCards = document.querySelectorAll(".outcome-card");
+const previewTitle = document.querySelector("[data-preview-title]");
+const previewDescription = document.querySelector("[data-preview-description]");
+const previewBases = document.querySelector("[data-preview-bases]");
+const previewBotanicals = document.querySelector("[data-preview-botanicals]");
+const previewFlavors = document.querySelector("[data-preview-flavors]");
+const previewSize = document.querySelector("[data-preview-size]");
+const previewPrice = document.querySelector("[data-preview-price]");
+const previewBlendName = document.querySelector("[data-preview-blend-name]");
+const previewBaseTitle = document.querySelector("[data-preview-base-title]");
+const previewBaseDescription = document.querySelector("[data-preview-base-description]");
+const radarChart = document.querySelector("[data-radar-chart]");
+const radarGrid = radarChart ? radarChart.querySelector("[data-radar-grid]") : null;
+const radarAxes = radarChart ? radarChart.querySelector("[data-radar-axes]") : null;
+const radarShape = radarChart ? radarChart.querySelector("[data-radar-shape]") : null;
+const radarPoints = radarChart ? radarChart.querySelector("[data-radar-points]") : null;
+const radarLabels = radarChart ? radarChart.querySelector("[data-radar-labels]") : null;
+const radarScores = document.querySelector("[data-radar-scores]");
+const baseEmpty = document.querySelector("[data-base-empty]");
+const baseGrids = document.querySelectorAll("[data-base-grid]");
+const baseCards = document.querySelectorAll(".base-card");
+const botanicalEmpty = document.querySelector("[data-botanical-empty]");
+const botanicalWarning = document.querySelector("[data-botanical-warning]");
+const botanicalGrids = document.querySelectorAll("[data-botanical-grid]");
+const botanicalCards = document.querySelectorAll(".botanical-card");
+const flavorEmpty = document.querySelector("[data-flavor-empty]");
+const flavorGrids = document.querySelectorAll("[data-flavor-grid]");
+const flavorCards = document.querySelectorAll(".flavor-card");
+const flavorWarning = document.querySelector("[data-flavor-warning]");
+const flavorSpectrum = document.querySelector("[data-flavor-spectrum]");
+const continueButton = document.querySelector("[data-continue]");
+const sizeCards = document.querySelectorAll(".size-card");
+const nameInput = document.querySelector("[data-blend-name]");
+const nameHelp = document.querySelector("[data-blend-name-help]");
+const stepContainer = document.querySelector("[data-blend-step]");
+const stepNextButton = document.querySelector("[data-step-next]");
+
+const NAME_MIN = 3;
+const NAME_MAX = 32;
+const NAME_HELP_DEFAULT = nameHelp ? nameHelp.dataset.default || "" : "";
+const BOTANICAL_MIN = 1;
+const BOTANICAL_MAX = 2;
+const FLAVOR_MIN = 1;
+const FLAVOR_MAX = 2;
+const currentStep = stepContainer ? stepContainer.dataset.blendStep : null;
+const stepRoutes = {
+  1: "/custom-blend/step-1",
+  2: "/custom-blend/step-2",
+  3: "/custom-blend/step-3",
+  4: "/custom-blend/step-4",
+};
+
+const outcomeAxes = (() => {
+  if (!radarChart) {
+    return ["Sleep", "Calm", "Focus", "Alertness"];
+  }
+
+  const stored = radarChart.dataset.outcomeAxes;
+  if (!stored) {
+    return ["Sleep", "Calm", "Focus", "Alertness"];
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : ["Sleep", "Calm", "Focus", "Alertness"];
+  } catch (error) {
+    console.warn("Unable to read outcome axes", error);
+    return ["Sleep", "Calm", "Focus", "Alertness"];
+  }
+})();
+
+const flavorCategories = (() => {
+  if (!flavorSpectrum) {
+    return ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"];
+  }
+
+  const stored = flavorSpectrum.dataset.flavorCategories;
+  if (!stored) {
+    return ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"];
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"];
+  } catch (error) {
+    console.warn("Unable to read flavor categories", error);
+    return ["Floral", "Citrus", "Earthy", "Spicy", "Sweet"];
+  }
+})();
+
+const updateList = (container, items, emptyMessage) => {
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "";
+  if (items.length === 0 && emptyMessage) {
+    const li = document.createElement("li");
+    li.textContent = emptyMessage;
+    container.appendChild(li);
+    return;
+  }
+
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    container.appendChild(li);
+  });
+};
+
+const formatPrice = (price) => {
+  if (typeof price !== "number" || Number.isNaN(price)) {
+    return "";
+  }
+  return `A$${price.toFixed(2)}`;
+};
+
+const updateSizePreview = (selection) => {
+  if (!previewSize || !previewPrice) {
+    return;
+  }
+
+  if (selection.sizeLabel && selection.sizeGrams && selection.sizePrice != null) {
+    previewSize.textContent = `${selection.sizeLabel} (${selection.sizeGrams}g)`;
+    previewPrice.textContent = `Price: ${formatPrice(selection.sizePrice)}`;
+    return;
+  }
+
+  previewSize.textContent = "Choose a size";
+  previewPrice.textContent = "Pricing updates as soon as you select a size.";
+};
+
+const updateNamePreview = (selection) => {
+  if (!previewBlendName) {
+    return;
+  }
+
+  if (selection.blendName) {
+    previewBlendName.textContent = selection.blendName;
+    return;
+  }
+
+  previewBlendName.textContent = "Name your blend";
+};
+
+const updateNameHelp = (message, isError) => {
+  if (!nameHelp || !nameInput) {
+    return;
+  }
+
+  nameHelp.textContent = message;
+  nameInput.setAttribute("aria-invalid", isError ? "true" : "false");
+};
+
+const updateFlavorWarning = (message) => {
+  if (!flavorWarning) {
+    return;
+  }
+
+  if (message) {
+    flavorWarning.textContent = message;
+    flavorWarning.hidden = false;
+  } else {
+    flavorWarning.hidden = true;
+  }
+};
+
+const updateBotanicalWarning = (message) => {
+  if (!botanicalWarning) {
+    return;
+  }
+
+  if (message) {
+    botanicalWarning.textContent = message;
+    botanicalWarning.hidden = false;
+  } else {
+    botanicalWarning.hidden = true;
+  }
+};
+
+const navigateToStep = (step) => {
+  const destination = stepRoutes[step];
+  if (destination && window.location.pathname !== destination) {
+    window.location.href = destination;
+  }
+};
+
+const enforceStepRequirements = (selection) => {
+  if (!currentStep) {
+    return false;
+  }
+  if (currentStep === "2" && !selection.outcomeId) {
+    navigateToStep(1);
+    return true;
+  }
+  if (currentStep === "3" && (!selection.outcomeId || !selection.baseId)) {
+    navigateToStep(2);
+    return true;
+  }
+  if (
+    currentStep === "4" &&
+    (!selection.outcomeId ||
+      !selection.baseId ||
+      (selection.selectedBotanicals || []).length < BOTANICAL_MIN)
+  ) {
+    navigateToStep(3);
+    return true;
+  }
+  return false;
+};
+
+const updateStepNavigation = (selection) => {
+  if (!stepNextButton || !currentStep) {
+    return;
+  }
+  let shouldEnable = false;
+  if (currentStep === "1") {
+    shouldEnable = Boolean(selection.outcomeId);
+  } else if (currentStep === "2") {
+    shouldEnable = Boolean(selection.baseId);
+  } else if (currentStep === "3") {
+    shouldEnable = (selection.selectedBotanicals || []).length >= BOTANICAL_MIN;
+  }
+  stepNextButton.disabled = !shouldEnable;
+};
+
+const updateOutcomePreviewFromSelection = (selection) => {
+  if (previewTitle) {
+    previewTitle.textContent = selection.outcomeTitle || "Choose an outcome";
+  }
+  if (previewDescription) {
+    previewDescription.textContent =
+      selection.outcomeDescription ||
+      "We will reveal the best bases and botanicals once you pick a direction.";
+  }
+  updateList(
+    previewBases,
+    selection.bases || [],
+    "Select an outcome to see base teas.",
+  );
+};
+
+const updateBasePreviewFromSelection = (selection) => {
+  if (previewBaseTitle) {
+    previewBaseTitle.textContent = selection.baseTitle || "Pick a base tea";
+  }
+  if (previewBaseDescription) {
+    previewBaseDescription.textContent =
+      selection.baseDescription ||
+      "The base tea will steer the balance of calm, focus, and alertness in your blend.";
+  }
+};
+
+const getStoredSelection = () => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.warn("Unable to parse stored blend selection", error);
+    return {};
+  }
+};
+
+const storeSelection = (selection) => {
+  try {
+    const nextSelection = { ...selection };
+    const existing = getStoredSelection();
+    const shouldPreserveBotanicals =
+      currentStep !== "3" &&
+      (nextSelection.selectedBotanicals || []).length === 0 &&
+      (existing.selectedBotanicals || []).length > 0 &&
+      (!nextSelection.baseId || existing.baseId === nextSelection.baseId) &&
+      (!nextSelection.outcomeId || existing.outcomeId === nextSelection.outcomeId);
+    if (shouldPreserveBotanicals) {
+      nextSelection.selectedBotanicals = existing.selectedBotanicals;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextSelection));
+  } catch (error) {
+    console.warn("Unable to store blend selection", error);
+  }
+};
+
+const RADAR_SIZE = 240;
+const RADAR_CENTER = RADAR_SIZE / 2;
+const RADAR_RADIUS = 78;
+const RADAR_STEPS = 5;
+
+let radarReady = false;
+let radarPointNodes = [];
+let radarScoreNodes = [];
+let flavorSpectrumReady = false;
+let flavorSpectrumRows = [];
+let currentBotanicalOptionIds = new Set();
+let currentFlavorOptionIds = new Set();
+
+const createSvgElement = (tag) =>
+  document.createElementNS("http://www.w3.org/2000/svg", tag);
+
+const axisAngle = (index, total) => (Math.PI * 2 * index) / total - Math.PI / 2;
+
+const pointAtRadius = (index, total, radius) => {
+  const angle = axisAngle(index, total);
+  return {
+    x: RADAR_CENTER + radius * Math.cos(angle),
+    y: RADAR_CENTER + radius * Math.sin(angle),
+  };
+};
+
+const initRadarChart = () => {
+  if (!radarChart || radarReady) {
+    return;
+  }
+
+  if (!radarGrid || !radarAxes || !radarLabels || !radarPoints) {
+    return;
+  }
+
+  radarGrid.innerHTML = "";
+  radarAxes.innerHTML = "";
+  radarLabels.innerHTML = "";
+  radarPoints.innerHTML = "";
+  if (radarScores) {
+    radarScores.innerHTML = "";
+  }
+
+  const total = outcomeAxes.length;
+  radarPointNodes = [];
+  radarScoreNodes = [];
+
+  for (let step = 1; step <= RADAR_STEPS; step += 1) {
+    const radius = (RADAR_RADIUS * step) / RADAR_STEPS;
+    const ringPoints = outcomeAxes.map((axis, index) => {
+      const point = pointAtRadius(index, total, radius);
+      return `${point.x},${point.y}`;
+    });
+    const ring = createSvgElement("polygon");
+    ring.setAttribute("points", ringPoints.join(" "));
+    ring.classList.add("radar-ring");
+    radarGrid.appendChild(ring);
+  }
+
+  outcomeAxes.forEach((axis, index) => {
+    const axisEnd = pointAtRadius(index, total, RADAR_RADIUS);
+    const line = createSvgElement("line");
+    line.setAttribute("x1", RADAR_CENTER);
+    line.setAttribute("y1", RADAR_CENTER);
+    line.setAttribute("x2", axisEnd.x);
+    line.setAttribute("y2", axisEnd.y);
+    line.classList.add("radar-axis");
+    radarAxes.appendChild(line);
+
+    const labelPoint = pointAtRadius(index, total, RADAR_RADIUS + 18);
+    const label = createSvgElement("text");
+    label.setAttribute("x", labelPoint.x);
+    label.setAttribute("y", labelPoint.y);
+    label.setAttribute("dominant-baseline", "middle");
+    const cosValue = Math.cos(axisAngle(index, total));
+    if (Math.abs(cosValue) < 0.2) {
+      label.setAttribute("text-anchor", "middle");
+    } else {
+      label.setAttribute("text-anchor", cosValue > 0 ? "start" : "end");
+    }
+    label.classList.add("radar-label");
+    label.textContent = axis;
+    radarLabels.appendChild(label);
+
+    const point = createSvgElement("circle");
+    point.setAttribute("r", "4");
+    point.classList.add("radar-point");
+    radarPoints.appendChild(point);
+    radarPointNodes.push(point);
+
+    if (radarScores) {
+      const item = document.createElement("li");
+      item.className = "radar-score-item";
+      item.textContent = `${axis}: 0/5`;
+      radarScores.appendChild(item);
+      radarScoreNodes.push(item);
+    }
+  });
+
+  radarReady = true;
+};
+
+const getAxisValue = (source, axis) => {
+  if (!source || typeof source !== "object") {
+    return 0;
+  }
+  if (Object.prototype.hasOwnProperty.call(source, axis)) {
+    return source[axis] || 0;
+  }
+  if (axis === "Alertness" && Object.prototype.hasOwnProperty.call(source, "Energy")) {
+    return source.Energy || 0;
+  }
+  return 0;
+};
+
+const parseBotanicalContributions = (card) => {
+  if (!card || !card.dataset.botanicalContributions) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(card.dataset.botanicalContributions);
+  } catch (error) {
+    console.warn("Unable to read botanical contributions", error);
+    return {};
+  }
+};
+
+const parseFlavorBotanicalIds = (card) => {
+  if (!card || !card.dataset.flavorBotanicalIds) {
+    return [];
+  }
+  return card.dataset.flavorBotanicalIds.split(",").filter(Boolean);
+};
+
+const scoreFlavor = (card, selectedBotanicals = []) => {
+  const selectedIds = new Set(selectedBotanicals.map((botanical) => botanical.id));
+  if (selectedIds.size === 0) {
+    return 0;
+  }
+  return parseFlavorBotanicalIds(card).reduce(
+    (total, botanicalId) => total + (selectedIds.has(botanicalId) ? 1 : 0),
+    0,
+  );
+};
+
+const scoreBotanical = (card, baseAlignment = {}) => {
+  const contributions = parseBotanicalContributions(card);
+  return outcomeAxes.reduce(
+    (total, axis) =>
+      total + getAxisValue(baseAlignment, axis) * getAxisValue(contributions, axis),
+    0,
+  );
+};
+
+const renderRadarChart = (alignment = {}) => {
+  if (!radarChart || !radarShape) {
+    return;
+  }
+
+  initRadarChart();
+  const total = outcomeAxes.length;
+  const points = outcomeAxes.map((axis, index) => {
+    const value = Math.min(5, getAxisValue(alignment, axis));
+    const radius = (RADAR_RADIUS * value) / RADAR_STEPS;
+    const point = pointAtRadius(index, total, radius);
+    if (radarPointNodes[index]) {
+      radarPointNodes[index].setAttribute("cx", point.x);
+      radarPointNodes[index].setAttribute("cy", point.y);
+    }
+    if (radarScoreNodes[index]) {
+      radarScoreNodes[index].textContent = `${axis}: ${value}/5`;
+    }
+    return `${point.x},${point.y}`;
+  });
+  radarShape.setAttribute("points", points.join(" "));
+};
+
+const calculateCombinedAlignment = (baseAlignment = {}, botanicals = []) => {
+  const combined = {};
+  outcomeAxes.forEach((axis) => {
+    let value = getAxisValue(baseAlignment, axis);
+    botanicals.forEach((botanical) => {
+      value += getAxisValue(botanical.contributions, axis);
+    });
+    combined[axis] = Math.min(5, value);
+  });
+  return combined;
+};
+
+const updateAlignmentPreview = (selection) => {
+  const baseAlignment = selection.baseAlignment || {};
+  const botanicals = selection.selectedBotanicals || [];
+  renderRadarChart(calculateCombinedAlignment(baseAlignment, botanicals));
+};
+
+const initFlavorSpectrum = () => {
+  if (!flavorSpectrum || flavorSpectrumReady) {
+    return;
+  }
+
+  flavorSpectrum.innerHTML = "";
+  flavorSpectrumRows = [];
+
+  flavorCategories.forEach((category) => {
+    const row = document.createElement("div");
+    row.className = "flavor-spectrum-row";
+
+    const label = document.createElement("span");
+    label.textContent = category;
+
+    const bar = document.createElement("div");
+    bar.className = "flavor-spectrum-bar";
+    const fill = document.createElement("span");
+    bar.appendChild(fill);
+
+    const score = document.createElement("span");
+    score.className = "flavor-spectrum-score";
+    score.textContent = "0/5";
+
+    row.appendChild(label);
+    row.appendChild(bar);
+    row.appendChild(score);
+
+    flavorSpectrum.appendChild(row);
+    flavorSpectrumRows.push({ bar: fill, score });
+  });
+
+  flavorSpectrumReady = true;
+};
+
+const calculateFlavorProfile = (flavors = []) => {
+  const profile = {};
+  flavorCategories.forEach((category) => {
+    profile[category] = 0;
+  });
+
+  flavors.forEach((flavor) => {
+    const spectrum = flavor.spectrum || {};
+    flavorCategories.forEach((category) => {
+      profile[category] = Math.min(5, profile[category] + (spectrum[category] || 0));
+    });
+  });
+
+  return profile;
+};
+
+const renderFlavorSpectrum = (profile = {}) => {
+  if (!flavorSpectrum) {
+    return;
+  }
+
+  initFlavorSpectrum();
+  flavorCategories.forEach((category, index) => {
+    const value = Math.min(5, profile[category] || 0);
+    if (flavorSpectrumRows[index]) {
+      flavorSpectrumRows[index].bar.style.width = `${value * 20}%`;
+      flavorSpectrumRows[index].score.textContent = `${value}/5`;
+    }
+  });
+};
+
+const updateBotanicalPreview = (selection) => {
+  const botanicals = selection.selectedBotanicals || [];
+  const titles = botanicals.map((botanical) => botanical.title);
+  updateList(
+    previewBotanicals,
+    titles,
+    "Add botanicals to amplify your blend.",
+  );
+};
+
+const updateBotanicalRequirement = (selection) => {
+  if (!selection.baseId) {
+    updateBotanicalWarning("");
+    return;
+  }
+  const count = (selection.selectedBotanicals || []).length;
+  if (count < BOTANICAL_MIN) {
+    updateBotanicalWarning(
+      `Select at least ${BOTANICAL_MIN} botanical${BOTANICAL_MIN === 1 ? "" : "s"}.`,
+    );
+    return;
+  }
+  updateBotanicalWarning("");
+};
+
+const updateFlavorPreview = (selection) => {
+  const flavors = selection.selectedFlavors || [];
+  const titles = flavors.map((flavor) => `${flavor.title} (${flavor.category})`);
+  updateList(
+    previewFlavors,
+    titles,
+    "Add flavor notes to complete the aroma profile.",
+  );
+  renderFlavorSpectrum(calculateFlavorProfile(flavors));
+};
+
+const updateFlavorRequirement = (selection) => {
+  if (!selection.baseId) {
+    updateFlavorWarning("");
+    return;
+  }
+  if ((selection.selectedBotanicals || []).length === 0) {
+    updateFlavorWarning("Select functional botanicals to unlock flavors.");
+    return;
+  }
+  const count = (selection.selectedFlavors || []).length;
+  if (count < FLAVOR_MIN) {
+    updateFlavorWarning(
+      `Select at least ${FLAVOR_MIN} flavor botanical${FLAVOR_MIN === 1 ? "" : "s"}.`,
+    );
+    return;
+  }
+  updateFlavorWarning("");
+};
+
+const resetBasePreview = () => {
+  baseCards.forEach((item) => item.classList.remove("is-selected"));
+  if (previewBaseTitle) {
+    previewBaseTitle.textContent = "Pick a base tea";
+  }
+  if (previewBaseDescription) {
+    previewBaseDescription.textContent =
+      "The base tea will steer the balance of calm, focus, and alertness in your blend.";
+  }
+  updateAlignmentPreview({});
+  if (continueButton) {
+    continueButton.disabled = true;
+  }
+};
+
+const showBaseGrid = (outcomeId) => {
+  baseGrids.forEach((grid) => {
+    const isMatch = grid.dataset.baseGrid === outcomeId;
+    grid.hidden = !isMatch;
+  });
+  if (baseEmpty) {
+    baseEmpty.hidden = Boolean(outcomeId);
+  }
+};
+
+const showBotanicalGrid = (outcomeId, baseId, baseAlignment = {}) => {
+  const matchingCards = Array.from(botanicalCards).filter((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    return Boolean(isMatch && matchesBase);
+  });
+  const sortedCards = matchingCards
+    .map((card) => ({
+      card,
+      score: scoreBotanical(card, baseAlignment),
+      title: card.dataset.botanicalTitle || "",
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.title.localeCompare(b.title);
+    })
+    .slice(0, 6);
+
+  currentBotanicalOptionIds = new Set(
+    sortedCards.map((entry) => entry.card.dataset.botanicalId),
+  );
+
+  botanicalGrids.forEach((grid) => {
+    const isMatch = grid.dataset.botanicalGrid === outcomeId;
+    grid.hidden = !isMatch || !baseId;
+    if (isMatch && baseId) {
+      sortedCards.forEach((entry) => {
+        grid.appendChild(entry.card);
+      });
+    }
+  });
+
+  if (botanicalEmpty) {
+    botanicalEmpty.hidden = Boolean(outcomeId && baseId && sortedCards.length > 0);
+  }
+
+  botanicalCards.forEach((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    const isAllowed = currentBotanicalOptionIds.has(card.dataset.botanicalId);
+    card.hidden = !(isMatch && baseId && matchesBase && isAllowed);
+  });
+};
+
+const showFlavorGrid = (outcomeId, baseId, selectedBotanicals = []) => {
+  const selectedIds = new Set(
+    selectedBotanicals.map((botanical) => botanical.id),
+  );
+  let matchingCards = Array.from(flavorCards).filter((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    if (!isMatch || !matchesBase) {
+      return false;
+    }
+    if (selectedIds.size === 0) {
+      return false;
+    }
+    const botanicalIds = parseFlavorBotanicalIds(card);
+    return botanicalIds.some((id) => selectedIds.has(id));
+  });
+
+  if (matchingCards.length === 0 && selectedIds.size > 0) {
+    matchingCards = Array.from(flavorCards).filter((card) => {
+      const isMatch = card.dataset.outcomeId === outcomeId;
+      const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+      const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+      return Boolean(isMatch && matchesBase);
+    });
+  }
+  const sortedCards = matchingCards
+    .map((card) => ({
+      card,
+      score: scoreFlavor(card, selectedBotanicals),
+      title: card.dataset.flavorTitle || "",
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.title.localeCompare(b.title);
+    })
+    .slice(0, 6);
+
+  currentFlavorOptionIds = new Set(
+    sortedCards.map((entry) => entry.card.dataset.flavorId),
+  );
+
+  flavorGrids.forEach((grid) => {
+    const isMatch = grid.dataset.flavorGrid === outcomeId;
+    grid.hidden = !isMatch || !baseId;
+    if (isMatch && baseId) {
+      sortedCards.forEach((entry) => {
+        grid.appendChild(entry.card);
+      });
+    }
+  });
+
+  if (flavorEmpty) {
+    flavorEmpty.hidden = Boolean(
+      outcomeId && baseId && selectedIds.size > 0 && sortedCards.length > 0,
+    );
+  }
+
+  flavorCards.forEach((card) => {
+    const isMatch = card.dataset.outcomeId === outcomeId;
+    const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+    const matchesBase = baseId && (baseIds.length === 0 || baseIds.includes(baseId));
+    const isAllowed = currentFlavorOptionIds.has(card.dataset.flavorId);
+    card.hidden = !(isMatch && baseId && matchesBase && isAllowed);
+  });
+};
+
+const resetBotanicalSelection = () => {
+  botanicalCards.forEach((item) => item.classList.remove("is-selected"));
+  updateBotanicalPreview({ selectedBotanicals: [] });
+};
+
+const resetFlavorSelection = () => {
+  flavorCards.forEach((item) => item.classList.remove("is-selected"));
+  updateFlavorWarning("");
+  updateFlavorPreview({ selectedFlavors: [] });
+};
+
+const applySelection = (card) => {
+  outcomeCards.forEach((item) => item.classList.remove("is-selected"));
+  card.classList.add("is-selected");
+
+  const stored = getStoredSelection();
+  const title = card.dataset.outcomeTitle || "";
+  const description = card.dataset.outcomeDescription || "";
+  const bases = (card.dataset.bases || "").split(",").filter(Boolean);
+  const botanicals = (card.dataset.botanicals || "").split(",").filter(Boolean);
+
+  if (previewTitle) {
+    previewTitle.textContent = title;
+  }
+  if (previewDescription) {
+    previewDescription.textContent = description;
+  }
+
+  updateList(previewBases, bases);
+  updateList(previewBotanicals, [], "Add botanicals to amplify your blend.");
+
+  showBaseGrid(card.dataset.outcomeId);
+  resetBasePreview();
+  showBotanicalGrid(card.dataset.outcomeId, null);
+  resetBotanicalSelection();
+  updateBotanicalWarning("");
+  showFlavorGrid(card.dataset.outcomeId, null);
+  resetFlavorSelection();
+  updateFlavorRequirement({ selectedFlavors: [], selectedBotanicals: [] });
+
+  const nextSelection = {
+    outcomeId: card.dataset.outcomeId,
+    outcomeTitle: title,
+    outcomeDescription: description,
+    bases,
+    botanicals,
+    baseId: null,
+    baseTitle: null,
+    baseDescription: null,
+    baseAlignment: {},
+    selectedBotanicals: [],
+    selectedFlavors: [],
+    sizeLabel: stored.sizeLabel || null,
+    sizeGrams: stored.sizeGrams || null,
+    sizePrice: stored.sizePrice || null,
+    blendName: stored.blendName || null,
+  };
+
+  storeSelection(nextSelection);
+  updateSizePreview(nextSelection);
+  updateNamePreview(nextSelection);
+  updateStepNavigation(nextSelection);
+};
+
+outcomeCards.forEach((card) => {
+  card.addEventListener("click", () => applySelection(card));
+});
+
+const applyBaseSelection = (card) => {
+  baseCards.forEach((item) => item.classList.remove("is-selected"));
+  card.classList.add("is-selected");
+
+  const title = card.dataset.baseTitle || "";
+  const description = card.dataset.baseDescription || "";
+  let alignment = {};
+
+  if (card.dataset.alignment) {
+    try {
+      alignment = JSON.parse(card.dataset.alignment);
+    } catch (error) {
+      console.warn("Unable to read base alignment", error);
+    }
+  }
+
+  if (previewBaseTitle) {
+    previewBaseTitle.textContent = title;
+  }
+  if (previewBaseDescription) {
+    previewBaseDescription.textContent = description;
+  }
+
+  if (continueButton) {
+    continueButton.disabled = false;
+  }
+
+  const stored = getStoredSelection();
+  const selection = {
+    ...stored,
+    baseId: card.dataset.baseId,
+    baseTitle: title,
+    baseDescription: description,
+    baseAlignment: alignment,
+  };
+
+  showBotanicalGrid(selection.outcomeId, selection.baseId, alignment);
+  selection.selectedBotanicals = reconcileBotanicals(selection);
+  showFlavorGrid(selection.outcomeId, selection.baseId, selection.selectedBotanicals);
+  selection.selectedFlavors = reconcileFlavors(selection);
+  storeSelection(selection);
+  updateBotanicalPreview(selection);
+  updateBotanicalRequirement(selection);
+  updateFlavorPreview(selection);
+  updateFlavorRequirement(selection);
+  updateAlignmentPreview(selection);
+  updateStepNavigation(selection);
+};
+
+baseCards.forEach((card) => {
+  card.addEventListener("click", () => applyBaseSelection(card));
+});
+
+const applySizeSelection = (card) => {
+  sizeCards.forEach((item) => item.classList.remove("is-selected"));
+  card.classList.add("is-selected");
+
+  const label = card.dataset.sizeLabel || "";
+  const grams = Number.parseInt(card.dataset.sizeGrams || "", 10);
+  const price = Number.parseFloat(card.dataset.sizePrice || "");
+  if (!label || Number.isNaN(grams) || Number.isNaN(price)) {
+    return;
+  }
+
+  const selection = {
+    ...getStoredSelection(),
+    sizeLabel: label,
+    sizeGrams: grams,
+    sizePrice: price,
+  };
+
+  storeSelection(selection);
+  updateSizePreview(selection);
+};
+
+sizeCards.forEach((card) => {
+  card.addEventListener("click", () => applySizeSelection(card));
+});
+
+const applyNameSelection = () => {
+  if (!nameInput) {
+    return;
+  }
+
+  const rawValue = nameInput.value || "";
+  const trimmed = rawValue.trim();
+
+  if (!trimmed) {
+    const selection = { ...getStoredSelection(), blendName: null };
+    storeSelection(selection);
+    updateNamePreview(selection);
+    updateNameHelp(NAME_HELP_DEFAULT, false);
+    return;
+  }
+
+  if (trimmed.length < NAME_MIN || trimmed.length > NAME_MAX) {
+    updateNameHelp(
+      `Name should be ${NAME_MIN}-${NAME_MAX} characters.`,
+      true,
+    );
+    return;
+  }
+
+  const selection = { ...getStoredSelection(), blendName: trimmed };
+  storeSelection(selection);
+  updateNamePreview(selection);
+  updateNameHelp(NAME_HELP_DEFAULT, false);
+};
+
+if (nameInput) {
+  nameInput.addEventListener("input", applyNameSelection);
+}
+
+if (stepNextButton) {
+  stepNextButton.addEventListener("click", () => {
+    if (stepNextButton.disabled) {
+      return;
+    }
+    const nextUrl = stepNextButton.dataset.nextStepUrl;
+    if (nextUrl) {
+      window.location.href = nextUrl;
+    }
+  });
+}
+
+const restoreSelection = () => {
+  try {
+    const selection = getStoredSelection();
+    const hasBotanicalCards = botanicalCards.length > 0;
+    const hasFlavorCards = flavorCards.length > 0;
+    const shouldReconcileBotanicals = currentStep === "3" && hasBotanicalCards;
+    const shouldReconcileFlavors = currentStep === "4" && hasFlavorCards;
+    if (enforceStepRequirements(selection)) {
+      return;
+    }
+    if (!selection.outcomeId) {
+      updateFlavorPreview({ selectedFlavors: [] });
+      updateSizePreview(selection);
+      updateNamePreview(selection);
+      if (nameInput) {
+        nameInput.value = selection.blendName || "";
+        updateNameHelp(NAME_HELP_DEFAULT, false);
+      }
+      updateStepNavigation(selection);
+      return;
+    }
+
+    const matchOutcome = Array.from(outcomeCards).find(
+      (card) => card.dataset.outcomeId === selection.outcomeId,
+    );
+    if (matchOutcome) {
+      applySelection(matchOutcome);
+    } else {
+      updateOutcomePreviewFromSelection(selection);
+      showBaseGrid(selection.outcomeId);
+      showBotanicalGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.baseAlignment || {},
+      );
+      showFlavorGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.selectedBotanicals || [],
+      );
+    }
+
+    if (selection.baseId) {
+      const matchBase = Array.from(baseCards).find(
+        (card) =>
+          card.dataset.baseId === selection.baseId &&
+          card.dataset.outcomeId === selection.outcomeId,
+      );
+      if (matchBase) {
+        applyBaseSelection(matchBase);
+      } else {
+        updateBasePreviewFromSelection(selection);
+        updateAlignmentPreview(selection);
+        showBotanicalGrid(
+          selection.outcomeId,
+          selection.baseId,
+          selection.baseAlignment || {},
+        );
+        showFlavorGrid(
+          selection.outcomeId,
+          selection.baseId,
+          selection.selectedBotanicals || [],
+        );
+      }
+    } else {
+      showBotanicalGrid(selection.outcomeId, null);
+      showFlavorGrid(selection.outcomeId, null);
+    }
+
+    if (selection.selectedBotanicals) {
+      selection.selectedBotanicals.forEach((botanical) => {
+        const matchBotanical = Array.from(botanicalCards).find(
+          (card) =>
+            card.dataset.botanicalId === botanical.id &&
+            card.dataset.outcomeId === selection.outcomeId,
+        );
+        if (matchBotanical) {
+          matchBotanical.classList.add("is-selected");
+        }
+      });
+      if (shouldReconcileBotanicals) {
+        selection.selectedBotanicals = reconcileBotanicals(selection);
+      }
+      updateBotanicalPreview(selection);
+      updateBotanicalRequirement(selection);
+      updateAlignmentPreview(selection);
+      showFlavorGrid(
+        selection.outcomeId,
+        selection.baseId,
+        selection.selectedBotanicals,
+      );
+    }
+
+    if (selection.selectedFlavors) {
+      selection.selectedFlavors.forEach((flavor) => {
+        const matchFlavor = Array.from(flavorCards).find(
+          (card) =>
+            card.dataset.flavorId === flavor.id &&
+            card.dataset.outcomeId === selection.outcomeId,
+        );
+        if (matchFlavor) {
+          matchFlavor.classList.add("is-selected");
+        }
+      });
+      if (shouldReconcileFlavors) {
+        selection.selectedFlavors = reconcileFlavors(selection);
+      }
+      updateFlavorPreview(selection);
+    }
+    updateFlavorRequirement(selection);
+
+    if (selection.sizeLabel) {
+      const matchSize = Array.from(sizeCards).find(
+        (card) => card.dataset.sizeLabel === selection.sizeLabel,
+      );
+      if (matchSize) {
+        matchSize.classList.add("is-selected");
+      }
+    }
+    updateSizePreview(selection);
+    updateNamePreview(selection);
+    if (nameInput) {
+      nameInput.value = selection.blendName || "";
+      updateNameHelp(NAME_HELP_DEFAULT, false);
+    }
+    updateStepNavigation(selection);
+  } catch (error) {
+    console.warn("Unable to restore blend selection", error);
+  }
+};
+
+const botanicalCardById = new Map();
+botanicalCards.forEach((card) => {
+  if (card.dataset.botanicalId) {
+    botanicalCardById.set(card.dataset.botanicalId, card);
+  }
+});
+
+const flavorCardById = new Map();
+flavorCards.forEach((card) => {
+  if (card.dataset.flavorId) {
+    flavorCardById.set(card.dataset.flavorId, card);
+  }
+});
+
+const isBotanicalAllowed = (card, outcomeId, baseId) => {
+  if (!card || !outcomeId || !baseId) {
+    return false;
+  }
+  if (card.dataset.outcomeId !== outcomeId) {
+    return false;
+  }
+  const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+  if (currentBotanicalOptionIds.size > 0) {
+    return currentBotanicalOptionIds.has(card.dataset.botanicalId);
+  }
+  return baseIds.length === 0 || baseIds.includes(baseId);
+};
+
+const reconcileBotanicals = (selection) => {
+  const selected = selection.selectedBotanicals || [];
+  if (botanicalCards.length === 0) {
+    return selected.slice(0, BOTANICAL_MAX);
+  }
+  const filtered = selected.filter((botanical) => {
+    const card = botanicalCardById.get(botanical.id);
+    return isBotanicalAllowed(card, selection.outcomeId, selection.baseId);
+  });
+  const limited = filtered.slice(0, BOTANICAL_MAX);
+
+  botanicalCards.forEach((card) => {
+    const isSelected = limited.some(
+      (botanical) => botanical.id === card.dataset.botanicalId,
+    );
+    card.classList.toggle("is-selected", isSelected);
+  });
+
+  return limited;
+};
+
+const isFlavorAllowed = (card, outcomeId, baseId) => {
+  if (!card || !outcomeId || !baseId) {
+    return false;
+  }
+  if (card.dataset.outcomeId !== outcomeId) {
+    return false;
+  }
+  const baseIds = (card.dataset.baseIds || "").split(",").filter(Boolean);
+  if (!(baseIds.length === 0 || baseIds.includes(baseId))) {
+    return false;
+  }
+  if (currentFlavorOptionIds.size === 0) {
+    return false;
+  }
+  return currentFlavorOptionIds.has(card.dataset.flavorId);
+};
+
+const updateFlavorConflicts = (selection) => {
+  const selected = selection.selectedFlavors || [];
+  const blocked = new Set();
+
+  selected.forEach((flavor) => {
+    (flavor.incompatibleWith || []).forEach((id) => blocked.add(id));
+  });
+
+  flavorCards.forEach((card) => {
+    const isSelected = selected.some(
+      (flavor) => flavor.id === card.dataset.flavorId,
+    );
+    const isBlocked = blocked.has(card.dataset.flavorId);
+    const shouldBlock = !isSelected && isBlocked;
+    card.classList.toggle("is-incompatible", shouldBlock);
+    card.setAttribute("aria-disabled", shouldBlock ? "true" : "false");
+  });
+};
+
+const reconcileFlavors = (selection) => {
+  if ((selection.selectedBotanicals || []).length === 0) {
+    flavorCards.forEach((card) => {
+      card.classList.remove("is-selected");
+    });
+    updateFlavorConflicts({ selectedFlavors: [] });
+    return [];
+  }
+  const selected = selection.selectedFlavors || [];
+  const filtered = [];
+  const blocked = new Set();
+
+  selected.forEach((flavor) => {
+    const card = flavorCardById.get(flavor.id);
+    if (!isFlavorAllowed(card, selection.outcomeId, selection.baseId)) {
+      return;
+    }
+    if (blocked.has(flavor.id)) {
+      return;
+    }
+    filtered.push(flavor);
+    (flavor.incompatibleWith || []).forEach((id) => blocked.add(id));
+  });
+
+  const limited = filtered.slice(0, FLAVOR_MAX);
+
+  flavorCards.forEach((card) => {
+    const isSelected = limited.some((flavor) => flavor.id === card.dataset.flavorId);
+    card.classList.toggle("is-selected", isSelected);
+  });
+
+  updateFlavorConflicts({ selectedFlavors: limited });
+  return limited;
+};
+
+const toggleBotanicalSelection = (card) => {
+  const selection = getStoredSelection();
+  if (!selection.baseId) {
+    return;
+  }
+
+  const existing = selection.selectedBotanicals || [];
+  const isSelected = card.classList.contains("is-selected");
+  let updated = existing;
+
+  if (isSelected) {
+    if (existing.length <= BOTANICAL_MIN) {
+      updateBotanicalWarning(
+        `Select at least ${BOTANICAL_MIN} botanical${BOTANICAL_MIN === 1 ? "" : "s"}.`,
+      );
+      return;
+    }
+    card.classList.remove("is-selected");
+    updated = existing.filter(
+      (botanical) => botanical.id !== card.dataset.botanicalId,
+    );
+  } else {
+    if (existing.length >= BOTANICAL_MAX) {
+      updateBotanicalWarning(`Select up to ${BOTANICAL_MAX} botanicals.`);
+      return;
+    }
+    if (!isBotanicalAllowed(card, selection.outcomeId, selection.baseId)) {
+      return;
+    }
+    card.classList.add("is-selected");
+    let attributes = [];
+    const contributions = parseBotanicalContributions(card);
+    if (card.dataset.botanicalAttributes) {
+      try {
+        attributes = JSON.parse(card.dataset.botanicalAttributes);
+      } catch (error) {
+        console.warn("Unable to read botanical attributes", error);
+      }
+    }
+    updated = [
+      ...existing,
+      {
+        id: card.dataset.botanicalId,
+        title: card.dataset.botanicalTitle || "",
+        attributes,
+        contributions,
+      },
+    ];
+  }
+
+  const reconciled = reconcileBotanicals({
+    ...selection,
+    selectedBotanicals: updated,
+  });
+  const nextSelection = {
+    ...selection,
+    selectedBotanicals: reconciled,
+  };
+
+  showFlavorGrid(nextSelection.outcomeId, nextSelection.baseId, reconciled);
+  nextSelection.selectedFlavors = reconcileFlavors(nextSelection);
+  storeSelection(nextSelection);
+  updateBotanicalPreview(nextSelection);
+  updateBotanicalRequirement(nextSelection);
+  updateAlignmentPreview(nextSelection);
+  updateFlavorPreview(nextSelection);
+  updateFlavorRequirement(nextSelection);
+  updateStepNavigation(nextSelection);
+};
+
+botanicalCards.forEach((card) => {
+  card.addEventListener("click", () => toggleBotanicalSelection(card));
+});
+
+const toggleFlavorSelection = (card) => {
+  const selection = getStoredSelection();
+  if (!selection.baseId) {
+    return;
+  }
+  if ((selection.selectedBotanicals || []).length === 0) {
+    updateFlavorWarning("Select functional botanicals to unlock flavors.");
+    return;
+  }
+
+  const existing = selection.selectedFlavors || [];
+  const isSelected = card.classList.contains("is-selected");
+  let updated = existing;
+
+  if (isSelected) {
+    if (existing.length <= FLAVOR_MIN) {
+      updateFlavorWarning(
+        `Select at least ${FLAVOR_MIN} flavor botanical${FLAVOR_MIN === 1 ? "" : "s"}.`,
+      );
+      return;
+    }
+    card.classList.remove("is-selected");
+    updated = existing.filter((flavor) => flavor.id !== card.dataset.flavorId);
+  } else {
+    if (existing.length >= FLAVOR_MAX) {
+      updateFlavorWarning(`Select up to ${FLAVOR_MAX} flavor botanicals.`);
+      return;
+    }
+    if (!isFlavorAllowed(card, selection.outcomeId, selection.baseId)) {
+      return;
+    }
+    let incompatibleWith = [];
+    if (card.dataset.incompatible) {
+      try {
+        incompatibleWith = JSON.parse(card.dataset.incompatible);
+      } catch (error) {
+        console.warn("Unable to read incompatible flavors", error);
+      }
+    }
+
+    const conflict = existing.find(
+      (flavor) =>
+        incompatibleWith.includes(flavor.id) ||
+        (flavor.incompatibleWith || []).includes(card.dataset.flavorId),
+    );
+    if (conflict) {
+      updateFlavorWarning(
+        `${card.dataset.flavorTitle || "This flavor"} clashes with ${conflict.title}.`,
+      );
+      return;
+    }
+
+    let notes = [];
+    let spectrum = {};
+    if (card.dataset.flavorNotes) {
+      try {
+        notes = JSON.parse(card.dataset.flavorNotes);
+      } catch (error) {
+        console.warn("Unable to read flavor notes", error);
+      }
+    }
+    if (card.dataset.flavorSpectrum) {
+      try {
+        spectrum = JSON.parse(card.dataset.flavorSpectrum);
+      } catch (error) {
+        console.warn("Unable to read flavor spectrum", error);
+      }
+    }
+
+    updated = [
+      ...existing,
+      {
+        id: card.dataset.flavorId,
+        title: card.dataset.flavorTitle || "",
+        category: card.dataset.flavorCategory || "",
+        notes,
+        spectrum,
+        incompatibleWith,
+      },
+    ];
+  }
+
+  const reconciled = reconcileFlavors({
+    ...selection,
+    selectedFlavors: updated,
+  });
+  const nextSelection = {
+    ...selection,
+    selectedFlavors: reconciled,
+  };
+
+  storeSelection(nextSelection);
+  updateFlavorPreview(nextSelection);
+  updateFlavorRequirement(nextSelection);
+  updateStepNavigation(nextSelection);
+};
+
+flavorCards.forEach((card) => {
+  card.addEventListener("click", () => toggleFlavorSelection(card));
+});
+
+restoreSelection();

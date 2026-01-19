@@ -1,0 +1,56 @@
+<svg width="1440" height="520" viewBox="0 0 1440 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="T ALCHEMY luxury logo">
+  <defs>
+    <linearGradient id="luxAccent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF4D6D"/>
+      <stop offset="0.5" stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#2DCEEF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="520" fill="black"/>
+
+  <!-- Custom wordmark built from geometric strokes -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- T -->
+    <path d="M110 140H260" stroke="url(#luxAccent)" stroke-width="20"/>
+    <path d="M185 140V360" stroke="#F8F7F4" stroke-width="20"/>
+
+    <!-- A (alchemical triangle with crossbar) -->
+    <path d="M330 360L405 140L480 360" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M360 280H450" stroke="url(#luxAccent)" stroke-width="16"/>
+
+    <!-- L -->
+    <path d="M545 140V360H640" stroke="#F8F7F4" stroke-width="20"/>
+
+    <!-- C -->
+    <path d="M730 170C690 150 640 175 640 250C640 325 690 350 730 330" stroke="#F8F7F4" stroke-width="20"/>
+
+    <!-- H (double stem + subtle alchemy cut) -->
+    <path d="M780 140V360" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M860 140V360" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M780 250H860" stroke="url(#luxAccent)" stroke-width="16"/>
+
+    <!-- E -->
+    <path d="M930 140V360" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M930 140H1030" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M930 250H1010" stroke="url(#luxAccent)" stroke-width="16"/>
+    <path d="M930 360H1035" stroke="#F8F7F4" stroke-width="20"/>
+
+    <!-- M -->
+    <path d="M1100 360V140" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M1100 140L1165 240L1230 140" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M1230 140V360" stroke="#F8F7F4" stroke-width="20"/>
+
+    <!-- Y -->
+    <path d="M1280 140L1340 240" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M1400 140L1340 240" stroke="#F8F7F4" stroke-width="20"/>
+    <path d="M1340 240V360" stroke="url(#luxAccent)" stroke-width="20"/>
+  </g>
+
+  <!-- Overlaid brand line: T ALCHEMY -->
+  <g fill="#F8F7F4">
+    <text x="110" y="450" font-family="'Space Grotesk', 'Helvetica Neue', sans-serif" font-size="28" letter-spacing="12">T ALCHEMY</text>
+  </g>
+
+  <!-- Alchemical dot accent -->
+  <circle cx="520" cy="110" r="8" fill="url(#luxAccent)"/>
+</svg>

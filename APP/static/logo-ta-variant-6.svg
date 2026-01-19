@@ -1,0 +1,9 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TA monogram variant 6">
+  <rect x="64" y="64" width="384" height="384" rx="64" fill="#FFE6D6"/>
+  <rect x="96" y="96" width="320" height="320" rx="48" fill="#0A3D62"/>
+  <path d="M176 212H336" stroke="#FFE6D6" stroke-width="18" stroke-linecap="round"/>
+  <path d="M256 212V336" stroke="#FFE6D6" stroke-width="18" stroke-linecap="round"/>
+  <path d="M220 336L256 242L292 336" stroke="#FFE6D6" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M236 296H276" stroke="#FFD93D" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="340" cy="188" r="12" fill="#FF6B6B"/>
+</svg>
