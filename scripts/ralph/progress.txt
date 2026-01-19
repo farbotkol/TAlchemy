@@ -12,3 +12,12 @@ Thread: N/A
   - Gotchas encountered: Python is available as `python3` in the environment.
   - Useful context: `app/static/styles.css` is loaded after Bootstrap for brand overrides.
 ---
+## Mon Jan 19 22:02:06 AEDT 2026 - US-BS-002
+Thread: https://ampcode.com/threads/UNKNOWN
+- What was implemented: refreshed the homepage with a Bootstrap hero, featured product panel, and curated blend cards using grid, spacing, and button variants.
+- Files changed: app/templates/index.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: N/A
+  - Gotchas encountered: N/A
+  - Useful context: Browser verification screenshot stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-home.png
+---
