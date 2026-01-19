@@ -89,3 +89,12 @@ Thread: N/A
   - Gotchas encountered: None.
   - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step2-bases.png.
 ---
+## Mon Jan 19 20:15:27 AEDT 2026 - US-CB-202
+Thread: N/A
+- What was implemented: Verified Step 3 botanicals remain filtered by base tea relevance (top 6), enforce 1-2 selection limits, and reset invalid selections after base changes.
+- Files changed: scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: None this iteration.
+  - Gotchas encountered: None.
+  - Useful context: Browser validation screenshot saved at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/step3-botanicals.png.
+---
