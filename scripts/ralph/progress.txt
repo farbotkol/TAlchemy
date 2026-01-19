@@ -21,3 +21,12 @@ Thread: https://ampcode.com/threads/UNKNOWN
   - Gotchas encountered: N/A
   - Useful context: Browser verification screenshot stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-home.png
 ---
+## Mon Jan 19 22:05:13 AEDT 2026 - US-BS-003
+Thread: https://ampcode.com/threads/UNKNOWN
+- What was implemented: added a Bootstrap-based product detail page with grid layout, cart summary card, and CTA buttons, plus a FastAPI route serving sample product data.
+- Files changed: app/main.py, app/templates/product.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: N/A
+  - Gotchas encountered: N/A
+  - Useful context: Browser verification screenshot stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-product.png
+---

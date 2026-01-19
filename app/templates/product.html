@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} | Tea Alchemy{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/">Collections</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="ratio ratio-4x3 bg-secondary-subtle rounded-3 d-flex align-items-center justify-content-center">
+            <span class="text-uppercase text-muted">Signature Blend</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <span class="badge text-bg-light">Small batch</span>
+            <span class="badge text-bg-light">Caffeine</span>
+            <span class="badge text-bg-light">Citrus finish</span>
+          </div>
+          <p class="lead mt-4">
+            A luminous Earl Grey layered with candied orange and a hint of florals. Balanced for afternoon
+            rituals and late-night conversations.
+          </p>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <h6 class="text-uppercase text-muted">Tasting Notes</h6>
+              <ul class="list-unstyled mb-0">
+                {% for note in product.notes %}
+                <li class="mb-1">{{ note }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <h6 class="text-uppercase text-muted">Ingredients</h6>
+              <ul class="list-unstyled mb-0">
+                {% for ingredient in product.ingredients %}
+                <li class="mb-1">{{ ingredient }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-2">{{ product.name }}</h1>
+          <p class="text-muted mb-3">{{ product.tagline }}</p>
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <span class="display-6 fw-semibold">${{ "%.2f" | format(product.price) }}</span>
+            <span class="badge text-bg-success">In Stock</span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Size</label>
+            <div class="btn-group w-100" role="group" aria-label="Size selection">
+              {% for size in product.sizes %}
+              <input
+                type="radio"
+                class="btn-check"
+                name="size"
+                id="size-{{ loop.index }}"
+                autocomplete="off"
+                {% if loop.first %}checked{% endif %}
+              />
+              <label class="btn btn-outline-primary" for="size-{{ loop.index }}">{{ size }}</label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Quantity</label>
+            <div class="input-group">
+              <button class="btn btn-outline-secondary" type="button" aria-label="Decrease quantity">-</button>
+              <input type="text" class="form-control text-center" value="1" />
+              <button class="btn btn-outline-secondary" type="button" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary btn-lg" type="button">Add to cart</button>
+            <button class="btn btn-outline-dark" type="button">Save to wishlist</button>
+          </div>
+
+          <hr class="my-4" />
+          <div class="d-flex justify-content-between text-muted small">
+            <span>Free shipping over $60</span>
+            <span>Ships in 24 hours</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h6 class="text-uppercase text-muted">Cart Summary</h6>
+          <div class="list-group list-group-flush mb-3">
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <div>
+                <div class="fw-semibold">Starter Tin</div>
+                <small class="text-muted">2 x 50g</small>
+              </div>
+              <span>$32.00</span>
+            </div>
+            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <div>
+                <div class="fw-semibold">Tea filters</div>
+                <small class="text-muted">Pack of 50</small>
+              </div>
+              <span>$8.00</span>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between fw-semibold mb-3">
+            <span>Total</span>
+            <span>$40.00</span>
+          </div>
+          <div class="d-grid">
+            <button class="btn btn-outline-primary" type="button">View cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
