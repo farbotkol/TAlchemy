@@ -3,6 +3,7 @@ Started: Mon Jan 19 22:46:07 AEDT 2026
 ---
 ## Codebase Patterns
 - Templates and static assets live under `app/templates` and `app/static`; use lowercase `app` imports/paths.
+- Cart interactions rely on `.add-to-cart` buttons with data attributes for product info in templates.
 
 ## 2026-01-19 22:50:20 AEDT - US-BS-001
 Thread: N/A
@@ -20,4 +21,13 @@ Thread: N/A
   - Patterns discovered: Homepage cards now use Bootstrap `card` with `btn btn-warning` CTAs for consistency.
   - Gotchas encountered: dev-browser expects Playwright caches under `~/.cache/ms-playwright` on macOS.
   - Useful context: Uvicorn ran successfully on port 8010 for browser verification.
+---
+## 2026-01-19 23:04:59 AEDT - US-BS-003
+Thread: N/A
+- What was implemented: Rebuilt the product detail template with Bootstrap grid, cards, list groups, badges, and buttons; aligned cart summary layout to Bootstrap utilities; browser verified the page at http://127.0.0.1:8021/products/solstice-rest and captured `~/.codex/skills/dev-browser/tmp/product-detail.png`.
+- Files changed: app/templates/product_detail.html, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: Product detail uses Bootstrap `row`/`col` with `card` and `list-group` components; retain `.add-to-cart` class for cart.js bindings.
+  - Gotchas encountered: Port 8010 was already in use; used port 8021 for local verification.
+  - Useful context: dev-browser server runs via `npx tsx scripts/start-server.ts` in `~/.codex/skills/dev-browser`.
 ---
