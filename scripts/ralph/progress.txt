@@ -1,6 +1,7 @@
 # Ralph Progress Log
 ## Codebase Patterns
 - UI templates extend `app/templates/base.html`, which loads Bootstrap 5 via CDN and then custom styles.
+- Brand overrides live in `app/static/styles.css` using Bootstrap CSS variables (e.g., `--bs-primary`, `--bs-body-font-family`).
 Started: Tue Jan 20 00:00:00 AEDT 2026
 ---
 ## Mon Jan 19 21:58:00 AEDT 2026 - US-BS-001
@@ -47,4 +48,13 @@ Thread: https://ampcode.com/threads/$AMP_CURRENT_THREAD_ID
   - Patterns discovered: N/A
   - Gotchas encountered: dev-browser server was already running on port 9222 after Playwright install.
   - Useful context: Browser verification screenshots stored at /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-cart.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-checkout.png, /Users/lukefarbotko/.codex/skills/dev-browser/tmp/tea-confirmation.png
+---
+## Mon Jan 19 22:15:19 AEDT 2026 - US-BS-006
+Thread: https://ampcode.com/threads/UNKNOWN
+- What was implemented: reduced custom styling to Bootstrap variable overrides for brand color, typography, and border radius.
+- Files changed: app/static/styles.css, scripts/ralph/prd.json, scripts/ralph/progress.txt
+- **Learnings for future iterations:**
+  - Patterns discovered: use Bootstrap CSS variables in `app/static/styles.css` for brand tweaks instead of custom component rules.
+  - Gotchas encountered: N/A
+  - Useful context: N/A
 ---

@@ -1,7 +1,7 @@
-body {
-  font-family: "Georgia", "Times New Roman", serif;
-}
-
-.card {
-  border-radius: 1rem;
+:root {
+  --brand-primary: #2f6f57;
+  --bs-primary: var(--brand-primary);
+  --bs-primary-rgb: 47, 111, 87;
+  --bs-body-font-family: "Georgia", "Times New Roman", serif;
+  --bs-border-radius: 1rem;
 }
