@@ -17,6 +17,8 @@ class Product(BaseModel):
     description: str
     outcomes: List[str]
     sizes: List[ProductSize]
+    image: str
+    image_alt: str
 
 
 class BlendBase(BaseModel):
@@ -24,6 +26,8 @@ class BlendBase(BaseModel):
     title: str
     description: str
     alignment: dict[str, int]
+    image: str
+    image_alt: str
 
 
 class BlendFlavor(BaseModel):
@@ -35,6 +39,8 @@ class BlendFlavor(BaseModel):
     base_ids: List[str]
     botanical_ids: List[str]
     incompatible_with: List[str]
+    image: str
+    image_alt: str
 
 
 class BlendOutcome(BaseModel):
@@ -52,6 +58,67 @@ class BlendBotanical(BaseModel):
     attributes: List[str]
     contributions: dict[str, int]
     base_ids: List[str]
+    image: str
+    image_alt: str
+
+
+PLACEHOLDER_IMAGE_PATH = "/static/tea-leaves-placeholder.png"
+PLACEHOLDER_IMAGE_ALT = "Loose tea leaves placeholder"
+PLACEHOLDER_IMAGE = (PLACEHOLDER_IMAGE_PATH, PLACEHOLDER_IMAGE_ALT)
+
+
+def get_product_image(product_id: str) -> tuple[str, str]:
+    return PLACEHOLDER_IMAGE
+
+
+def get_base_image(base_id: str) -> tuple[str, str]:
+    return PLACEHOLDER_IMAGE
+
+
+def build_botanical(
+    *,
+    id: str,
+    title: str,
+    attributes: List[str],
+    contributions: dict[str, int],
+    base_ids: List[str],
+) -> BlendBotanical:
+    image, image_alt = PLACEHOLDER_IMAGE
+    return BlendBotanical(
+        id=id,
+        title=title,
+        attributes=attributes,
+        contributions=contributions,
+        base_ids=base_ids,
+        image=image,
+        image_alt=image_alt,
+    )
+
+
+def build_flavor(
+    *,
+    id: str,
+    title: str,
+    category: str,
+    notes: List[str],
+    spectrum: dict[str, int],
+    base_ids: List[str],
+    botanical_ids: List[str],
+    incompatible_with: List[str],
+) -> BlendFlavor:
+    image, image_alt = PLACEHOLDER_IMAGE
+    return BlendFlavor(
+        id=id,
+        title=title,
+        category=category,
+        notes=notes,
+        spectrum=spectrum,
+        base_ids=base_ids,
+        botanical_ids=botanical_ids,
+        incompatible_with=incompatible_with,
+        image=image,
+        image_alt=image_alt,
+    )
 
 
 PRODUCTS: List[Product] = [
@@ -64,6 +131,8 @@ PRODUCTS: List[Product] = [
             ProductSize(label="50g", grams=50, price_aud=18.0),
             ProductSize(label="100g", grams=100, price_aud=32.0),
         ],
+        image=get_product_image("solstice-rest")[0],
+        image_alt=get_product_image("solstice-rest")[1],
     ),
     Product(
         id="coastal-focus",
@@ -74,6 +143,8 @@ PRODUCTS: List[Product] = [
             ProductSize(label="50g", grams=50, price_aud=20.0),
             ProductSize(label="100g", grams=100, price_aud=36.0),
         ],
+        image=get_product_image("coastal-focus")[0],
+        image_alt=get_product_image("coastal-focus")[1],
     ),
     Product(
         id="morning-spark",
@@ -84,6 +155,8 @@ PRODUCTS: List[Product] = [
             ProductSize(label="50g", grams=50, price_aud=19.0),
             ProductSize(label="100g", grams=100, price_aud=34.0),
         ],
+        image=get_product_image("morning-spark")[0],
+        image_alt=get_product_image("morning-spark")[1],
     ),
     Product(
         id="quiet-glow",
@@ -94,6 +167,8 @@ PRODUCTS: List[Product] = [
             ProductSize(label="50g", grams=50, price_aud=21.0),
             ProductSize(label="100g", grams=100, price_aud=38.0),
         ],
+        image=get_product_image("quiet-glow")[0],
+        image_alt=get_product_image("quiet-glow")[1],
     ),
 ]
 
@@ -116,36 +191,42 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 title="Rooibos",
                 description="A naturally caffeine-free base with a mellow, vanilla-leaning sweetness.",
                 alignment={"Sleep": 5, "Calm": 4, "Focus": 1, "Alertness": 1},
+                image=get_base_image("sleep-rooibos")[0],
+                image_alt=get_base_image("sleep-rooibos")[1],
             ),
             BlendBase(
                 id="sleep-honeybush",
                 title="Honeybush",
                 description="Soft, honeyed body that supports evening rituals without stimulation.",
                 alignment={"Sleep": 4, "Calm": 4, "Focus": 1, "Alertness": 1},
+                image=get_base_image("sleep-honeybush")[0],
+                image_alt=get_base_image("sleep-honeybush")[1],
             ),
             BlendBase(
                 id="sleep-decaf-black",
                 title="Decaf Black Tea",
                 description="A fuller tea profile with minimal caffeine for a grounded nightcap.",
                 alignment={"Sleep": 3, "Calm": 2, "Focus": 2, "Alertness": 2},
+                image=get_base_image("sleep-decaf-black")[0],
+                image_alt=get_base_image("sleep-decaf-black")[1],
             ),
         ],
         botanicals=[
-            BlendBotanical(
+            build_botanical(
                 id="chamomile",
                 title="Chamomile",
                 attributes=["Nervine", "Gentle floral", "Night ritual"],
                 contributions={"Sleep": 2, "Calm": 2, "Focus": 0, "Alertness": 0},
                 base_ids=["sleep-rooibos", "sleep-honeybush", "sleep-decaf-black"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="lavender",
                 title="Lavender",
                 attributes=["Soothing", "Aromatic", "Floral"],
                 contributions={"Sleep": 1, "Calm": 2, "Focus": 0, "Alertness": 0},
                 base_ids=["sleep-rooibos", "sleep-honeybush"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="skullcap",
                 title="Skullcap",
                 attributes=["Deep calm", "Evening", "Herbal"],
@@ -154,7 +235,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
             ),
         ],
         flavors=[
-            BlendFlavor(
+            build_flavor(
                 id="vanilla-bean",
                 title="Vanilla Bean",
                 category="Sweet",
@@ -164,7 +245,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["chamomile", "skullcap"],
                 incompatible_with=["smoked-ginger"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="lavender-bloom",
                 title="Lavender Bloom",
                 category="Floral",
@@ -174,7 +255,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["lavender", "chamomile"],
                 incompatible_with=["smoked-ginger"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="citrus-peel",
                 title="Citrus Peel",
                 category="Citrus",
@@ -184,7 +265,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["skullcap"],
                 incompatible_with=["lavender-bloom"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="cocoa-husk",
                 title="Cocoa Husk",
                 category="Earthy",
@@ -194,7 +275,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["skullcap", "chamomile"],
                 incompatible_with=[],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="smoked-ginger",
                 title="Smoked Ginger",
                 category="Spicy",
@@ -216,36 +297,42 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 title="White Tea",
                 description="Delicate and airy with a soothing finish that keeps the blend light.",
                 alignment={"Sleep": 3, "Calm": 5, "Focus": 3, "Alertness": 2},
+                image=get_base_image("calm-white-tea")[0],
+                image_alt=get_base_image("calm-white-tea")[1],
             ),
             BlendBase(
                 id="calm-green-tea",
                 title="Green Tea",
                 description="Fresh vegetal notes for clarity without tipping into overstimulation.",
                 alignment={"Sleep": 2, "Calm": 4, "Focus": 4, "Alertness": 3},
+                image=get_base_image("calm-green-tea")[0],
+                image_alt=get_base_image("calm-green-tea")[1],
             ),
             BlendBase(
                 id="calm-rooibos",
                 title="Rooibos",
                 description="Caffeine-free warmth that anchors florals and herbal notes.",
                 alignment={"Sleep": 4, "Calm": 4, "Focus": 1, "Alertness": 1},
+                image=get_base_image("calm-rooibos")[0],
+                image_alt=get_base_image("calm-rooibos")[1],
             ),
         ],
         botanicals=[
-            BlendBotanical(
+            build_botanical(
                 id="lemon-balm",
                 title="Lemon Balm",
                 attributes=["Stress ease", "Citrus lift", "Herbal"],
                 contributions={"Sleep": 1, "Calm": 2, "Focus": 1, "Alertness": 0},
                 base_ids=["calm-white-tea", "calm-green-tea", "calm-rooibos"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="rose",
                 title="Rose",
                 attributes=["Heart soothing", "Aromatic", "Floral"],
                 contributions={"Sleep": 1, "Calm": 2, "Focus": 0, "Alertness": 0},
                 base_ids=["calm-white-tea", "calm-rooibos"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="tulsi",
                 title="Tulsi",
                 attributes=["Adaptogen", "Grounding", "Herbal"],
@@ -254,7 +341,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
             ),
         ],
         flavors=[
-            BlendFlavor(
+            build_flavor(
                 id="rose-petal",
                 title="Rose Petal",
                 category="Floral",
@@ -264,7 +351,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["rose", "lemon-balm"],
                 incompatible_with=["cardamom-spark"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="lemongrass",
                 title="Lemongrass",
                 category="Citrus",
@@ -274,7 +361,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["lemon-balm", "tulsi"],
                 incompatible_with=["sandalwood"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="sandalwood",
                 title="Sandalwood",
                 category="Earthy",
@@ -284,7 +371,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["tulsi"],
                 incompatible_with=["lemongrass"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="cardamom-spark",
                 title="Cardamom Spark",
                 category="Spicy",
@@ -294,7 +381,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["tulsi", "lemon-balm"],
                 incompatible_with=["rose-petal"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="honey-nut",
                 title="Honeyed Nut",
                 category="Sweet",
@@ -316,36 +403,42 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 title="Sencha Green Tea",
                 description="Clean oceanic lift for sustained attention without jittery peaks.",
                 alignment={"Sleep": 1, "Calm": 3, "Focus": 5, "Alertness": 3},
+                image=get_base_image("focus-sencha")[0],
+                image_alt=get_base_image("focus-sencha")[1],
             ),
             BlendBase(
                 id="focus-oolong",
                 title="Oolong Tea",
                 description="Balanced oxidation with gentle body for measured concentration.",
                 alignment={"Sleep": 2, "Calm": 3, "Focus": 4, "Alertness": 3},
+                image=get_base_image("focus-oolong")[0],
+                image_alt=get_base_image("focus-oolong")[1],
             ),
             BlendBase(
                 id="focus-black-tea",
                 title="Black Tea",
                 description="Brighter briskness that keeps the mind alert and present.",
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 4, "Alertness": 4},
+                image=get_base_image("focus-black-tea")[0],
+                image_alt=get_base_image("focus-black-tea")[1],
             ),
         ],
         botanicals=[
-            BlendBotanical(
+            build_botanical(
                 id="ginkgo",
                 title="Ginkgo",
                 attributes=["Cognitive", "Circulation", "Bright"],
                 contributions={"Sleep": 0, "Calm": 1, "Focus": 2, "Alertness": 1},
                 base_ids=["focus-sencha", "focus-oolong", "focus-black-tea"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="gotu-kola",
                 title="Gotu Kola",
                 attributes=["Mindful focus", "Adaptogen", "Herbal"],
                 contributions={"Sleep": 0, "Calm": 1, "Focus": 2, "Alertness": 0},
                 base_ids=["focus-oolong", "focus-black-tea"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="peppermint",
                 title="Peppermint",
                 attributes=["Cooling", "Alertness", "Fresh"],
@@ -354,7 +447,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
             ),
         ],
         flavors=[
-            BlendFlavor(
+            build_flavor(
                 id="jasmine-veil",
                 title="Jasmine Veil",
                 category="Floral",
@@ -364,7 +457,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["ginkgo"],
                 incompatible_with=["toasted-nut"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="bergamot-zest",
                 title="Bergamot Zest",
                 category="Citrus",
@@ -374,7 +467,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["ginkgo", "peppermint"],
                 incompatible_with=["brown-sugar"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="toasted-nut",
                 title="Toasted Nut",
                 category="Earthy",
@@ -384,7 +477,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["gotu-kola"],
                 incompatible_with=["jasmine-veil"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="pepper-mint",
                 title="Pepper Mint",
                 category="Spicy",
@@ -394,7 +487,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["peppermint", "ginkgo"],
                 incompatible_with=["brown-sugar"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="brown-sugar",
                 title="Brown Sugar",
                 category="Sweet",
@@ -416,36 +509,42 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 title="Assam Black Tea",
                 description="Bold malty richness for a strong, energizing backbone.",
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 3, "Alertness": 5},
+                image=get_base_image("energy-assam")[0],
+                image_alt=get_base_image("energy-assam")[1],
             ),
             BlendBase(
                 id="energy-yerba",
                 title="Yerba Mate",
                 description="Bright herbaceous lift that sustains long-lasting momentum.",
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 4, "Alertness": 5},
+                image=get_base_image("energy-yerba")[0],
+                image_alt=get_base_image("energy-yerba")[1],
             ),
             BlendBase(
                 id="energy-smoked-oolong",
                 title="Smoked Oolong",
                 description="Toasty depth with a steady hum of alertness.",
                 alignment={"Sleep": 1, "Calm": 2, "Focus": 3, "Alertness": 4},
+                image=get_base_image("energy-smoked-oolong")[0],
+                image_alt=get_base_image("energy-smoked-oolong")[1],
             ),
         ],
         botanicals=[
-            BlendBotanical(
+            build_botanical(
                 id="cacao-nibs",
                 title="Cacao Nibs",
                 attributes=["Mood lift", "Rich", "Uplifting"],
                 contributions={"Sleep": 0, "Calm": 0, "Focus": 1, "Alertness": 2},
                 base_ids=["energy-assam", "energy-smoked-oolong"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="ginseng",
                 title="Ginseng",
                 attributes=["Adaptogen", "Vitality", "Rooty"],
                 contributions={"Sleep": 0, "Calm": 0, "Focus": 2, "Alertness": 2},
                 base_ids=["energy-assam", "energy-yerba"],
             ),
-            BlendBotanical(
+            build_botanical(
                 id="orange-peel",
                 title="Orange Peel",
                 attributes=["Zesty", "Aromatic", "Bright"],
@@ -454,7 +553,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
             ),
         ],
         flavors=[
-            BlendFlavor(
+            build_flavor(
                 id="hibiscus-glow",
                 title="Hibiscus Glow",
                 category="Floral",
@@ -464,7 +563,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["orange-peel"],
                 incompatible_with=["clove-heat"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="blood-orange",
                 title="Blood Orange",
                 category="Citrus",
@@ -474,7 +573,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["orange-peel", "ginseng"],
                 incompatible_with=["molasses-sugar"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="cacao-bark",
                 title="Cacao Bark",
                 category="Earthy",
@@ -484,7 +583,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["cacao-nibs"],
                 incompatible_with=["hibiscus-glow"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="clove-heat",
                 title="Clove Heat",
                 category="Spicy",
@@ -494,7 +593,7 @@ CUSTOM_BLEND_OUTCOMES: List[BlendOutcome] = [
                 botanical_ids=["ginseng", "cacao-nibs"],
                 incompatible_with=["hibiscus-glow"],
             ),
-            BlendFlavor(
+            build_flavor(
                 id="molasses-sugar",
                 title="Molasses Sugar",
                 category="Sweet",

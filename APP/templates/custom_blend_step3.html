@@ -15,16 +15,19 @@
   <body>
     <main class="page container py-5" data-blend-step="3">
       <header class="mb-4">
-        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <a class="btn btn-sm btn-outline-secondary" href="/custom-blend/step-2"
-            >&larr; Back to Step 2</a
-          >
+        <div class="page-header-top">
           <div class="brand-lockup">
             <a class="brand-link" href="/">
               <span class="brand-mark" aria-hidden="true"></span>
               <span class="brand-name">Tea Alchemy</span>
             </a>
           </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
+        </div>
+        <div class="back-link-row">
+          <a class="back-link" href="/custom-blend/step-2"
+            >&larr; Back to Step 2</a
+          >
         </div>
         <p class="step-indicator text-uppercase text-muted small mb-2">
           Step 3 of 4
@@ -33,9 +36,6 @@
         <p class="subhead lead text-muted">
           Select botanicals that deepen the outcome. Each one nudges the blend's balance.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-warning" href="/cart">Review cart</a>
-        </div>
       </header>
 
       <section class="row g-4">
@@ -55,42 +55,45 @@
                 Select at least one botanical to continue.
               </p>
               {% for outcome in outcomes %}
-              <div class="row g-3" data-botanical-grid="{{ outcome.id }}" hidden>
-                {% for botanical in outcome.botanicals %}
-                <div class="col-md-6 col-xl-4">
-                  <button
-                    class="botanical-card card h-100 w-100 text-start"
-                    type="button"
-                    data-botanical-id="{{ botanical.id }}"
-                    data-outcome-id="{{ outcome.id }}"
-                    data-botanical-title="{{ botanical.title }}"
-                    data-botanical-attributes='{{ botanical.attributes | tojson }}'
-                    data-botanical-contributions='{{ botanical.contributions | tojson }}'
-                    data-base-ids="{{ botanical.base_ids | join(',') }}"
-                  >
-                    <div class="botanical-card-header">
-                      <span class="botanical-title">{{ botanical.title }}</span>
-                      <span class="botanical-tag">Functional</span>
-                    </div>
-                    <div class="attribute-list">
-                      {% for attribute in botanical.attributes %}
-                      <span class="attribute-pill">{{ attribute }}</span>
-                      {% endfor %}
-                    </div>
-                    <div class="alignment-grid">
-                      {% for axis in outcome_axes %}
-                      <div class="alignment-item">
-                        <span class="alignment-label">{{ axis }}</span>
-                        <div class="alignment-meter">
-                          <span style="width: {{ botanical.contributions[axis] * 20 }}%"></span>
-                        </div>
+                <div class="botanical-grid row g-3" data-botanical-grid="{{ outcome.id }}" hidden>
+                  {% for botanical in outcome.botanicals %}
+                  <div class="col-md-6 col-xl-4">
+                    <button
+                      class="botanical-card card h-100 w-100 text-start"
+                      type="button"
+                      data-botanical-id="{{ botanical.id }}"
+                      data-outcome-id="{{ outcome.id }}"
+                      data-botanical-title="{{ botanical.title }}"
+                      data-botanical-attributes='{{ botanical.attributes | tojson }}'
+                      data-botanical-contributions='{{ botanical.contributions | tojson }}'
+                      data-base-ids="{{ botanical.base_ids | join(',') }}"
+                    >
+                      <div class="botanical-card-media">
+                        <img src="{{ botanical.image }}" alt="{{ botanical.image_alt }}" />
                       </div>
-                      {% endfor %}
-                    </div>
-                  </button>
+                      <div class="botanical-card-header">
+                        <span class="botanical-title">{{ botanical.title }}</span>
+                        <span class="botanical-tag">Functional</span>
+                      </div>
+                      <div class="attribute-list">
+                        {% for attribute in botanical.attributes %}
+                        <span class="attribute-pill">{{ attribute }}</span>
+                        {% endfor %}
+                      </div>
+                      <div class="alignment-grid">
+                        {% for axis in outcome_axes %}
+                        <div class="alignment-item">
+                          <span class="alignment-label">{{ axis }}</span>
+                          <div class="alignment-meter">
+                            <span style="width: {{ botanical.contributions[axis] * 20 }}%"></span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </button>
+                  </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
-              </div>
               {% endfor %}
               <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 step-nav">
                 <a class="btn btn-outline-secondary" href="/custom-blend/step-2">Back</a>

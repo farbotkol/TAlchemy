@@ -15,16 +15,19 @@
   <body>
     <main class="page container py-5" data-blend-step="2">
       <header class="mb-4">
-        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <a class="btn btn-sm btn-outline-secondary" href="/custom-blend/step-1"
-            >&larr; Back to Step 1</a
-          >
+        <div class="page-header-top">
           <div class="brand-lockup">
             <a class="brand-link" href="/">
               <span class="brand-mark" aria-hidden="true"></span>
               <span class="brand-name">Tea Alchemy</span>
             </a>
           </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
+        </div>
+        <div class="back-link-row">
+          <a class="back-link" href="/custom-blend/step-1"
+            >&larr; Back to Step 1</a
+          >
         </div>
         <p class="step-indicator text-uppercase text-muted small mb-2">
           Step 2 of 4
@@ -33,9 +36,6 @@
         <p class="subhead lead text-muted">
           Each base aligns differently with your outcome. Pick one to shape the alertness profile.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-warning" href="/cart">Review cart</a>
-        </div>
       </header>
 
       <section class="row g-4">
@@ -47,37 +47,42 @@
                 Select an outcome first to reveal matching base teas.
               </p>
               {% for outcome in outcomes %}
-              <div class="row g-3" data-base-grid="{{ outcome.id }}" hidden>
-                {% for base in outcome.bases %}
-                <div class="col-md-6 col-xl-4">
-                  <button
-                    class="base-card card h-100 w-100 text-start"
-                    type="button"
-                    data-base-id="{{ base.id }}"
-                    data-outcome-id="{{ outcome.id }}"
-                    data-base-title="{{ base.title }}"
-                    data-base-description="{{ base.description }}"
-                    data-alignment='{{ base.alignment | tojson }}'
-                  >
-                    <div class="base-card-header">
-                      <span class="base-title">{{ base.title }}</span>
-                      <span class="base-tag">{{ outcome.title }} aligned</span>
-                    </div>
-                    <p class="base-description">{{ base.description }}</p>
-                    <div class="alignment-grid">
-                      {% for axis in outcome_axes %}
-                      <div class="alignment-item">
-                        <span class="alignment-label">{{ axis }}</span>
-                        <div class="alignment-meter">
-                          <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
-                        </div>
+                <div class="base-grid row g-3" data-base-grid="{{ outcome.id }}" hidden>
+                  {% for base in outcome.bases %}
+                  <div class="col-md-6 col-xl-4">
+                    <button
+                      class="base-card card h-100 w-100 text-start"
+                      type="button"
+                      data-base-id="{{ base.id }}"
+                      data-outcome-id="{{ outcome.id }}"
+                      data-base-title="{{ base.title }}"
+                      data-base-description="{{ base.description }}"
+                      data-alignment='{{ base.alignment | tojson }}'
+                      data-base-image="{{ base.image }}"
+                      data-base-image-alt="{{ base.image_alt }}"
+                    >
+                      <div class="base-card-media">
+                        <img src="{{ base.image }}" alt="{{ base.image_alt }}" />
                       </div>
-                      {% endfor %}
-                    </div>
-                  </button>
+                      <div class="base-card-header">
+                        <span class="base-title">{{ base.title }}</span>
+                        <span class="base-tag">{{ outcome.title }} aligned</span>
+                      </div>
+                      <p class="base-description">{{ base.description }}</p>
+                      <div class="alignment-grid">
+                        {% for axis in outcome_axes %}
+                        <div class="alignment-item">
+                          <span class="alignment-label">{{ axis }}</span>
+                          <div class="alignment-meter">
+                            <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </button>
+                  </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
-              </div>
               {% endfor %}
               <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 step-nav">
                 <a class="btn btn-outline-secondary" href="/custom-blend/step-1">Back</a>

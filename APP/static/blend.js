@@ -795,6 +795,8 @@ const applySelection = (card) => {
     baseTitle: null,
     baseDescription: null,
     baseAlignment: {},
+    baseImage: null,
+    baseImageAlt: null,
     selectedBotanicals: [],
     selectedFlavors: [],
     sizeLabel: stored.sizeLabel || null,
@@ -847,6 +849,8 @@ const applyBaseSelection = (card) => {
     baseTitle: title,
     baseDescription: description,
     baseAlignment: alignment,
+    baseImage: card.dataset.baseImage || stored.baseImage || null,
+    baseImageAlt: card.dataset.baseImageAlt || stored.baseImageAlt || null,
   };
 
   showBotanicalGrid(selection.outcomeId, selection.baseId, alignment);

@@ -6,6 +6,8 @@
 #   ./.agents/ralph/loop.sh prd "request"   # generate PRD via agent
 #   ./.agents/ralph/loop.sh 10              # build mode, 10 iterations
 #   ./.agents/ralph/loop.sh build 1 --no-commit
+#   ./.agents/ralph/loop.sh --agent codex    # choose agent by name (default: codex)
+#   ./.agents/ralph/loop.sh --agent-cmd "copilot exec -" # provide full agent command
 
 set -euo pipefail
 
@@ -56,6 +58,9 @@ resolve_agent_cmd() {
       ;;
     droid)
       echo "${AGENT_DROID_CMD:-droid exec --skip-permissions-unsafe -f {prompt}}"
+      ;;
+    copilot)
+      echo "${AGENT_COPILOT_CMD:-copilot exec --skip-auth -}"
       ;;
     codex|"")
       echo "${AGENT_CODEX_CMD:-codex exec --yolo --skip-git-repo-check -}"
@@ -163,6 +168,9 @@ run_agent_inline() {
 }
 
 MODE="build"
+# allow overriding the agent via CLI: --agent <name> or --agent-cmd <command>
+CLI_AGENT_NAME=""
+CLI_AGENT_CMD=""
 while [ $# -gt 0 ]; do
   case "$1" in
     build|prd)
@@ -176,6 +184,14 @@ while [ $# -gt 0 ]; do
     --no-commit)
       NO_COMMIT=true
       shift
+      ;;
+    --agent)
+      CLI_AGENT_NAME="$2"
+      shift 2
+      ;;
+    --agent-cmd)
+      CLI_AGENT_CMD="$2"
+      shift 2
       ;;
     *)
       if [ "$MODE" = "prd" ]; then
@@ -191,6 +207,13 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
+
+# Apply CLI agent overrides (if provided)
+if [ -n "$CLI_AGENT_CMD" ]; then
+  AGENT_CMD="$CLI_AGENT_CMD"
+elif [ -n "$CLI_AGENT_NAME" ]; then
+  AGENT_CMD="$(resolve_agent_cmd "$CLI_AGENT_NAME")"
+fi
 
 PROMPT_FILE="$PROMPT_BUILD"
 

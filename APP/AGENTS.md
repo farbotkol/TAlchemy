@@ -2,6 +2,7 @@
 
 - FastAPI entry point is `app/main.py` with Jinja2 templates in `app/templates` and static assets in `app/static`.
 - Pre-made product data lives in `app/data.py` and is rendered for both listing and detail pages.
+- Each product and custom blend base now carries `image`/`image_alt` metadata in `app/data.py`; keep those fields synchronized when new teas or blends are added so the UI can show consistent imagery.
 - Cart state is stored client-side in localStorage under `teaAlchemyCart` and rendered via `APP/static/cart.js` on product detail.
 - Custom blend selection is stored in localStorage under `teaAlchemyBlend` and driven by `APP/static/blend.js`.
 - Custom blend steps live on `/custom-blend/step-1` through `/custom-blend/step-4`; navigation gating relies on `data-blend-step` and `data-step-next` handled in `APP/static/blend.js`.

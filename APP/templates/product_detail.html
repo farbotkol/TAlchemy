@@ -15,21 +15,22 @@
   <body>
     <main class="container py-5">
       <header class="mb-4">
-        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <a class="btn btn-sm btn-outline-secondary" href="/"
-            >&larr; Back to blends</a
-          >
+        <div class="page-header-top">
           <div class="brand-lockup">
             <a class="brand-link" href="/">
               <span class="brand-mark" aria-hidden="true"></span>
               <span class="brand-name">Tea Alchemy</span>
             </a>
           </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
+        </div>
+        <div class="back-link-row">
+          <a class="back-link" href="/">&larr; Back to blends</a>
         </div>
         <h1 class="display-5">{{ product.name }}</h1>
         <p class="lead text-muted">{{ product.description }}</p>
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-warning" href="/cart">Review cart</a>
+        <div class="product-detail-figure mb-3">
+          <img src="{{ product.image }}" alt="{{ product.image_alt }}" />
         </div>
       </header>
 
@@ -70,6 +71,7 @@
                     data-product-name="{{ product.name }}"
                     data-size-label="{{ size.label }}"
                     data-price="{{ '%.2f'|format(size.price_aud) }}"
+                    data-product-image="{{ product.image }}"
                   >
                     Add to cart
                   </button>

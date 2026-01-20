@@ -42,7 +42,11 @@ const addToCart = (entry) => {
   if (existing) {
     existing.quantity += 1;
   } else {
-    cart.push({ ...entry, quantity: 1 });
+    const entryWithImage = {
+      ...entry,
+      image: entry.image || "/static/tea-leaves-placeholder.png",
+    };
+    cart.push({ ...entryWithImage, quantity: 1 });
   }
   writeCart(cart);
   return cart;
@@ -148,9 +152,13 @@ const renderCartReviewItems = (cart) => {
     const wrapper = document.createElement("div");
     wrapper.className = "cart-review-item";
     const lineTotal = item.unitPrice * item.quantity;
+    const imageSrc = item.image || "/static/tea-leaves-placeholder.png";
 
     wrapper.innerHTML = `
-      <div>
+      <div class="cart-review-item-media">
+        <img src="${imageSrc}" alt="${item.name}" />
+      </div>
+      <div class="cart-review-item-content">
         <strong>${item.name}</strong>
         <div class="cart-item-meta">
           <span>${item.sizeLabel} - Qty ${item.quantity}</span>
@@ -208,6 +216,19 @@ const renderBlendPanel = (blend) => {
   titleNode.className = "cart-review-title";
   titleNode.textContent = title;
 
+  const baseImage = blend.baseImage || "/static/tea-leaves-placeholder.png";
+  const baseAlt = blend.baseImageAlt || blend.baseTitle || "Custom blend base";
+  const header = document.createElement("div");
+  header.className = "cart-custom-header";
+  const imageNode = document.createElement("img");
+  imageNode.className = "cart-custom-image";
+  imageNode.src = baseImage;
+  imageNode.alt = baseAlt;
+  const headerText = document.createElement("div");
+  headerText.appendChild(titleNode);
+  header.appendChild(imageNode);
+  header.appendChild(headerText);
+
   const list = document.createElement("dl");
   list.className = "cart-detail-list";
 
@@ -231,8 +252,7 @@ const renderBlendPanel = (blend) => {
   removeButton.type = "button";
   removeButton.dataset.removeBlend = "true";
   removeButton.textContent = "Remove blend";
-
-  container.appendChild(titleNode);
+  container.appendChild(header);
   container.appendChild(list);
   container.appendChild(removeButton);
 };
@@ -256,6 +276,7 @@ const bindAddToCartButtons = () => {
       const productName = button.dataset.productName;
       const sizeLabel = button.dataset.sizeLabel;
       const price = Number.parseFloat(button.dataset.price);
+      const productImage = button.dataset.productImage;
 
       if (!productId || !productName || !sizeLabel || Number.isNaN(price)) {
         return;
@@ -266,6 +287,7 @@ const bindAddToCartButtons = () => {
         name: productName,
         sizeLabel,
         unitPrice: price,
+        image: productImage,
       });
 
       renderCart(cart);

@@ -15,16 +15,19 @@
   <body>
     <main class="page container py-5" data-blend-step="4">
       <header class="mb-4">
-        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-          <a class="btn btn-sm btn-outline-secondary" href="/custom-blend/step-3"
-            >&larr; Back to Step 3</a
-          >
+        <div class="page-header-top">
           <div class="brand-lockup">
             <a class="brand-link" href="/">
               <span class="brand-mark" aria-hidden="true"></span>
               <span class="brand-name">Tea Alchemy</span>
             </a>
           </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
+        </div>
+        <div class="back-link-row">
+          <a class="back-link" href="/custom-blend/step-3"
+            >&larr; Back to Step 3</a
+          >
         </div>
         <p class="step-indicator text-uppercase text-muted small mb-2">
           Step 4 of 4
@@ -33,9 +36,6 @@
         <p class="subhead lead text-muted">
           Layer in flavor accents that stay compatible with your base tea and functional goal.
         </p>
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-warning" href="/cart">Review cart</a>
-        </div>
       </header>
 
       <section class="row g-4">
@@ -56,7 +56,7 @@
                   That pairing clashes with your current flavor profile. Try a different note.
                 </p>
                 {% for outcome in outcomes %}
-                <div class="row g-3" data-flavor-grid="{{ outcome.id }}" hidden>
+                <div class="flavor-grid row g-3" data-flavor-grid="{{ outcome.id }}" hidden>
                   {% for flavor in outcome.flavors %}
                   <div class="col-md-6 col-xl-4">
                     <button
@@ -72,6 +72,9 @@
                       data-flavor-botanical-ids="{{ flavor.botanical_ids | join(',') }}"
                       data-incompatible='{{ flavor.incompatible_with | tojson }}'
                     >
+                      <div class="flavor-card-media">
+                        <img src="{{ flavor.image }}" alt="{{ flavor.image_alt }}" />
+                      </div>
                       <div class="flavor-card-header">
                         <span class="flavor-title">{{ flavor.title }}</span>
                         <span class="flavor-tag">{{ flavor.category }}</span>
@@ -98,7 +101,6 @@
                 {% endfor %}
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 step-nav">
                   <a class="btn btn-outline-secondary" href="/custom-blend/step-3">Back</a>
-                  <a class="btn btn-warning" href="/cart">Review cart</a>
                 </div>
               </div>
 

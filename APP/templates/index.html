@@ -15,12 +15,15 @@
   <body>
     <main class="container py-5">
       <header class="page-hero mb-5">
-        <div class="brand-lockup">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <div>
-            <p class="brand-name">Tea Alchemy</p>
-            <p class="brand-tagline">Sparked blends &amp; bright rituals</p>
+        <div class="page-header-top">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <div>
+              <p class="brand-name">Tea Alchemy</p>
+              <p class="brand-tagline">Sparked blends &amp; bright rituals</p>
+            </div>
           </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
         </div>
         <h1 class="display-5 fw-semibold">Pre-made blends for every intention.</h1>
         <p class="subhead lead">
@@ -34,6 +37,9 @@
         <div class="col-12 col-md-6 col-lg-4">
           <article class="card h-100 shadow-sm border-0">
             <div class="card-body d-flex flex-column gap-3">
+              <div class="product-figure">
+                <img src="{{ product.image }}" alt="{{ product.image_alt }}" />
+              </div>
               <div>
                 <h2 class="h4 mb-2">{{ product.name }}</h2>
                 <p class="description mb-0">{{ product.description }}</p>
