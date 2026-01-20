@@ -4,157 +4,193 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tea Alchemy | Custom Blend</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <main class="page" data-blend-step="2">
-      <header class="page-hero detail">
-        <a class="back-link" href="/custom-blend/step-1">&larr; Back to Step 1</a>
-        <div class="brand-lockup">
-          <a class="brand-link" href="/">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <span class="brand-name">Tea Alchemy</span>
-          </a>
+    <main class="page container py-5" data-blend-step="2">
+      <header class="mb-4">
+        <div class="page-header-top">
+          <div class="brand-lockup">
+            <a class="brand-link" href="/">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <span class="brand-name">Tea Alchemy</span>
+            </a>
+          </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
         </div>
-        <p class="step-indicator">Step 2 of 4</p>
-        <h1>Choose a base tea.</h1>
-        <p class="subhead">
+        <div class="back-link-row">
+          <a class="back-link" href="/custom-blend/step-1"
+            >&larr; Back to Step 1</a
+          >
+        </div>
+        <p class="step-indicator text-uppercase text-muted small mb-2">
+          Step 2 of 4
+        </p>
+        <h1 class="display-5">Choose a base tea.</h1>
+        <p class="subhead lead text-muted">
           Each base aligns differently with your outcome. Pick one to shape the alertness profile.
         </p>
-        <div class="hero-actions">
-          <a class="secondary-action" href="/cart">Review cart</a>
-        </div>
       </header>
 
-      <section class="blend-layout">
-        <div class="blend-panel">
-          <h2 class="section-title">Base teas matched to your outcome</h2>
-          <p class="base-empty" data-base-empty>
-            Select an outcome first to reveal matching base teas.
-          </p>
-          {% for outcome in outcomes %}
-          <div class="base-grid" data-base-grid="{{ outcome.id }}" hidden>
-            {% for base in outcome.bases %}
-            <button
-              class="base-card"
-              type="button"
-              data-base-id="{{ base.id }}"
-              data-outcome-id="{{ outcome.id }}"
-              data-base-title="{{ base.title }}"
-              data-base-description="{{ base.description }}"
-              data-alignment='{{ base.alignment | tojson }}'
-            >
-              <div class="base-card-header">
-                <span class="base-title">{{ base.title }}</span>
-                <span class="base-tag">{{ outcome.title }} aligned</span>
-              </div>
-              <p class="base-description">{{ base.description }}</p>
-              <div class="alignment-grid">
-                {% for axis in outcome_axes %}
-                <div class="alignment-item">
-                  <span class="alignment-label">{{ axis }}</span>
-                  <div class="alignment-meter">
-                    <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
+      <section class="row g-4">
+        <div class="col-lg-8">
+          <div class="card shadow-sm blend-panel">
+            <div class="card-body d-grid gap-3">
+              <h2 class="section-title h4 mb-0">Base teas matched to your outcome</h2>
+              <p class="alert alert-info base-empty mb-0" data-base-empty role="alert">
+                Select an outcome first to reveal matching base teas.
+              </p>
+              {% for outcome in outcomes %}
+                <div class="base-grid row g-3" data-base-grid="{{ outcome.id }}" hidden>
+                  {% for base in outcome.bases %}
+                  <div class="col-md-6 col-xl-4">
+                    <button
+                      class="base-card card h-100 w-100 text-start"
+                      type="button"
+                      data-base-id="{{ base.id }}"
+                      data-outcome-id="{{ outcome.id }}"
+                      data-base-title="{{ base.title }}"
+                      data-base-description="{{ base.description }}"
+                      data-alignment='{{ base.alignment | tojson }}'
+                      data-base-image="{{ base.image }}"
+                      data-base-image-alt="{{ base.image_alt }}"
+                    >
+                      <div class="base-card-media">
+                        <img src="{{ base.image }}" alt="{{ base.image_alt }}" />
+                      </div>
+                      <div class="base-card-header">
+                        <span class="base-title">{{ base.title }}</span>
+                        <span class="base-tag">{{ outcome.title }} aligned</span>
+                      </div>
+                      <p class="base-description">{{ base.description }}</p>
+                      <div class="alignment-grid">
+                        {% for axis in outcome_axes %}
+                        <div class="alignment-item">
+                          <span class="alignment-label">{{ axis }}</span>
+                          <div class="alignment-meter">
+                            <span style="width: {{ base.alignment[axis] * 20 }}%"></span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </button>
                   </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
+              {% endfor %}
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 step-nav">
+                <a class="btn btn-outline-secondary" href="/custom-blend/step-1">Back</a>
+                <button
+                  class="btn btn-warning"
+                  type="button"
+                  data-step-next
+                  data-next-step-url="/custom-blend/step-3"
+                  disabled
+                >
+                  Continue to botanicals
+                </button>
               </div>
-            </button>
-            {% endfor %}
-          </div>
-          {% endfor %}
-          <div class="step-nav">
-            <a class="secondary-action" href="/custom-blend/step-1">Back</a>
-            <button
-              class="primary-action"
-              type="button"
-              data-step-next
-              data-next-step-url="/custom-blend/step-3"
-              disabled
-            >
-              Continue to botanicals
-            </button>
+            </div>
           </div>
         </div>
 
-        <aside class="blend-panel blend-preview" aria-live="polite">
-          <h2 class="section-title">Your blend path</h2>
-          <div class="preview-card" data-outcome-preview>
-            <p class="preview-label">Outcome</p>
-            <h3 class="preview-title" data-preview-title>Choose an outcome</h3>
-            <p class="preview-description" data-preview-description>
-              We will reveal the best bases and botanicals once you pick a direction.
-            </p>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Base teas available</p>
-            <ul class="preview-list" data-preview-bases>
-              <li>Select an outcome to see base teas.</li>
-            </ul>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Selected base tea</p>
-            <h3 class="preview-title" data-preview-base-title>Pick a base tea</h3>
-            <p class="preview-description" data-preview-base-description>
-              The base tea will steer the balance of calm, focus, and alertness in your blend.
-            </p>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Outcome visualization</p>
-            <div class="radar-chart" data-radar-chart data-outcome-axes='{{ outcome_axes | tojson }}'>
-              <svg
-                class="radar-svg"
-                viewBox="0 0 240 240"
-                role="img"
-                aria-label="Outcome alignment radar chart"
-              >
-                <title>Outcome alignment radar chart</title>
-                <g class="radar-grid" data-radar-grid></g>
-                <g class="radar-axes" data-radar-axes></g>
-                <polygon class="radar-shape" data-radar-shape points=""></polygon>
-                <g class="radar-points" data-radar-points></g>
-                <g class="radar-labels" data-radar-labels></g>
-              </svg>
+        <aside class="col-lg-4">
+          <div class="card shadow-sm blend-panel blend-preview" aria-live="polite">
+            <div class="card-body d-grid gap-3">
+              <h2 class="section-title h4 mb-0">Your blend path</h2>
+              <div class="preview-card card border-0" data-outcome-preview>
+                <p class="preview-label">Outcome</p>
+                <h3 class="preview-title" data-preview-title>Choose an outcome</h3>
+                <p class="preview-description" data-preview-description>
+                  We will reveal the best bases and botanicals once you pick a direction.
+                </p>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Base teas available</p>
+                <ul class="preview-list" data-preview-bases>
+                  <li>Select an outcome to see base teas.</li>
+                </ul>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Selected base tea</p>
+                <h3 class="preview-title" data-preview-base-title>Pick a base tea</h3>
+                <p class="preview-description" data-preview-base-description>
+                  The base tea will steer the balance of calm, focus, and alertness in your blend.
+                </p>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Outcome visualization</p>
+                <div
+                  class="radar-chart"
+                  data-radar-chart
+                  data-outcome-axes='{{ outcome_axes | tojson }}'
+                >
+                  <svg
+                    class="radar-svg"
+                    viewBox="0 0 240 240"
+                    role="img"
+                    aria-label="Outcome alignment radar chart"
+                  >
+                    <title>Outcome alignment radar chart</title>
+                    <g class="radar-grid" data-radar-grid></g>
+                    <g class="radar-axes" data-radar-axes></g>
+                    <polygon class="radar-shape" data-radar-shape points=""></polygon>
+                    <g class="radar-points" data-radar-points></g>
+                    <g class="radar-labels" data-radar-labels></g>
+                  </svg>
+                </div>
+                <ul class="radar-score-list" data-radar-scores></ul>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Functional botanicals</p>
+                <ul class="preview-list" data-preview-botanicals>
+                  <li>Add botanicals to amplify your blend.</li>
+                </ul>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Flavor botanicals</p>
+                <ul class="preview-list" data-preview-flavors>
+                  <li>Add flavor notes to complete the aroma profile.</li>
+                </ul>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Flavor spectrum</p>
+                <div
+                  class="flavor-spectrum"
+                  data-flavor-spectrum
+                  data-flavor-categories='{{ flavor_categories | tojson }}'
+                ></div>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Blend size</p>
+                <h3 class="preview-title" data-preview-size>Choose a size</h3>
+                <p class="preview-description" data-preview-price>
+                  Pricing updates as soon as you select a size.
+                </p>
+              </div>
+              <div class="preview-card card border-0">
+                <p class="preview-label">Blend name</p>
+                <h3 class="preview-title" data-preview-blend-name>Name your blend</h3>
+                <p class="preview-description">
+                  Your custom label will follow the blend through checkout.
+                </p>
+              </div>
             </div>
-            <ul class="radar-score-list" data-radar-scores></ul>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Functional botanicals</p>
-            <ul class="preview-list" data-preview-botanicals>
-              <li>Add botanicals to amplify your blend.</li>
-            </ul>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Flavor botanicals</p>
-            <ul class="preview-list" data-preview-flavors>
-              <li>Add flavor notes to complete the aroma profile.</li>
-            </ul>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Flavor spectrum</p>
-            <div
-              class="flavor-spectrum"
-              data-flavor-spectrum
-              data-flavor-categories='{{ flavor_categories | tojson }}'
-            ></div>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Blend size</p>
-            <h3 class="preview-title" data-preview-size>Choose a size</h3>
-            <p class="preview-description" data-preview-price>
-              Pricing updates as soon as you select a size.
-            </p>
-          </div>
-          <div class="preview-card">
-            <p class="preview-label">Blend name</p>
-            <h3 class="preview-title" data-preview-blend-name>Name your blend</h3>
-            <p class="preview-description">
-              Your custom label will follow the blend through checkout.
-            </p>
           </div>
         </aside>
       </section>
     </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
     <script src="/static/blend.js"></script>
   </body>
 </html>

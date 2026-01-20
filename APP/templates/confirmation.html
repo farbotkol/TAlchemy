@@ -4,17 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tea Alchemy | Order Confirmation</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
     <main class="page">
       <header class="page-hero detail">
-        <a class="back-link" href="/">&larr; Back to blends</a>
-        <div class="brand-lockup">
-          <a class="brand-link" href="/">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <span class="brand-name">Tea Alchemy</span>
-          </a>
+        <div class="page-header-top">
+          <div class="brand-lockup">
+            <a class="brand-link" href="/">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <span class="brand-name">Tea Alchemy</span>
+            </a>
+          </div>
+          <a class="btn btn-warning review-cart-btn" href="/cart">Review cart</a>
+        </div>
+        <div class="back-link-row">
+          <a class="back-link" href="/">&larr; Back to blends</a>
         </div>
         <h1>Your tea journey is now in motion.</h1>
         <p class="subhead">
@@ -76,6 +87,11 @@
         </aside>
       </section>
     </main>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
     <script src="/static/confirmation.js"></script>
   </body>
 </html>

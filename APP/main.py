@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from APP.data import (
+from app.data import (
     BLEND_OUTCOME_AXES,
     CUSTOM_BLEND_SIZES,
     CUSTOM_BLEND_OUTCOMES,
